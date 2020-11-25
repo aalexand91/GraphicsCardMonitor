@@ -116,7 +116,7 @@ namespace GraphicsCards
 					// Parameters: N/A
 					// Returns: The total number of GPU handlers in the system as a long
 					//*********************************************************************************
-					unsigned long GetNumHandlers() override;
+					ULONG GetNumHandlers() override;
 
 					//*********************************************************************************
 					// Function: Nvidia::CommonApiWrapper::GetGpuCoreCount
@@ -124,7 +124,7 @@ namespace GraphicsCards
 					// Paramters: physHandlerNum - the index number of the physical handler in memory
 					// Returns: The number of GPU cores for the graphics card as a long
 					//*********************************************************************************
-					unsigned long GetGpuCoreCount(unsigned long physHandlerNum) override;
+					ULONG GetGpuCoreCount(ULONG physHandlerNum) override;
 
 					//*********************************************************************************
 					// Function: Nvidia::CommonApiWrapper::GetName
@@ -132,7 +132,7 @@ namespace GraphicsCards
 					// Paramters: physHandlerNum - The GPU physical handler index number in memory
 					// Returns: The graphics card name as a string
 					//*********************************************************************************
-					String^ GetName(unsigned long physHandlerNum) override;
+					String^ GetName(ULONG physHandlerNum) override;
 
 					//*********************************************************************************
 					// Function: Nvidia::CommonApiWrapper::GetVBiosInfo
@@ -140,7 +140,7 @@ namespace GraphicsCards
 					// Parameters: physHandlerNum - The GPU handler index in memory
 					// Returns: The selected GPU VBIOS information as a string
 					//*********************************************************************************
-					String^ GetVBiosInfo(unsigned long physHandlerNum) override;
+					String^ GetVBiosInfo(ULONG physHandlerNum) override;
 
 					//*********************************************************************************
 					// Function: Nvidia::CommonApiWrapper::GetVirtualRamSize
@@ -149,7 +149,7 @@ namespace GraphicsCards
 					// Parameters: phyHandlerNum - the physical handler index number in memory
 					// Returns: The virtual RAM size used by the GPU in KB as an int
 					//*********************************************************************************
-					unsigned int GetVirtualRamSize(unsigned long physHandlerNum) override;
+					UINT GetVirtualRamSize(ULONG physHandlerNum) override;
 
 					//*********************************************************************************
 					// Function: Nvidia::CommonApiWrapper::GetPhysicalRamSize
@@ -157,7 +157,7 @@ namespace GraphicsCards
 					// Parameters: physHandlerNum - the physical handler index number in memory
 					// Returns: The physical RAM of the GPU in KB as an int
 					//*********************************************************************************
-					unsigned int GetPhysicalRamSize(unsigned long physHandlerNum) override;
+					UINT GetPhysicalRamSize(ULONG physHandlerNum) override;
 
 					//*********************************************************************************
 					// Function: Nvidia::CommonApiWrapper::GetCardSerialNumber
@@ -167,35 +167,42 @@ namespace GraphicsCards
 					// Returns:
 					//		The graphics card serial number as a String type
 					//*********************************************************************************
-					String^ GetCardSerialNumber(unsigned long physHandlerNum) override;
+					String^ GetCardSerialNumber(ULONG physHandlerNum) override;
 
 					/// <summary>
 					/// Gets the GPU PCI internal device ID
 					/// </summary>
 					/// <param name="physHandlerNum">the physical handler index number in memory</param>
 					/// <returns>the GPU PCI internal device ID as an unsigned int</returns>
-					unsigned int GetGpuPciInternalDeviceId(unsigned long physHandlerNum) override;
+					UINT GetGpuPciInternalDeviceId(ULONG physHandlerNum) override;
 
 					/// <summary>
 					/// Gets the GPU PCI revision ID
 					/// </summary>
 					/// <param name="physHandlerNum">The physical handler index in memory</param>
 					/// <returns>The GPU PCI revision ID as an unsigned int</returns>
-					unsigned int GetGpuPciRevId(unsigned long physHandlerNum) override;
+					UINT GetGpuPciRevId(ULONG physHandlerNum) override;
 
 					/// <summary>
 					/// Gets the GPU PCI subsystem ID
 					/// </summary>
 					/// <param name="physHandlerNum">The physical handler index in memory</param>
 					/// <returns>The GPU PCI subsystem ID as an unsigned int</returns>
-					unsigned int GetGpuPciSubSystemId(unsigned long physHandlerNum) override;
+					UINT GetGpuPciSubSystemId(ULONG physHandlerNum) override;
 
 					/// <summary>
 					/// Gets the GPU PCI external ID
 					/// </summary>
 					/// <param name="physHandlerNum">The physical handler index number in memory</param>
 					/// <returns>The GPU PCI external ID as an unsigned int</returns>
-					unsigned int GetGpuPciExternalDeviceId(unsigned long physHandlerNum) override;
+					UINT GetGpuPciExternalDeviceId(ULONG physHandlerNum) override;
+
+					/// <summary>
+					/// Gets the GPU Bus ID
+					/// </summary>
+					/// <param name="physHandlerNum">The physical handler index number in memory</param>
+					/// <returns>The GPU Bus ID as an unsigned int</returns>
+					UINT GetGpuBusId(ULONG physHandlerNum) override;
 			};
 	};
 

@@ -330,7 +330,7 @@ namespace GraphicsCards
 	// Paramters: physHandlerNum - the index number of the physical handler in memory
 	// Returns: The number of GPU cores for the graphics card as a long
 	//*********************************************************************************
-	unsigned long Nvidia::CommonApiWrapper::GetGpuCoreCount(unsigned long physHandlerNum)
+	ULONG Nvidia::CommonApiWrapper::GetGpuCoreCount(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -385,7 +385,7 @@ namespace GraphicsCards
 	// Paramters: physHandlerNum - The GPU physical handler index number in memory
 	// Returns: The graphics card name as a string
 	//*********************************************************************************
-	String^ Nvidia::CommonApiWrapper::GetName(unsigned long physHandlerNum)
+	String^ Nvidia::CommonApiWrapper::GetName(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -441,7 +441,7 @@ namespace GraphicsCards
 	// Parameters: physHandlerNum - The GPU handler index in memory
 	// Returns: The selected GPU VBIOS information as a string
 	//*********************************************************************************
-	String^ Nvidia::CommonApiWrapper::GetVBiosInfo(unsigned long physHandlerNum)
+	String^ Nvidia::CommonApiWrapper::GetVBiosInfo(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -496,7 +496,7 @@ namespace GraphicsCards
 	// Parameters: phyHandlerNum - the physical handler index number in memory
 	// Returns: The virtual RAM size used by the GPU in KB as an int
 	//*********************************************************************************
-	unsigned int Nvidia::CommonApiWrapper::GetVirtualRamSize(unsigned long physHandlerNum)
+	UINT Nvidia::CommonApiWrapper::GetVirtualRamSize(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -552,7 +552,7 @@ namespace GraphicsCards
 	// Returns:
 	//		The physical RAM of the GPU in KB as an int
 	//*********************************************************************************
-	unsigned int Nvidia::CommonApiWrapper::GetPhysicalRamSize(unsigned long physHandlerNum)
+	UINT Nvidia::CommonApiWrapper::GetPhysicalRamSize(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -609,7 +609,7 @@ namespace GraphicsCards
 	// Returns:
 	//		The graphics card serial number as a String type
 	//*********************************************************************************
-	String^ Nvidia::CommonApiWrapper::GetCardSerialNumber(unsigned long physHandlerNum)
+	String^ Nvidia::CommonApiWrapper::GetCardSerialNumber(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -663,7 +663,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">the physical handler index number in memory</param>
 	/// <returns>the GPU PCI internal device ID as an unsigned int</returns>
-	unsigned int Nvidia::CommonApiWrapper::GetGpuPciInternalDeviceId(unsigned long physHandlerNum)
+	UINT Nvidia::CommonApiWrapper::GetGpuPciInternalDeviceId(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -707,7 +707,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">The physical handler index in memory</param>
 	/// <returns>The GPU PCI revision ID as an unsigned int</returns>
-	unsigned int Nvidia::CommonApiWrapper::GetGpuPciRevId(unsigned long physHandlerNum)
+	UINT Nvidia::CommonApiWrapper::GetGpuPciRevId(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -752,7 +752,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">The physical handler index in memory</param>
 	/// <returns>The GPU PCI subsystem ID as an unsigned int</returns>
-	unsigned int Nvidia::CommonApiWrapper::GetGpuPciSubSystemId(unsigned long physHandlerNum)
+	UINT Nvidia::CommonApiWrapper::GetGpuPciSubSystemId(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -797,7 +797,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">The physical handler index number in memory</param>
 	/// <returns>The GPU PCI external ID as an unsigned int</returns>
-	unsigned int Nvidia::CommonApiWrapper::GetGpuPciExternalDeviceId(unsigned long physHandlerNum)
+	UINT Nvidia::CommonApiWrapper::GetGpuPciExternalDeviceId(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -833,6 +833,57 @@ namespace GraphicsCards
 		{
 			// let the user know an error occurred getting the GPU external PCI ID
 			String^ errMsg = "Could not get GPU PCI external ID. " + ex->Message;
+			throw gcnew Exception(errMsg);
+		}
+	}
+
+	/// <summary>
+	/// Gets the GPU Bus ID
+	/// </summary>
+	/// <param name="physHandlerNum">The physical handler index number in memory</param>
+	/// <returns>The GPU Bus ID as an unsigned int</returns>
+	UINT Nvidia::CommonApiWrapper::GetGpuBusId(ULONG physHandlerNum)
+	{
+		try
+		{
+			// check if the API is okay and initialized
+			// also check if the GPU handlers have been initialized
+			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			{
+				// check if the handler index is valid
+				if (physHandlerNum > _numPhysHandlers)
+				{
+					throw gcnew Exception("Physical handler number greater than total number of handlers.");
+				}
+				else
+				{
+					NvU32 busID = 0;	// the GPU Bus ID
+
+					// get the GPU Bus ID
+					_apiStatus = NvAPI_GPU_GetBusId(_physicalHandlers[physHandlerNum], &busID);
+
+					// check if the API successfully obtained the GPU bus ID
+					if (_apiStatus == NVAPI_OK)
+					{
+						return busID;
+					}
+					else
+					{
+						// let the user know an API error occurred
+						throw gcnew Exception(GetApiErrMsg(_apiStatus));
+					}
+				}
+			}
+			else
+			{
+				// let the user know there is an API or handler issue
+				throw gcnew Exception(GetDefaultErrMsg());
+			}
+		}
+		catch (Exception^ ex)
+		{
+			// let the user know an error occurred getting the GPU Bus ID
+			String^ errMsg = "Could not get GPU Bus ID. " + ex->Message;
 			throw gcnew Exception(errMsg);
 		}
 	}

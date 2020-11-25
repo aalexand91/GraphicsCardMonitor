@@ -128,8 +128,18 @@ namespace GraphicsCards
 			/// <returns>The GPU PCI external ID as an unsigned int</returns>
 			virtual unsigned int GetGpuPciExternalDeviceId(unsigned long physHandlerNum) = 0;
 
+			/// <summary>
+			/// Gets the GPU Bus ID
+			/// </summary>
+			/// <param name="physHandlerNum">The index of the GPU handler in memory</param>
+			/// <returns>The GPU Bus ID as an unsigned int </returns>
 			virtual unsigned int GetGpuBusId(unsigned long physHandlerNum) = 0;
 
+			/// <summary>
+			/// Gets the GPU Core temperature in celsius
+			/// </summary>
+			/// <param name="physHandlerNum"></param>
+			/// <returns></returns>
 			virtual float GetGpuCoreTemp(unsigned long physHandlerNum) = 0;
 
 			virtual float GetMemoryTemp(unsigned long physHandlerNum) = 0;
