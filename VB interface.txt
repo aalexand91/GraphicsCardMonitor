@@ -1,0 +1,164 @@
+''' <summary>
+''' Interface: IGraphicsCard
+''' Description: Used as an interface that all graphics cards will implement
+'''              to abstract unique graphics card drivers application
+'''              
+''' Original Author(s): Anthony Alexander
+''' Date: 07/10/2020
+''' 
+''' Date        Author              Description of Change
+''' 
+''' 07/10/2020  Anthony Alexander   Initial Release
+''' </summary>
+Public Interface IGraphicsCard
+
+    ''' <summary>
+    ''' Initializes the graphics card API
+    ''' </summary>
+    ''' <returns>
+    ''' true, if the API successfully initializes
+    ''' false, if the API does not initialize successfully
+    ''' </returns>
+    Function InitializeApi() As Boolean
+
+    ''' <summary>
+    ''' Closes the graphics card API
+    ''' </summary>
+    ''' <returns>
+    ''' </returns>
+    Function CloseApi() As Boolean
+
+    ''' <summary>
+    ''' Gets the number of GPU cores
+    ''' </summary>
+    ''' <returns>
+    ''' The number of GPU cores as an UInteger
+    ''' </returns>
+    Function GetGpuCoreCount() As UInteger
+
+    ''' <summary>
+    ''' Gets the name of the graphics card
+    ''' </summary>
+    ''' <returns>
+    ''' The name of the graphics card as a String
+    ''' </returns>
+    Function GetName() As String
+
+    ''' <summary>
+    ''' Gets the full BIOS information of the graphics card
+    ''' </summary>
+    ''' <returns>
+    ''' Graphics card BIOS information as a String
+    ''' </returns>
+    Function GetVBiosInformation() As String
+
+    ''' <summary>
+    ''' Gets the video RAM size in KB of the graphics card.
+    ''' Includes both the physical and system RAM dedicated to the card.
+    ''' </summary>
+    ''' <returns>
+    ''' Physical and dedicated system RAM in KB as an UInteger
+    ''' </returns>
+    Function GetVirtualRamSize() As UInteger
+
+    ''' <summary>
+    ''' Gets the video RAM size in KB of the graphics card.
+    ''' Does not include any system RAM dedicated to the card.
+    ''' </summary>
+    ''' <returns>
+    ''' Physical amount of video RAM in KB as an UInteger
+    ''' </returns>
+    Function GetPhysicalRamSize() As UInteger
+
+    ''' <summary>
+    ''' Gets the manufacturer information of the graphics card
+    ''' </summary>
+    ''' <returns>
+    ''' Manufacturer's information as a String
+    ''' </returns>
+    Function GetCardInformation() As String
+
+    ''' <summary>
+    ''' Gets the internal PCI device identifier for the GPU
+    ''' </summary>
+    ''' <returns>
+    ''' The internal PCI device ID as an UInteger
+    ''' </returns>
+    Function GetGpuPciInternalDeviceId() As UInteger
+
+    ''' <summary>
+    ''' Gets the internal PCI subsystem identifier for the GPU
+    ''' </summary>
+    ''' <returns>
+    ''' The internal PCI subsystem identifier as an UInteger
+    ''' </returns>
+    Function GetGpuPciSubSystemId() As UInteger
+
+    ''' <summary>
+    ''' Gets the internal PCI device-specific revision indentifier
+    ''' for the GPU
+    ''' </summary>
+    ''' <returns>
+    ''' The internal PCI device-specific rev as an UInteger
+    ''' </returns>
+    Function GetGpuPciRevId() As UInteger
+
+    ''' <summary>
+    ''' Gets the external PCI device indentifier for the GPU
+    ''' </summary>
+    ''' <returns>
+    ''' The external PCI device ID as an UUInteger
+    ''' </returns>
+    Function GetGpuPciExternalDeviceId() As UInteger
+
+    ''' <summary>
+    ''' Gets the ID of the bus associated with the GPU
+    ''' </summary>
+    ''' <returns>
+    ''' The ID of the bus associated with the GPU as an UInteger
+    ''' </returns>
+    Function GetGpuBusId() As UInteger
+
+    ''' <summary>
+    ''' Gets the GPU core temperature in Celsius
+    ''' </summary>
+    ''' <returns>
+    ''' The GPU core temperature as an UInteger
+    ''' </returns>
+    Function GetGpuCoreTemp() As UInteger
+
+    ''' <summary>
+    ''' Gets the GPU memory temperature in Celsius
+    ''' </summary>
+    ''' <returns>
+    ''' The GPU memory temperature as an UInteger
+    ''' </returns>
+    Function GetMemoryTemp() As UInteger
+
+    ''' <summary>
+    ''' Gets the GPU power supply temperature in Celsius
+    ''' </summary>
+    ''' <returns>
+    ''' The GPU power supply temperature as an UInteger
+    ''' </returns>
+    Function GetPowerSupplyTemp() As UInteger
+
+    ''' <summary>
+    ''' Gets the temperature of the overall graphics card in Celsius
+    ''' </summary>
+    ''' <returns>
+    ''' The graphics card temperature as an UInteger
+    ''' </returns>
+    Function GetBoardTemp() As UInteger
+
+    Function GetMax3dPerfomanceState() As UInteger
+
+    Function GetBalanced3dPerformanceState() As UInteger
+
+    Function GetHighDefVideoPlaybackState() As UInteger
+
+    Function GetMinIdlePowerConsumption() As UInteger
+
+    Function GetBaseVoltage() As Integer
+
+End Interface

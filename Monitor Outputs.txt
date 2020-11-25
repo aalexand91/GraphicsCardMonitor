@@ -1,0 +1,19 @@
+GPU Core Count
+GPU name
+GPU VBios Info
+GPU Virtual RAM size
+GPU Physical RAM size
+Card info
+GPU PCI Internal Device ID
+GPU PCI Rev ID
+GPU PCI Subsystem ID
+GPU PCI External Device ID
+GPU Bus ID
+GPU Core Temp
+GPU Memory Temp
+Power Supply Temp
+Board Temp
+Max 3D performance state
+Balanced 3D performance state
+HD video playback state
+Base voltage

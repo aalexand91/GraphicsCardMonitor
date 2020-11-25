@@ -1,0 +1,35 @@
+ImageRuntimeVersion: v4.0.30319
+Assembly IGraphicsCard, Version=1.0.*, Culture=Invariant Language (Invariant Country): 
+	hash=SHA1, flags=PublicKey
+Assembly mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Interface GraphicsCards.IGraphicsCard: AutoLayout, AnsiClass, Class, Public, ClassSemanticsMask, Abstract, BeforeFieldInit
+  Methods:
+    InitializeApi(): PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask, Abstract
+    InitializeHandlers(): PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask, Abstract
+    GetNumHandlers(): PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask, Abstract
+    GetGpuCoreCount(UInt32 IsLong): PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask, Abstract
+    GetName(UInt32 IsLong): PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask, Abstract
+    GetVBiosInfo(UInt32 IsLong): PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask, Abstract
+    GetVirtualRamSize(UInt32 IsLong): PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask, Abstract
+    GetPhysicalRamSize(UInt32 IsLong): PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask, Abstract
+    GetCardSerialNumber(UInt32 IsLong): PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask, Abstract
+    GetGpuPciInternalDeviceId(UInt32 IsLong): PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask, Abstract
+    GetGpuPciRevId(UInt32 IsLong): PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask, Abstract
+    GetGpuPciSubSystemId(UInt32 IsLong): PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask, Abstract
+    GetGpuPciExternalDeviceId(UInt32 IsLong): PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask, Abstract
+    GetGpuBusId(UInt32 IsLong): PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask, Abstract
+    GetGpuCoreTemp(UInt32 IsLong): PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask, Abstract
+    GetMemoryTemp(UInt32 IsLong): PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask, Abstract
+    GetPowerSupplyTemp(UInt32 IsLong): PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask, Abstract
+    GetBoardTemp(UInt32 IsLong): PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask, Abstract
+    GetMax3dPerformanceState(UInt32 IsLong): PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask, Abstract
+    GetBalanced3dPerformanceState(UInt32 IsLong): PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask, Abstract
+    GetHighDefVideoPlaybackState(UInt32 IsLong): PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask, Abstract
+    GetBaseVoltage(UInt32 IsLong): PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask, Abstract
