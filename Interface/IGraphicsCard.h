@@ -92,6 +92,12 @@ namespace GraphicsCards
 			//*************************************************************************
 			virtual unsigned int GetPhysicalRamSize(unsigned long physHandlerNum) = 0;
 
+			//*************************************************************************
+			// Function: IGraphicsCard::GetCardSerialNumber
+			// Description: Gets the graphics card serial number
+			// Parameters: physHandlerNum - The index of the GPU handler in memory
+			// Returns: The graphics card serial number as a String
+			//*************************************************************************
 			virtual String^ GetCardSerialNumber(unsigned long physHandlerNum) = 0;
 
 			virtual unsigned int GetGpuPciInternalDeviceId(unsigned long physHandlerNum) = 0;
