@@ -556,6 +556,10 @@ namespace GraphicsCards
 	//*********************************************************************************
 	// Function: Nvidia::CommonApiWrapper::GetCardSerialNumber
 	// Description: Gets the serial number of the graphics card
+	// Parameters:
+	//		physHandlerNum - the physical handler index number in memory
+	// Returns:
+	//		The graphics card serial number as a String type
 	//*********************************************************************************
 	String^ Nvidia::CommonApiWrapper::GetCardSerialNumber(unsigned long physHandlerNum)
 	{
@@ -602,6 +606,39 @@ namespace GraphicsCards
 		{
 			// let the user know an error occurred get the graphics card info
 			String^ errMsg = "Could not get graphics card information. " + ex->Message;
+			throw gcnew Exception(errMsg);
+		}
+	}
+
+	unsigned int Nvidia::CommonApiWrapper::GetGpuPciInternalDeviceId(unsigned long physHandlerNum)
+	{
+		try
+		{
+			// check if the API is okay and initialized
+			// also check if the GPU handler have been initialized
+			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			{
+				// check if the handler index is valid
+				if (physHandlerNum > _numPhysHandlers)
+				{
+					throw gcnew Exception("Physical handler number greater than total number of handlers.");
+				}
+				else
+				{
+
+				}
+			}
+			else
+			{
+				// let the user know there is an API or GPU handler issue
+				throw gcnew Exception(GetDefaultErrMsg());
+			}
+		}
+		catch (Exception^ ex)
+		{
+			// let the user know an error occured getting the GPU PCI
+			// internal device ID
+			String^ errMsg = "Could not get GPU PCI internal device ID. " + ex->Message;
 			throw gcnew Exception(errMsg);
 		}
 	}

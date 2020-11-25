@@ -141,7 +141,17 @@ namespace GraphicsCards
 					//*********************************************************************************
 					unsigned int GetPhysicalRamSize(unsigned long physHandlerNum) override;
 
+					//*********************************************************************************
+					// Function: Nvidia::CommonApiWrapper::GetCardSerialNumber
+					// Description: Gets the serial number of the graphics card
+					// Parameters:
+					//		physHandlerNum - the physical handler index number in memory
+					// Returns:
+					//		The graphics card serial number as a String type
+					//*********************************************************************************
 					String^ GetCardSerialNumber(unsigned long physHandlerNum) override;
+
+					unsigned int GetGpuPciInternalDeviceId(unsigned long physHandlerNum) override;
 			};
 	};
 
