@@ -11,27 +11,44 @@ namespace GraphicsCards
 		protected:
 			ref class CommonApiWrapper : public IGraphicsCard
 			{
-				///****************************************************************************
-				/// Private Class Members
-				///****************************************************************************
+				//****************************************************************************
+				// Private Class Structures
+				//****************************************************************************
+				private:
+					
+					/// <summary>
+					/// Structure for all PCI identifiers for the GPU
+					/// </summary>
+					ref struct PciIdentifiers
+					{
+						bool	hasIdInfo;		// determines if all PCI identifiers have been obtained
+						NvU32	internalId;		// the internal PCI device ID for the GPU
+						NvU32	subsystemId;	// the internal PCI subsystem ID for the GPU
+						NvU32	revId;			// the internal PCI revision ID for the GPU
+						NvU32	externalId;		// the external PCI device ID for the GPU
+					};
+
+				//****************************************************************************
+				// Private Class Members
+				//****************************************************************************
 				private:
 					NvAPI_Status			_apiStatus;			// the API status
 					bool					_apiInit;			// the API initialization status
 					bool					_handlersInit;		// determines if handlers are initialized
 					NvPhysicalGpuHandle*	_physicalHandlers;	// points to location of GPU physical handlers
 					NvU32					_numPhysHandlers;	// the number of physical handlers
+					PciIdentifiers^			_pciIdentities;		// the PCI IDs for the GPU
 
-				///****************************************************************************
-				/// Private Class Methods
-				///****************************************************************************
+				//****************************************************************************
+				// Private Class Methods
+				//****************************************************************************
 				private:
 
-					//*********************************************************************************
-					// Function: Nvidia::CommonApiWrapper::GetApiErrMsg
-					// Description: Gets the API status error message
-					// Parameters: apiStat - The API status
-					// Returns: The API error message as a System::String type
-					//*********************************************************************************
+					/// <summary>
+					/// Gets the API status error message
+					/// </summary>
+					/// <param name="apiStat">The API status</param>
+					/// <returns>The API error message as a System::String type</returns>
 					String^ GetApiErrMsg(NvAPI_Status apiStat);
 
 					//*********************************************************************************
@@ -52,6 +69,13 @@ namespace GraphicsCards
 					// Returns: An error message as a string
 					//*********************************************************************************
 					String^ GetDefaultErrMsg();
+
+					/// <summary>
+					/// Gets all GPU PCI Identifiers
+					/// </summary>
+					/// <param name="physHandlerNum">the physical hander index in memory</param>
+					/// <param name="ptrPciIdentifiers">pointer to the PciIdentifiers member</param>
+					void GetPciIds(unsigned long physHandlerNum, PciIdentifiers^ pciIdentifiers);
 
 				///****************************************************************************
 				/// Public Class Methods
@@ -151,6 +175,11 @@ namespace GraphicsCards
 					//*********************************************************************************
 					String^ GetCardSerialNumber(unsigned long physHandlerNum) override;
 
+					/// <summary>
+					/// Gets the GPU PCI internal device ID
+					/// </summary>
+					/// <param name="physHandlerNum">the physical handler index number in memory</param>
+					/// <returns>the GPU PCI internal device ID as an unsigned int</returns>
 					unsigned int GetGpuPciInternalDeviceId(unsigned long physHandlerNum) override;
 			};
 	};
