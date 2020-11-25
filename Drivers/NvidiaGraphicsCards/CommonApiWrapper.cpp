@@ -154,6 +154,55 @@ namespace GraphicsCards
 		}
 	}
 
+	/// <summary>
+	/// Gets all GPU PCI Identifiers
+	/// </summary>
+	/// <param name="physHandlerNum">the physical hander index in memory</param>
+	/// <param name="ptrPciIdentifiers">pointer to the PciIdentifiers member</param>
+	void Nvidia::CommonApiWrapper::GetPciIds(unsigned long physHandlerNum, PciIdentifiers^ ptrPciIdentifiers)
+	{
+		try
+		{
+			NvU32 internalId	= 0;	// GPU PCI internal ID
+			NvU32 subsystemId	= 0;	// GPU PCI subsystem PCI ID
+			NvU32 revId			= 0;	// GPU PCI revision ID
+			NvU32 externalId	= 0;	// GPU PCI external ID
+
+			// get all PCI IDs for the GPU
+			_apiStatus = NvAPI_GPU_GetPCIIdentifiers(_physicalHandlers[physHandlerNum], &internalId, &subsystemId, &revId, &externalId);
+
+			// check if the API successfully obtained the PCI IDs for the GPU
+			if (_apiStatus == NVAPI_OK)
+			{
+				// the API successfully obtained the PCI IDs
+				// set all PciIdentifier member values
+				ptrPciIdentifiers->hasIdInfo	= true;
+				ptrPciIdentifiers->internalId	= internalId;
+				ptrPciIdentifiers->subsystemId	= subsystemId;
+				ptrPciIdentifiers->revId		= revId;
+				ptrPciIdentifiers->externalId	= externalId;
+			}
+			else
+			{
+				// just in case, default all PCI ID values
+				ptrPciIdentifiers->hasIdInfo	= false;
+				ptrPciIdentifiers->internalId	= 0;
+				ptrPciIdentifiers->subsystemId	= 0;
+				ptrPciIdentifiers->revId		= 0;
+				ptrPciIdentifiers->externalId	= 0;
+
+				// let the user know there was an API error
+				throw gcnew Exception(GetApiErrMsg(_apiStatus));
+			}
+		}
+		catch (Exception^ ex)
+		{
+			// let the user know an error occurred obtaining all GPU PCI identifiers
+			String^ errMsg = "Could not get all GPU PCI identifiers. " + ex->Message;
+			throw gcnew Exception(errMsg);
+		}
+	}
+
 	///********************************************************************************
 	/// Public Class Methods
 	///********************************************************************************
@@ -610,6 +659,11 @@ namespace GraphicsCards
 		}
 	}
 
+	/// <summary>
+	/// Gets the GPU PCI internal device ID
+	/// </summary>
+	/// <param name="physHandlerNum">the physical handler index number in memory</param>
+	/// <returns>the GPU PCI internal device ID as an unsigned int</returns>
 	unsigned int Nvidia::CommonApiWrapper::GetGpuPciInternalDeviceId(unsigned long physHandlerNum)
 	{
 		try
@@ -625,7 +679,14 @@ namespace GraphicsCards
 				}
 				else
 				{
+					// check if the the PCI IDs have not been obtained
+					if (!_pciIdentities->hasIdInfo)
+					{
+						GetPciIds(physHandlerNum, _pciIdentities);
+					}
 
+					// return the internal GPU PCI ID
+					return _pciIdentities->internalId;
 				}
 			}
 			else
