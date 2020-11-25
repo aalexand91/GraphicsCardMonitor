@@ -207,28 +207,27 @@ namespace GraphicsCards
 	/// Public Class Methods
 	///********************************************************************************
 
-	//*********************************************************************************
-	// Constructor
-	// Description: Constructor for CommonApiWrapper object
-	// Parameters: N/A
-	// Returns: A CommonApiWrapper object
-	//*********************************************************************************
+	/// <summary>
+	/// Constructor for CommonApiWrapper object
+	/// </summary>
 	Nvidia::CommonApiWrapper::CommonApiWrapper()
 	{
 		// default all class members
-		_apiStatus			= NVAPI_API_NOT_INITIALIZED;
-		_apiInit			= false;
-		_handlersInit		= false;
-		_physicalHandlers	= nullptr;
-		_numPhysHandlers	= 0;
+		_apiStatus					= NVAPI_API_NOT_INITIALIZED;
+		_apiInit					= false;
+		_handlersInit				= false;
+		_physicalHandlers			= nullptr;
+		_numPhysHandlers			= 0;
+		_pciIdentities->hasIdInfo	= false;
+		_pciIdentities->internalId	= 0;
+		_pciIdentities->revId		= 0;
+		_pciIdentities->subsystemId = 0;
+		_pciIdentities->externalId	= 0;
 	}
 
-	//*********************************************************************************
-	// Destructor
-	// Description: Destructor for CommonApiWrapper object
-	// Parameters: N/A
-	// Returns: N/A
-	//*********************************************************************************
+	/// <summary>
+	/// Destructor for CommonApiWrapper object
+	/// </summary>
 	Nvidia::CommonApiWrapper::~CommonApiWrapper()
 	{
 	}
@@ -697,9 +696,143 @@ namespace GraphicsCards
 		}
 		catch (Exception^ ex)
 		{
-			// let the user know an error occured getting the GPU PCI
-			// internal device ID
+			// let the user know an error occured getting the GPU PCI internal device ID
 			String^ errMsg = "Could not get GPU PCI internal device ID. " + ex->Message;
+			throw gcnew Exception(errMsg);
+		}
+	}
+
+	/// <summary>
+	/// Gets the GPU PCI revision ID
+	/// </summary>
+	/// <param name="physHandlerNum">The physical handler index in memory</param>
+	/// <returns>The GPU PCI revision ID as an unsigned int</returns>
+	unsigned int Nvidia::CommonApiWrapper::GetGpuPciRevId(unsigned long physHandlerNum)
+	{
+		try
+		{
+			// check if the API is okay and initialized
+			// also check if the GPU handler has been initialized
+			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			{
+				// check if the handler index is valid
+				if (physHandlerNum > _numPhysHandlers)
+				{
+					throw gcnew Exception("Physical handler number greater than total number of handlers.");
+				}
+				else
+				{
+					// check if the PCI IDs have not been obtained yet
+					if (!_pciIdentities->hasIdInfo)
+					{
+						// PCI IDs have not been obtained yet so get them first
+						GetPciIds(physHandlerNum, _pciIdentities);
+					}
+
+					// return the PCI revision ID
+					return _pciIdentities->revId;
+				}
+			}
+			else
+			{
+				// let the user know there is an API or GPU handler issue
+				throw gcnew Exception(GetDefaultErrMsg());
+			}
+		}
+		catch (Exception^ ex)
+		{
+			// let the user know an error occured getting the GPU PCI rev ID
+			String^ errMsg = "Could not get GPU PCI revision ID. " + ex->Message;
+			throw gcnew Exception(errMsg);
+		}
+	}
+
+	/// <summary>
+	/// Gets the GPU PCI subsystem ID
+	/// </summary>
+	/// <param name="physHandlerNum">The physical handler index in memory</param>
+	/// <returns>The GPU PCI subsystem ID as an unsigned int</returns>
+	unsigned int Nvidia::CommonApiWrapper::GetGpuPciSubSystemId(unsigned long physHandlerNum)
+	{
+		try
+		{
+			// check if the API is okay and initialized
+			// also check if the GPU handler has been initialized
+			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			{
+				// check if the handler index if valid
+				if (physHandlerNum > _numPhysHandlers)
+				{
+					throw gcnew Exception("Physical handler number greater than total number of handlers.");
+				}
+				else
+				{
+					// check if the PCI IDs have not been obtained
+					if (!_pciIdentities->hasIdInfo)
+					{
+						// GPU PCI IDs have not been obtained yet so go get them
+						GetPciIds(physHandlerNum, _pciIdentities);
+					}
+
+					// return the PCI subsystem ID
+					return _pciIdentities->subsystemId;
+				}
+			}
+			else
+			{
+				// let the user know there is an API or GPU handler issue
+				throw gcnew Exception(GetDefaultErrMsg());
+			}
+		}
+		catch (Exception^ ex)
+		{
+			// let the user know an error occured getting the GPU subsystem PCI ID
+			String^ errMsg = "Could not get GPU PCI subsytem ID. " + ex->Message;
+			throw gcnew Exception(errMsg);
+		}
+	}
+
+	/// <summary>
+	/// Gets the GPU PCI external ID
+	/// </summary>
+	/// <param name="physHandlerNum">The physical handler index number in memory</param>
+	/// <returns>The GPU PCI external ID as an unsigned int</returns>
+	unsigned int Nvidia::CommonApiWrapper::GetGpuPciExternalDeviceId(unsigned long physHandlerNum)
+	{
+		try
+		{
+			// check if the API is okay and initialized
+			// also check if the GPU handler has been initialized
+			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			{
+				// check if the handler index is valid
+				if (physHandlerNum > _numPhysHandlers)
+				{
+					throw gcnew Exception("Physical handler number greater than total number of handlers.");
+				}
+				else
+				{
+					// check if the GPU PCI IDs have not been obtained
+					if (!_pciIdentities->hasIdInfo)
+					{
+						// GPU PCI IDs have not been obtained yet so go get them
+						GetPciIds(physHandlerNum, _pciIdentities);
+					}
+
+					// return the PCI external ID
+					return _pciIdentities->externalId;
+				}
+			}
+			else
+			{
+				// let the user know there is an API or handler issue
+				throw gcnew Exception(GetDefaultErrMsg());
+			}
+		}
+		catch (Exception^ ex)
+		{
+			// let the user know an error occurred getting the GPU external PCI ID
+			String^ errMsg = "Could not get GPU PCI external ID. " + ex->Message;
 			throw gcnew Exception(errMsg);
 		}
 	}

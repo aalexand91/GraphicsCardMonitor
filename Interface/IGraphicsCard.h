@@ -100,12 +100,32 @@ namespace GraphicsCards
 			//*************************************************************************
 			virtual String^ GetCardSerialNumber(unsigned long physHandlerNum) = 0;
 
+			/// <summary>
+			/// Gets the internal PCI ID of the GPU
+			/// </summary>
+			/// <param name="physHandlerNum">The index of the GPU handler in memory</param>
+			/// <returns>The internal PCI ID of the GPU as an unsigned int</returns>
 			virtual unsigned int GetGpuPciInternalDeviceId(unsigned long physHandlerNum) = 0;
 
+			/// <summary>
+			/// Gets the PCI revision ID of the GPU
+			/// </summary>
+			/// <param name="physHandlerNum">The index of the GPU handler in memory</param>
+			/// <returns>The PCI revision ID of the GPU as an unsigned int</returns>
 			virtual unsigned int GetGpuPciRevId(unsigned long physHandlerNum) = 0;
 
+			/// <summary>
+			/// Gets the GPU PCI subsystem ID
+			/// </summary>
+			/// <param name="physHandlerNum">The index of the GPU handler in memory</param>
+			/// <returns>The GPU PCI subsystem ID as an unsigned int</returns>
 			virtual unsigned int GetGpuPciSubSystemId(unsigned long physHandlerNum) = 0;
 
+			/// <summary>
+			/// Gets the GPU PCI external ID
+			/// </summary>
+			/// <param name="physHandlerNum">The index of the GPU handler in memory</param>
+			/// <returns>The GPU PCI external ID as an unsigned int</returns>
 			virtual unsigned int GetGpuPciExternalDeviceId(unsigned long physHandlerNum) = 0;
 
 			virtual unsigned int GetGpuBusId(unsigned long physHandlerNum) = 0;

@@ -82,20 +82,14 @@ namespace GraphicsCards
 				///****************************************************************************
 				public:
 
-					//*********************************************************************************
-					// Constructor
-					// Description: Constructor for CommonApiWrapper object
-					// Parameters: N/A
-					// Returns: A CommonApiWrapper object
-					//*********************************************************************************
+					/// <summary>
+					/// Constructor for CommonApiWrapper object
+					/// </summary>
 					CommonApiWrapper();
 
-					//*********************************************************************************
-					// Destructor
-					// Description: Destructor for CommonApiWrapper object
-					// Parameters: N/A
-					// Returns: N/A
-					//*********************************************************************************
+					/// <summary>
+					/// Destructor for CommonApiWrapper object
+					/// </summary>
 					~CommonApiWrapper();
 
 					//*********************************************************************************
@@ -181,6 +175,27 @@ namespace GraphicsCards
 					/// <param name="physHandlerNum">the physical handler index number in memory</param>
 					/// <returns>the GPU PCI internal device ID as an unsigned int</returns>
 					unsigned int GetGpuPciInternalDeviceId(unsigned long physHandlerNum) override;
+
+					/// <summary>
+					/// Gets the GPU PCI revision ID
+					/// </summary>
+					/// <param name="physHandlerNum">The physical handler index in memory</param>
+					/// <returns>The GPU PCI revision ID as an unsigned int</returns>
+					unsigned int GetGpuPciRevId(unsigned long physHandlerNum) override;
+
+					/// <summary>
+					/// Gets the GPU PCI subsystem ID
+					/// </summary>
+					/// <param name="physHandlerNum">The physical handler index in memory</param>
+					/// <returns>The GPU PCI subsystem ID as an unsigned int</returns>
+					unsigned int GetGpuPciSubSystemId(unsigned long physHandlerNum) override;
+
+					/// <summary>
+					/// Gets the GPU PCI external ID
+					/// </summary>
+					/// <param name="physHandlerNum">The physical handler index number in memory</param>
+					/// <returns>The GPU PCI external ID as an unsigned int</returns>
+					unsigned int GetGpuPciExternalDeviceId(unsigned long physHandlerNum) override;
 			};
 	};
 
