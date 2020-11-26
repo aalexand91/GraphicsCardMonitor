@@ -6,9 +6,16 @@ using namespace System;
 
 namespace GraphicsCards 
 {
+	/// <summary>
+	/// Nvidia Graphics Card Class
+	/// </summary>
 	public ref class Nvidia
 	{
 		protected:
+			/// <summary>
+			/// Class: CommonApiWrapper
+			/// Description: Common class that provides common Nvidia API functions
+			/// </summary>
 			ref class CommonApiWrapper : public IGraphicsCard
 			{
 				//****************************************************************************
@@ -51,23 +58,16 @@ namespace GraphicsCards
 					/// <returns>The API error message as a System::String type</returns>
 					String^ GetApiErrMsg(NvAPI_Status apiStat);
 
-					//*********************************************************************************
-					// Function: Nvidia::CommonApiWrapper::GetPhysicalHandlers
-					// Description: Gets all physical GPU handlers in the system
-					//				and stores them in memory
-					// Parameters: N/A
-					// Returns: true, if all physical GPU handlers were found
-					//			false, if an error occurred getting the phyical GPU handlers
-					//*********************************************************************************
+					/// <summary>
+					/// Gets all physical GPU handlers in the system
+					/// </summary>
+					/// <returns>true if API successfully gets all GPU handlers; false otherwise</returns>
 					bool GetPhysicalHandlers();
 
-					//*********************************************************************************
-					// Function: Nvidia::CommonApiWrapper::GetDefaultErrMsg
-					// Description: Gets the default error message when the user incorrectly
-					//				uses the driver
-					// Parameters: N/A
-					// Returns: An error message as a string
-					//*********************************************************************************
+					/// <summary>
+					/// Gets the default error message when the user incorrectly uses the driver
+					/// </summary>
+					/// <returns>An error message as a System::String type</returns>
 					String^ GetDefaultErrMsg();
 
 					/// <summary>
@@ -75,7 +75,15 @@ namespace GraphicsCards
 					/// </summary>
 					/// <param name="physHandlerNum">the physical hander index in memory</param>
 					/// <param name="ptrPciIdentifiers">pointer to the PciIdentifiers member</param>
-					void GetPciIds(unsigned long physHandlerNum, PciIdentifiers^ pciIdentifiers);
+					void GetPciIds(ULONG physHandlerNum, PciIdentifiers^ pciIdentifiers);
+					
+					/// <summary>
+					/// Checks if the handler index is valid. This prevents the user from using an index
+					/// number that is greater than the total number of handlers available in the system
+					/// </summary>
+					/// <param name="physHandlerNum">The physical handler index in memory</param>
+					/// <returns>true, if the handler index is valid</returns>
+					bool IsHandlerIndexValid(ULONG physHandlerNum);
 
 				///****************************************************************************
 				/// Public Class Methods
@@ -92,81 +100,68 @@ namespace GraphicsCards
 					/// </summary>
 					~CommonApiWrapper();
 
-					//*********************************************************************************
-					// Function: Nvidia::CommonApiWrapper::InitializeApi
-					// Description: Initializes the Nvidia graphics card API
-					// Paramters: N/A
-					// Returns: true, if the Nvidia graphics card API initializes successfully
-					//			false, if the Nvidia graphics card API fails to initialize
-					//*********************************************************************************
+					/// <summary>
+					/// Initializes the Nvidia graphics card API
+					/// </summary>
+					/// <returns>
+					/// true if the Nvidia graphics card API initialized successfully;
+					/// false otherwise
+					/// </returns>
 					bool InitializeApi() override;
 					
-					//*********************************************************************************
-					// Function: Nvidia::CommonApiWrapper::InitializeHandlers
-					// Description: Initializes all handlers for the GPUs in the system
-					// Parameters: N/A
-					// Returns: true, if all GPU handlers successfully initialized
-					//			false, if the GPU handlers failed to initialize
-					//*********************************************************************************
+					/// <summary>
+					/// Initializes all handlers for the GPUs in the system
+					/// </summary>
+					/// <returns>true if all GPU handlers successfully initialized; false otherwise</returns>
 					bool InitializeHandlers() override;
 
-					//*********************************************************************************
-					// Function: Nvidia::CommonApiWrapper::GetNumHandlers
-					// Description: Get the total number of GPU handlers in the system
-					// Parameters: N/A
-					// Returns: The total number of GPU handlers in the system as a long
-					//*********************************************************************************
+					/// <summary>
+					/// Gets the total number of GPU handlers in the system
+					/// </summary>
+					/// <returns>The total number of GPU handlers in the system as an unsigned long</returns>
 					ULONG GetNumHandlers() override;
 
-					//*********************************************************************************
-					// Function: Nvidia::CommonApiWrapper::GetGpuCoreCount
-					// Description: Gets the total number of GPU cores for the graphics card
-					// Paramters: physHandlerNum - the index number of the physical handler in memory
-					// Returns: The number of GPU cores for the graphics card as a long
-					//*********************************************************************************
+					/// <summary>
+					/// Gets the total number of GPU cores for the graphics card
+					/// </summary>
+					/// <param name="physHandlerNum">The index number of the physical handler in memory</param>
+					/// <returns>The number of GPU cores for the graphics card as an unsigned long</returns>
 					ULONG GetGpuCoreCount(ULONG physHandlerNum) override;
 
-					//*********************************************************************************
-					// Function: Nvidia::CommonApiWrapper::GetName
-					// Description: Gets the full name of the selected graphics card
-					// Paramters: physHandlerNum - The GPU physical handler index number in memory
-					// Returns: The graphics card name as a string
-					//*********************************************************************************
+					/// <summary>
+					/// Gets the full name of the graphics card
+					/// </summary>
+					/// <param name="physHandlerNum">The index number of the physical handler in memory</param>
+					/// <returns>The graphics card name as a System::String type</returns>
 					String^ GetName(ULONG physHandlerNum) override;
 
-					//*********************************************************************************
-					// Function: Nvidia::CommonApiWrapper::GetVBiosInfo
-					// Description: Gets the VBIOS information for the selected GPU
-					// Parameters: physHandlerNum - The GPU handler index in memory
-					// Returns: The selected GPU VBIOS information as a string
-					//*********************************************************************************
+					/// <summary>
+					/// Gets the VBIOS information for the GPU
+					/// </summary>
+					/// <param name="physHandlerNum">The index number of the physical handler in memory</param>
+					/// <returns>The GPU VBIOS information as a System::String</returns>
 					String^ GetVBiosInfo(ULONG physHandlerNum) override;
 
-					//*********************************************************************************
-					// Function: Nvidia::CommonApiWrapper::GetVirtualRamSize
-					// Description: Gets the virtual RAM size (physical RAM size and any allocated RAM
-					//				for GPU) used by the GPU in KB
-					// Parameters: phyHandlerNum - the physical handler index number in memory
-					// Returns: The virtual RAM size used by the GPU in KB as an int
-					//*********************************************************************************
+					/// <summary>
+					/// Gets the virtual RAM size (physical RAM size and any allocated RAM for the GPU)
+					/// used by the GPU in KB
+					/// </summary>
+					/// <param name="physHandlerNum">The index number of the physical handler in memory</param>
+					/// <returns>The virtual RAM size used by the GPU in KB as an unsigned int</returns>
 					UINT GetVirtualRamSize(ULONG physHandlerNum) override;
 
-					//*********************************************************************************
-					// Function: Nvidia::CommonApiWrapper::GetPhysicalRamSize
-					// Description: Gets the physical RAM size of the GPU in KB
-					// Parameters: physHandlerNum - the physical handler index number in memory
-					// Returns: The physical RAM of the GPU in KB as an int
-					//*********************************************************************************
+					/// <summary>
+					/// Gets the physical RAM size of the GPU in KB
+					/// </summary>
+					/// <param name="physHandlerNum">The index number of the physical handler in memory</param>
+					/// <returns>The physical RAM of the GPU in KB as an unsigned int</returns>
 					UINT GetPhysicalRamSize(ULONG physHandlerNum) override;
 
-					//*********************************************************************************
-					// Function: Nvidia::CommonApiWrapper::GetCardSerialNumber
-					// Description: Gets the serial number of the graphics card
-					// Parameters:
-					//		physHandlerNum - the physical handler index number in memory
-					// Returns:
-					//		The graphics card serial number as a String type
-					//*********************************************************************************
+					/// <summary>
+					/// Gets the serial number of the graphics card
+					/// </summary>
+					/// <param name="physHandlerNum">The index number of the physical handler in memory</param>
+					/// <returns>The graphics card serial number as a System::String</returns>
 					String^ GetCardSerialNumber(ULONG physHandlerNum) override;
 
 					/// <summary>
@@ -203,6 +198,8 @@ namespace GraphicsCards
 					/// <param name="physHandlerNum">The physical handler index number in memory</param>
 					/// <returns>The GPU Bus ID as an unsigned int</returns>
 					UINT GetGpuBusId(ULONG physHandlerNum) override;
+
+					float GetGpuCoreTemp(ULONG physHandlerNum) override;
 			};
 	};
 

@@ -20,12 +20,11 @@ namespace GraphicsCards
 	/// Private Class Methods
 	///********************************************************************************
 
-	//*********************************************************************************
-	// Function: Nvidia::CommonApiWrapper::GetApiErrMsg
-	// Description: Gets the API status error message
-	// Parameters: apiStat - The API status
-	// Returns: The API error message as a System::String type
-	//*********************************************************************************
+	/// <summary>
+	/// Gets the API status error message
+	/// </summary>
+	/// <param name="apiStat"> The API status</param>
+	/// <returns>The API error message as a System::String type</returns>
 	String^ Nvidia::CommonApiWrapper::GetApiErrMsg(NvAPI_Status apiStat)
 	{
 		try
@@ -52,14 +51,10 @@ namespace GraphicsCards
 		}
 	}
 
-	//*********************************************************************************
-	// Function: Nvidia::CommonApiWrapper::GetPhysicalHandlers
-	// Description: Gets all physical GPU handlers in the system
-	//				and stores them in memory
-	// Parameters: N/A
-	// Returns: true, if all physical GPU handlers were found
-	//			false, if an error occurred getting the phyical GPU handlers
-	//*********************************************************************************
+	/// <summary>
+	/// Gets all physical GPU handlers in the system
+	/// </summary>
+	/// <returns>true if API successfully gets all GPU handlers; false otherwise</returns>
 	bool Nvidia::CommonApiWrapper::GetPhysicalHandlers()
 	{
 		try
@@ -110,13 +105,10 @@ namespace GraphicsCards
 		}
 	}
 
-	//*********************************************************************************
-	// Function: Nvidia::CommonApiWrapper::GetDefaultErrMsg
-	// Description: Gets the default error message when the user incorrectly
-	//				uses the driver
-	// Parameters: N/A
-	// Returns: An error message as a System::String type
-	//*********************************************************************************
+	/// <summary>
+	/// Gets the default error message when the user incorrectly uses the driver
+	/// </summary>
+	/// <returns>An error message as a System::String type</returns>
 	String^ Nvidia::CommonApiWrapper::GetDefaultErrMsg()
 	{
 		try
@@ -159,7 +151,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">the physical hander index in memory</param>
 	/// <param name="ptrPciIdentifiers">pointer to the PciIdentifiers member</param>
-	void Nvidia::CommonApiWrapper::GetPciIds(unsigned long physHandlerNum, PciIdentifiers^ ptrPciIdentifiers)
+	void Nvidia::CommonApiWrapper::GetPciIds(ULONG physHandlerNum, PciIdentifiers^ ptrPciIdentifiers)
 	{
 		try
 		{
@@ -203,6 +195,25 @@ namespace GraphicsCards
 		}
 	}
 
+	/// <summary>
+	/// Checks if the handler index is valid. This prevents the user from using an index
+	/// number that is greater than the total number of handlers available in the system
+	/// </summary>
+	/// <param name="physHandlerNum">The physical handler index in memory</param>
+	/// <returns>true, if the handler index is valid</returns>
+	bool Nvidia::CommonApiWrapper::IsHandlerIndexValid(ULONG physHandlerNum)
+	{
+		// check if the handler index number if valid
+		if (physHandlerNum > (_numPhysHandlers - 1))
+		{
+			// let the user know the handler index is invalid
+			throw gcnew Exception("Physical handler number greater than total number of handlers.");
+		}
+
+		// return true since the handler index is valid
+		return true;
+	}
+
 	///********************************************************************************
 	/// Public Class Methods
 	///********************************************************************************
@@ -232,13 +243,13 @@ namespace GraphicsCards
 	{
 	}
 
-	//*********************************************************************************
-	// Function: Nvidia::CommonApiWrapper::InitializeApi
-	// Description: Initializes the Nvidia graphics card API
-	// Paramters: N/A
-	// Returns: true, if the Nvidia graphics card API initializes successfully
-	//			false, if the Nvidia graphics card API fails to initialize
-	//*********************************************************************************
+	/// <summary>
+	/// Initializes the Nvidia graphics card API
+	/// </summary>
+	/// <returns>
+	/// true if the Nvidia graphics card API initialized successfully;
+	/// false otherwise
+	/// </returns>
 	bool Nvidia::CommonApiWrapper::InitializeApi()
 	{
 		try
@@ -269,13 +280,10 @@ namespace GraphicsCards
 		}
 	}
 
-	//*********************************************************************************
-	// Function: Nvidia::CommonApiWrapper::InitializeHandlers
-	// Description: Initializes all handlers for the GPUs in the system
-	// Parameters: N/A
-	// Returns: true, if all GPU handlers successfully initialized
-	//			false, if the GPU handlers failed to initialize
-	//*********************************************************************************
+	/// <summary>
+	/// Initializes all handlers for the GPUs in the system
+	/// </summary>
+	/// <returns>true if all GPU handlers successfully initialized; false otherwise</returns>
 	bool Nvidia::CommonApiWrapper::InitializeHandlers()
 	{
 		try
@@ -291,12 +299,10 @@ namespace GraphicsCards
 		}
 	}
 
-	//*********************************************************************************
-	// Function: Nvidia::CommonApiWrapper::GetNumHandlers
-	// Description: Get the total number of GPU handlers in the system
-	// Parameters: N/A
-	// Returns: The total number of GPU handlers in the system as a long
-	//*********************************************************************************
+	/// <summary>
+	/// Gets the total number of GPU handlers in the system
+	/// </summary>
+	/// <returns>The total number of GPU handlers in the system as an unsigned long</returns>
 	unsigned long Nvidia::CommonApiWrapper::GetNumHandlers()
 	{
 		try
@@ -324,12 +330,11 @@ namespace GraphicsCards
 		}
 	}
 
-	//*********************************************************************************
-	// Function: Nvidia::CommonApiWrapper::GetGpuCoreCount
-	// Description: Gets the total number of GPU cores for the graphics card
-	// Paramters: physHandlerNum - the index number of the physical handler in memory
-	// Returns: The number of GPU cores for the graphics card as a long
-	//*********************************************************************************
+	/// <summary>
+	/// Gets the total number of GPU cores for the graphics card
+	/// </summary>
+	/// <param name="physHandlerNum">The index number of the physical handler in memory</param>
+	/// <returns>The number of GPU cores for the graphics card as an unsigned long</returns>
 	ULONG Nvidia::CommonApiWrapper::GetGpuCoreCount(ULONG physHandlerNum)
 	{
 		try
@@ -339,11 +344,7 @@ namespace GraphicsCards
 			if (_apiInit && _apiStatus == NVAPI_OK && _handlersInit)
 			{
 				// check if the physical handler index is valid
-				if (physHandlerNum > _numPhysHandlers)
-				{
-					throw gcnew Exception("Physical handler number greater than total number of handlers.");
-				}
-				else
+				if (IsHandlerIndexValid(physHandlerNum))
 				{
 					NvU32 numCores; // stores the number of GPU cores
 
@@ -379,12 +380,11 @@ namespace GraphicsCards
 		}
 	}
 
-	//*********************************************************************************
-	// Function: Nvidia::CommonApiWrapper::GetName
-	// Description: Gets the full name of the selected graphics card
-	// Paramters: physHandlerNum - The GPU physical handler index number in memory
-	// Returns: The graphics card name as a string
-	//*********************************************************************************
+	/// <summary>
+	/// Gets the full name of the graphics card
+	/// </summary>
+	/// <param name="physHandlerNum">The index number of the physical handler in memory</param>
+	/// <returns>The graphics card name as a System::String type</returns>
 	String^ Nvidia::CommonApiWrapper::GetName(ULONG physHandlerNum)
 	{
 		try
@@ -394,12 +394,7 @@ namespace GraphicsCards
 			if (_apiInit && _apiStatus == NVAPI_OK && _handlersInit)
 			{
 				// check if the physical handler index is valid
-				if (physHandlerNum > _numPhysHandlers)
-				{
-					// let the user know the handler index is invalid
-					throw gcnew Exception("Physical handler number greater than total number of handlers.");
-				}
-				else
+				if (IsHandlerIndexValid(physHandlerNum))
 				{
 					NvAPI_ShortString name;	// stores the graphics card name
 
@@ -435,12 +430,11 @@ namespace GraphicsCards
 		}
 	}
 
-	//*********************************************************************************
-	// Function: Nvidia::CommonApiWrapper::GetVBiosInfo
-	// Description: Gets the VBIOS information for the selected GPU
-	// Parameters: physHandlerNum - The GPU handler index in memory
-	// Returns: The selected GPU VBIOS information as a string
-	//*********************************************************************************
+	/// <summary>
+	/// Gets the VBIOS information for the GPU
+	/// </summary>
+	/// <param name="physHandlerNum">The index number of the physical handler in memory</param>
+	/// <returns>The GPU VBIOS information as a System::String</returns>
 	String^ Nvidia::CommonApiWrapper::GetVBiosInfo(ULONG physHandlerNum)
 	{
 		try
@@ -450,12 +444,7 @@ namespace GraphicsCards
 			if (_apiInit && _apiStatus == NVAPI_OK && _handlersInit)
 			{
 				// check if the selected handler index is invalid
-				if (physHandlerNum > _numPhysHandlers)
-				{
-					// let the user know the selected handler index is invalid
-					throw gcnew Exception("Physical handler number greater than total number of handlers.");
-				}
-				else
+				if (IsHandlerIndexValid(physHandlerNum))
 				{
 					NvAPI_ShortString vbiosInfo;	// stores the VBIOS info
 
@@ -489,13 +478,12 @@ namespace GraphicsCards
 		}
 	}
 
-	//*********************************************************************************
-	// Function: Nvidia::CommonApiWrapper::GetVirtualRamSize
-	// Description: Gets the virtual RAM size (physical RAM size and any allocated RAM
-	//				for GPU) used by the GPU in KB
-	// Parameters: phyHandlerNum - the physical handler index number in memory
-	// Returns: The virtual RAM size used by the GPU in KB as an int
-	//*********************************************************************************
+	/// <summary>
+	/// Gets the virtual RAM size (physical RAM size and any allocated RAM for the GPU)
+	/// used by the GPU in KB
+	/// </summary>
+	/// <param name="physHandlerNum">The index number of the physical handler in memory</param>
+	/// <returns>The virtual RAM size used by the GPU in KB as an unsigned int</returns>
 	UINT Nvidia::CommonApiWrapper::GetVirtualRamSize(ULONG physHandlerNum)
 	{
 		try
@@ -505,12 +493,7 @@ namespace GraphicsCards
 			if (_apiInit && _apiStatus == NVAPI_OK && _handlersInit)
 			{
 				// check if handler index selected is valid
-				if (physHandlerNum > _numPhysHandlers)
-				{
-					// let the user know the handler index is invalid
-					throw gcnew Exception("Physical handler number greater than total number of handlers.");
-				}
-				else
+				if (IsHandlerIndexValid(physHandlerNum))
 				{
 					NvU32 virtualRamSize;	// stores virtual RAM size in KB
 
@@ -544,14 +527,11 @@ namespace GraphicsCards
 		}
 	}
 
-	//*********************************************************************************
-	// Function: Nvidia::CommonApiWrapper::GetPhysicalRamSize
-	// Description: Gets the physical RAM size of the GPU in KB
-	// Parameters:
-	//		physHandlerNum - the physical handler index number in memory
-	// Returns:
-	//		The physical RAM of the GPU in KB as an int
-	//*********************************************************************************
+	/// <summary>
+	/// Gets the physical RAM size of the GPU in KB
+	/// </summary>
+	/// <param name="physHandlerNum">The index number of the physical handler in memory</param>
+	/// <returns>The physical RAM of the GPU in KB as an unsigned int</returns>
 	UINT Nvidia::CommonApiWrapper::GetPhysicalRamSize(ULONG physHandlerNum)
 	{
 		try
@@ -561,12 +541,7 @@ namespace GraphicsCards
 			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
 			{
 				// check if the handler index is valid
-				if (physHandlerNum > _numPhysHandlers)
-				{
-					// let the user know the handler index is invalid
-					throw gcnew Exception("Physical handler number greater than total number of handlers.");
-				}
-				else
+				if (IsHandlerIndexValid(physHandlerNum))
 				{
 					NvU32 physRamSize; // the physical GPU RAM size in KB
 
@@ -601,14 +576,11 @@ namespace GraphicsCards
 		}
 	}
 
-	//*********************************************************************************
-	// Function: Nvidia::CommonApiWrapper::GetCardSerialNumber
-	// Description: Gets the serial number of the graphics card
-	// Parameters:
-	//		physHandlerNum - the physical handler index number in memory
-	// Returns:
-	//		The graphics card serial number as a String type
-	//*********************************************************************************
+	/// <summary>
+	/// Gets the serial number of the graphics card
+	/// </summary>
+	/// <param name="physHandlerNum">The index number of the physical handler in memory</param>
+	/// <returns>The graphics card serial number as a System::String</returns>
 	String^ Nvidia::CommonApiWrapper::GetCardSerialNumber(ULONG physHandlerNum)
 	{
 		try
@@ -618,12 +590,7 @@ namespace GraphicsCards
 			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
 			{
 				// check if the handler index is valid
-				if (physHandlerNum > _numPhysHandlers)
-				{
-					// let the user know the handler index is invalid
-					throw gcnew Exception("Physical handler number greater than total number of handlers.");
-				}
-				else
+				if (IsHandlerIndexValid(physHandlerNum))
 				{
 					NV_BOARD_INFO boardInfo;	// variable to store the graphics card info
 
@@ -672,11 +639,7 @@ namespace GraphicsCards
 			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
 			{
 				// check if the handler index is valid
-				if (physHandlerNum > _numPhysHandlers)
-				{
-					throw gcnew Exception("Physical handler number greater than total number of handlers.");
-				}
-				else
+				if (IsHandlerIndexValid(physHandlerNum))
 				{
 					// check if the the PCI IDs have not been obtained
 					if (!_pciIdentities->hasIdInfo)
@@ -716,11 +679,7 @@ namespace GraphicsCards
 			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
 			{
 				// check if the handler index is valid
-				if (physHandlerNum > _numPhysHandlers)
-				{
-					throw gcnew Exception("Physical handler number greater than total number of handlers.");
-				}
-				else
+				if (IsHandlerIndexValid(physHandlerNum))
 				{
 					// check if the PCI IDs have not been obtained yet
 					if (!_pciIdentities->hasIdInfo)
@@ -761,11 +720,7 @@ namespace GraphicsCards
 			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
 			{
 				// check if the handler index if valid
-				if (physHandlerNum > _numPhysHandlers)
-				{
-					throw gcnew Exception("Physical handler number greater than total number of handlers.");
-				}
-				else
+				if (IsHandlerIndexValid(physHandlerNum))
 				{
 					// check if the PCI IDs have not been obtained
 					if (!_pciIdentities->hasIdInfo)
@@ -806,11 +761,7 @@ namespace GraphicsCards
 			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
 			{
 				// check if the handler index is valid
-				if (physHandlerNum > _numPhysHandlers)
-				{
-					throw gcnew Exception("Physical handler number greater than total number of handlers.");
-				}
-				else
+				if (IsHandlerIndexValid(physHandlerNum))
 				{
 					// check if the GPU PCI IDs have not been obtained
 					if (!_pciIdentities->hasIdInfo)
@@ -851,11 +802,7 @@ namespace GraphicsCards
 			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
 			{
 				// check if the handler index is valid
-				if (physHandlerNum > _numPhysHandlers)
-				{
-					throw gcnew Exception("Physical handler number greater than total number of handlers.");
-				}
-				else
+				if (IsHandlerIndexValid(physHandlerNum))
 				{
 					NvU32 busID = 0;	// the GPU Bus ID
 
@@ -884,6 +831,34 @@ namespace GraphicsCards
 		{
 			// let the user know an error occurred getting the GPU Bus ID
 			String^ errMsg = "Could not get GPU Bus ID. " + ex->Message;
+			throw gcnew Exception(errMsg);
+		}
+	}
+
+	float Nvidia::CommonApiWrapper::GetGpuCoreTemp(ULONG physHandlerNum)
+	{
+		try
+		{
+			// check if the API is okay and initialized
+			// also check if the GPU handler is initialized
+			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			{
+				// check if the handler index is valid
+				if (IsHandlerIndexValid(physHandlerNum))
+				{
+
+				}
+			}
+			else
+			{
+				// let the user know there is an API or handler error
+				throw gcnew Exception(GetDefaultErrMsg());
+			}
+		}
+		catch (Exception^ ex)
+		{
+			// let the user know an error occurred getting the GPU core temperature
+			String^ errMsg = "Could not get GPU core temperature. " + ex->Message;
 			throw gcnew Exception(errMsg);
 		}
 	}
