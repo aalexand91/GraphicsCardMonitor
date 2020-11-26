@@ -67,37 +67,33 @@ namespace GraphicsCards
 			//*************************************************************************
 			virtual String^ GetName(unsigned long physHandlerNum) = 0;
 
-			//*************************************************************************
-			// Function: IGraphicsCard::GetVBiosInfo
-			// Description: Gets the VBIOS info for the selected graphics card
-			// Parameters: physHandlerNum - The index of the GPU handler in memory
-			// Returns: The VBIOS info of the graphics card as a System::String
-			//*************************************************************************
+			/// <summary>
+			/// Gets the VBIOS info for the selected graphics card
+			/// </summary>
+			/// <param name="physHandlerNum">The index of the GPU handler in memory</param>
+			/// <returns>The VBIOS info of the graphics card as a System::String</returns>
 			virtual String^ GetVBiosInfo(unsigned long physHandlerNum) = 0;
 
-			//*************************************************************************
-			// Function: IGraphicsCard::GetVirtualRamSize
-			// Description: Gets the virtual RAM size (physical RAM and allocated RAM
-			//				for GPU) of the GPU in KB
-			// Parameters: physHandlerNum - The index of the GPU handler in memory
-			// Returns: The virtual RAM size in KB of the GPU as a unsigned int
-			//*************************************************************************
+			/// <summary>
+			/// Gets the virtual RAM size (physical RAM and allocated RAM for GPU)
+			/// of the GPU in KB
+			/// </summary>
+			/// <param name="physHandlerNum">The index of the GPU handler in memory</param>
+			/// <returns>The virtual RAM size in KB of the GPU as a unsigned int</returns>
 			virtual unsigned int GetVirtualRamSize(unsigned long physHandlerNum) = 0;
 
-			//*************************************************************************
-			// Function: IGraphicsCard::GetPhysicalRamSize
-			// Description: Gets the physical RAM size of the GPU in KB
-			// Parameters: physHandlerNum - The index of the GPU handler in memory
-			// Returns: The physical RAM size in KB of the GPU as an unsigned int
-			//*************************************************************************
+			/// <summary>
+			/// Gets the physical RAM size of the GPU in KB
+			/// </summary>
+			/// <param name="physHandlerNum">The index of the GPU handler in memory</param>
+			/// <returns>The physical RAM size in KB of the GPU as an unsigned int</returns>
 			virtual unsigned int GetPhysicalRamSize(unsigned long physHandlerNum) = 0;
 
-			//*************************************************************************
-			// Function: IGraphicsCard::GetCardSerialNumber
-			// Description: Gets the graphics card serial number
-			// Parameters: physHandlerNum - The index of the GPU handler in memory
-			// Returns: The graphics card serial number as a String
-			//*************************************************************************
+			/// <summary>
+			/// Gets the graphics card serial number
+			/// </summary>
+			/// <param name="physHandlerNum">The index of the GPU handler in memory</param>
+			/// <returns>The graphics card serial number as a System::String</returns>
 			virtual String^ GetCardSerialNumber(unsigned long physHandlerNum) = 0;
 
 			/// <summary>
