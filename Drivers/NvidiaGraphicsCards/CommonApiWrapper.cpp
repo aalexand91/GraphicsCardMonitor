@@ -214,6 +214,98 @@ namespace GraphicsCards
 		return true;
 	}
 
+	/// <summary>
+	/// Gets the thermal device name based on the NV_THERMAL_TARGET type
+	/// </summary>
+	/// <param name="deviceType">The NV_THERMAL_TARGET device type</param>
+	/// <returns>Name of the thermal device as a System::String</returns>
+	String^ Nvidia::CommonApiWrapper::GetTempDeviceName(NV_THERMAL_TARGET deviceType)
+	{
+		String^ deviceName = "";
+
+		// determine the type of thermal device under test and assign the appropriate name
+		switch (deviceType)
+		{
+			case NVAPI_THERMAL_TARGET_GPU:
+				deviceName = "GPU";
+				break;
+			case NVAPI_THERMAL_TARGET_MEMORY:
+				deviceName = "Memory";
+				break;
+			case NVAPI_THERMAL_TARGET_POWER_SUPPLY:
+				deviceName = "Power supply";
+				break;
+			case NVAPI_THERMAL_TARGET_BOARD:
+				deviceName = "Board";
+				break;
+			case NVAPI_THERMAL_TARGET_VCD_BOARD:
+				deviceName = "VCD Board";
+				break;
+			case NVAPI_THERMAL_TARGET_VCD_INLET:
+				deviceName = "VCD Inlet";
+				break;
+			case NVAPI_THERMAL_TARGET_VCD_OUTLET:
+				deviceName = "VCD Outlet";
+				break;
+			// if the target is all, known, or unknown, use the default case
+			// since this method is meant for a single device type
+			case NVAPI_THERMAL_TARGET_ALL:
+			case NVAPI_THERMAL_TARGET_NONE:
+			case NVAPI_THERMAL_TARGET_UNKNOWN:
+			default:
+				deviceName = "Unknown";
+				break;
+		}
+
+		// return the device name
+		return deviceName;
+	}
+
+	/// <summary>
+	/// Gets the temperature for a specific thermal sensor device
+	/// </summary>
+	/// <param name="physHandler">The GPU physical handler</param>
+	/// <param name="deviceType">The NV_THERMAL_TARGET device type</param>
+	/// <param name="ptrDeviceTemp">Pointer to the data to store the device temperature</param>
+	/// <returns>true if the selected device temperature is obtained</returns>
+	bool Nvidia::CommonApiWrapper::GetDeviceTemperature(NvPhysicalGpuHandle physHandler, NV_THERMAL_TARGET deviceType, float* ptrDeviceTemp)
+	{
+		try
+		{
+			bool						success				= true;	// determines if API successfully get the thermal settings for the selected device
+			NV_GPU_THERMAL_SETTINGS_V2* ptrThermalSettings	= 0;	// pointer to the device thermal settings data
+
+			// get the thermal settings for the thermal device
+			// ptrThermalSettings will point to the address where the data of the thermal device is stored
+			_apiStatus = NvAPI_GPU_GetThermalSettings(physHandler, deviceType, ptrThermalSettings);
+
+			// check if the API successfully obtained the device thermal settings
+			if (_apiStatus == NVAPI_OK)
+			{
+				// the API obtained the device temperature
+				// set the value of the device temperature by dereferencing the pointer
+				*ptrDeviceTemp = static_cast<float>(ptrThermalSettings[0].sensor[0].currentTemp);
+			}
+			else
+			{
+				// set the thermal settings pointer to null to ensure the pointer is not floating
+				ptrThermalSettings = 0;
+
+				// let the user know an API error occurred
+				throw gcnew Exception(GetApiErrMsg(_apiStatus));
+			}
+
+			// return if thermal settings were successfully obtained
+			return success;
+		}
+		catch (Exception^ ex)
+		{
+			// let the user know an error occurred getting the device temperature
+			String^ errMsg = "Could not get " + GetTempDeviceName(deviceType) + " temperature. " + ex->Message;
+			throw gcnew Exception(errMsg);
+		}
+	}
+
 	///********************************************************************************
 	/// Public Class Methods
 	///********************************************************************************
@@ -835,6 +927,11 @@ namespace GraphicsCards
 		}
 	}
 
+	/// <summary>
+	/// Gets the GPU core temperature in celsius
+	/// </summary>
+	/// <param name="physHandlerNum">The physical handler index in memory</param>
+	/// <returns>The GPU core temperature in celsius as a float</returns>
 	float Nvidia::CommonApiWrapper::GetGpuCoreTemp(ULONG physHandlerNum)
 	{
 		try
@@ -846,7 +943,18 @@ namespace GraphicsCards
 				// check if the handler index is valid
 				if (IsHandlerIndexValid(physHandlerNum))
 				{
+					float coreTemp = 0;	// the GPU core temperature
 
+					// get the GPU core temperature
+					// method throws an exception if any errors occurr
+					bool success = GetDeviceTemperature(_physicalHandlers[physHandlerNum], NVAPI_THERMAL_TARGET_GPU, &coreTemp);
+
+					// check if the API successfully obtained the GPU temperature
+					if (success)
+					{
+						// return the GPU core temperature
+						return coreTemp;
+					}
 				}
 			}
 			else
@@ -859,6 +967,135 @@ namespace GraphicsCards
 		{
 			// let the user know an error occurred getting the GPU core temperature
 			String^ errMsg = "Could not get GPU core temperature. " + ex->Message;
+			throw gcnew Exception(errMsg);
+		}
+	}
+
+	/// <summary>
+	/// Gets the GPU memory temperature in celsius
+	/// </summary>
+	/// <param name="physHandlerNum">The physical handler index in memory</param>
+	/// <returns>GPU memory temperature in celsius as a float</returns>
+	float Nvidia::CommonApiWrapper::GetMemoryTemp(ULONG physHandlerNum)
+	{
+		try
+		{
+			// check if the API is okay and initialized
+			// also check if the GPU handler is initialized
+			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			{
+				// check if the handler index is valid
+				if (IsHandlerIndexValid(physHandlerNum))
+				{
+					float memoryTemp = 0;	// the GPU memory temperature
+
+					// get the GPU memory temperature
+					// method throws an exception if any errors occurr
+					bool success = GetDeviceTemperature(_physicalHandlers[physHandlerNum], NVAPI_THERMAL_TARGET_MEMORY, &memoryTemp);
+
+					// check if the memory temperature was obtained successfully
+					if (success)
+					{
+						return memoryTemp;
+					}
+				}
+			}
+			else
+			{
+				// let the user know there is an issue with the API or handler
+				throw gcnew Exception(GetDefaultErrMsg());
+			}
+		}
+		catch (Exception^ ex)
+		{
+			// let the user know an error occurred getting the GPU memory temperature
+			String^ errMsg = "Could not get GPU memory temperature. " + ex->Message;
+			throw gcnew Exception(errMsg);
+		}
+	}
+
+	/// <summary>
+	/// Gets the GPU power supply temperature in celsius
+	/// </summary>
+	/// <param name="physHandlerNum">The physical handler index in memory</param>
+	/// <returns>The GPU power supply temperature in celsius as a float</returns>
+	float Nvidia::CommonApiWrapper::GetPowerSupplyTemp(ULONG physHandlerNum)
+	{
+		try
+		{
+			// check if the API is okay and initialized
+			// also check if the GPU handler is initialized
+			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			{
+				// check if the handler index is valid
+				if (IsHandlerIndexValid(physHandlerNum))
+				{
+					float powerSupplyTemp = 0;	// the GPU power supply temperature
+
+					// get the GPU power supply temperature
+					// method throws an exception if any errors occurr
+					bool success = GetDeviceTemperature(_physicalHandlers[physHandlerNum], NVAPI_THERMAL_TARGET_POWER_SUPPLY, &powerSupplyTemp);
+
+					// check if the GPU power supply temperature was successfully obtained
+					if (success)
+					{
+						return powerSupplyTemp;
+					}
+				}
+			}
+			else
+			{
+				// let the user know there is an error with the API or handler
+				throw gcnew Exception(GetDefaultErrMsg());
+			}
+		}
+		catch (Exception^ ex)
+		{
+			// let the user know an error occurred getting the GPU power supply temperature
+			String^ errMsg = "Could not get GPU power supply temperature. " + ex->Message;
+			throw gcnew Exception(errMsg);
+		}
+	}
+
+	/// <summary>
+	/// Gets the GPU board temperature in celsius
+	/// </summary>
+	/// <param name="physHandlerNum">The physical handler index in memory</param>
+	/// <returns>The GPU board temperature in celsius as a float</returns>
+	float Nvidia::CommonApiWrapper::GetBoardTemp(ULONG physHandlerNum)
+	{
+		try
+		{
+			// check if the API is okay and initialized
+			// also check if the GPU handler is initialized
+			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			{
+				// check if the handler index is valid
+				if (IsHandlerIndexValid(physHandlerNum))
+				{
+					float boardTemp = 0;	// the GPU board temperature
+
+					// get the GPU board temperature
+					// method throws an exception if any errors occur
+					bool success = GetDeviceTemperature(_physicalHandlers[physHandlerNum], NVAPI_THERMAL_TARGET_BOARD, &boardTemp);
+
+					// check if the board temperature was succesfully obtained
+					if (success)
+					{
+						return boardTemp;
+					}
+				}
+			}
+			else
+			{
+				// let the user know there is an issue with the API or handler
+				throw gcnew Exception(GetDefaultErrMsg());
+			}
+		}
+		catch (Exception^ ex)
+		{
+			// let the user know an error occurred getting the GPU board temperature
+			String^ errMsg = "Could not get GPU board temperature. " + ex->Message;
 			throw gcnew Exception(errMsg);
 		}
 	}
