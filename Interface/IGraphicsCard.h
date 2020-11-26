@@ -18,53 +18,46 @@ using namespace System;
 
 namespace GraphicsCards 
 {
+	/// <summary>
+	/// Interface to abstract the type of graphics card being used by the application or program
+	/// </summary>
 	public interface class IGraphicsCard
 	{
-		///*************************************************************************
-		///Public Interface Methods
-		///*************************************************************************
+		/// <summary>
+		/// Public Interface Methods
+		/// </summary>
 		public:
 
-			//*************************************************************************
-			// Function: IGraphicsCard::InitializeApi
-			// Description: Initializes the graphics card API
-			// Parameters: N/A
-			// Returns: true, if the API initializes successfully
-			//			false, if the API does not successfully initialize
-			//*************************************************************************
+			/// <summary>
+			/// Initializes the graphics card API. This must be called before any other method can perform.
+			/// </summary>
+			/// <returns>true if the API initializes successfully; false otherwise</returns>
 			virtual bool InitializeApi() = 0;
 
-			//*************************************************************************
-			// Function: IGraphicsCard::InitializeHandlers
-			// Description: Initializes all graphics card handlers
-			// Parameters: N/A
-			// Returns: true, if the graphics card handlers successfully initialize
-			//			false, if the graphics cards handlers fail to initialize
-			//*************************************************************************
+			/// <summary>
+			/// Initializes all graphics card handlers
+			/// </summary>
+			/// <returns>true if the graphics card handlers successfully initialize; false otherwise</returns>
 			virtual bool InitializeHandlers() = 0;
 
-			//*************************************************************************
-			// Function: IGraphicsCard::GetNumHandlers
-			// Description: Gets the total number of GPU handlers
-			// Parameters: N/A
-			// Returns: The total number of GPU handlers
-			//*************************************************************************
+			/// <summary>
+			/// Gets the total number of GPU handlers
+			/// </summary>
+			/// <returns>The total number of GPU handlers</returns>
 			virtual unsigned long GetNumHandlers() = 0;
 
-			//*************************************************************************
-			// Function: IGraphicsCard::GetGpuCoreCount
-			// Description: Gets the number of GPU cores for the selected graphics card
-			// Parameters: physHandlerNum - The index of the GPU handler in memory
-			// Returns: The number of GPU cores as an unsigned long
-			//*************************************************************************
+			/// <summary>
+			/// Gets the number of GPU cores for the graphics card
+			/// </summary>
+			/// <param name="physHandlerNum">The index of the GPU handler in memory</param>
+			/// <returns>The number of GPU cores as an unsigned long</returns>
 			virtual unsigned long GetGpuCoreCount(unsigned long physHandlerNum) = 0;
 
-			//*************************************************************************
-			// Function: IGraphicsCard::GetName
-			// Description: Gets the name of the selected graphics card
-			// Parameters: physHandlerNum - The index of the GPU handler in memory
-			// Returns: The name of the graphics card as a System::String
-			//*************************************************************************
+			/// <summary>
+			/// Gets the name of the graphics card
+			/// </summary>
+			/// <param name="physHandlerNum">The index of the GPU handler in memory</param>
+			/// <returns>The name of the graphics card as a System::String</returns>
 			virtual String^ GetName(unsigned long physHandlerNum) = 0;
 
 			/// <summary>
@@ -134,14 +127,29 @@ namespace GraphicsCards
 			/// <summary>
 			/// Gets the GPU Core temperature in celsius
 			/// </summary>
-			/// <param name="physHandlerNum"></param>
-			/// <returns></returns>
+			/// <param name="physHandlerNum">The index of the GPU handler in memory</param>
+			/// <returns>The GPU core temperature in celsius as a float</returns>
 			virtual float GetGpuCoreTemp(unsigned long physHandlerNum) = 0;
 
+			/// <summary>
+			/// Gets the GPU memory temperature in celsius
+			/// </summary>
+			/// <param name="physHandlerNum">The index of the GPU handler in memory</param>
+			/// <returns>The GPU memory temperature in celsius as a float</returns>
 			virtual float GetMemoryTemp(unsigned long physHandlerNum) = 0;
 
+			/// <summary>
+			/// Gets the GPU power supply temperature in celsius
+			/// </summary>
+			/// <param name="physHandlerNum">The index of the GPU handler in memory</param>
+			/// <returns>The GPU memory temperature in celsius as a float</returns>
 			virtual float GetPowerSupplyTemp(unsigned long physHandlerNum) = 0;
 
+			/// <summary>
+			/// Gets the GPU board temperature in celsius
+			/// </summary>
+			/// <param name="physHandlerNum">The index of the GPU handler in memory</param>
+			/// <returns>The GPU board temperature in celsius as a float</returns>
 			virtual float GetBoardTemp(unsigned long physHandlerNum) = 0;
 
 			virtual unsigned int GetMax3dPerformanceState(unsigned long physHandlerNum) = 0;

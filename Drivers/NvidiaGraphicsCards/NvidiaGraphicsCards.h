@@ -85,6 +85,22 @@ namespace GraphicsCards
 					/// <returns>true, if the handler index is valid</returns>
 					bool IsHandlerIndexValid(ULONG physHandlerNum);
 
+					/// <summary>
+					/// Gets the thermal device name based on the NV_THERMAL_TARGET type
+					/// </summary>
+					/// <param name="deviceType">The NV_THERMAL_TARGET device type</param>
+					/// <returns>Name of the thermal device as a System::String</returns>
+					String^ GetTempDeviceName(NV_THERMAL_TARGET deviceType);
+
+					/// <summary>
+					/// Gets the temperature for a specific thermal sensor device
+					/// </summary>
+					/// <param name="physHandler">The GPU physical handler</param>
+					/// <param name="deviceType">The NV_THERMAL_TARGET device type</param>
+					/// <param name="ptrDeviceTemp">Pointer to the data to store the device temperature</param>
+					/// <returns>true if the selected device temperature is obtained</returns>
+					bool GetDeviceTemperature(NvPhysicalGpuHandle physHandler, NV_THERMAL_TARGET deviceType, float* ptrDeviceTemp);
+
 				///****************************************************************************
 				/// Public Class Methods
 				///****************************************************************************
@@ -199,7 +215,33 @@ namespace GraphicsCards
 					/// <returns>The GPU Bus ID as an unsigned int</returns>
 					UINT GetGpuBusId(ULONG physHandlerNum) override;
 
+					/// <summary>
+					/// Gets the GPU core temperature in celsius
+					/// </summary>
+					/// <param name="physHandlerNum">The physical handler index in memory</param>
+					/// <returns>The GPU core temperature in celsius as a float</returns>
 					float GetGpuCoreTemp(ULONG physHandlerNum) override;
+
+					/// <summary>
+					/// Gets the GPU memory temperature in celsius
+					/// </summary>
+					/// <param name="physHandlerNum">The physical handler index in memory</param>
+					/// <returns>GPU memory temperature in celsius as a float</returns>
+					float GetMemoryTemp(ULONG physHandlerNum) override;
+
+					/// <summary>
+					/// Gets the GPU power supply temperature in celsius
+					/// </summary>
+					/// <param name="physHandlerNum">The physical handler index in memory</param>
+					/// <returns>The GPU power supply temperature in celsius as a float</returns>
+					float GetPowerSupplyTemp(ULONG physHandlerNum) override;
+
+					/// <summary>
+					/// Gets the GPU board temperature in celsius
+					/// </summary>
+					/// <param name="physHandlerNum">The physical handler index in memory</param>
+					/// <returns>The GPU board temperature in celsius as a float</returns>
+					float GetBoardTemp(ULONG physHandlerNum) override;
 			};
 	};
 
