@@ -26,7 +26,7 @@ namespace GraphicsCardMonitor
         /// <summary>
         /// interface for the graphics cards
         /// </summary>
-        IGraphicsCard gGraphicsCards;
+        readonly IGraphicsCard gGraphicsCards;
 
         /// <summary>
         /// the total number of graphics cards in the system
@@ -106,6 +106,8 @@ namespace GraphicsCardMonitor
                 // initialize the graphics card API
                 try
                 {
+                    // TODO: SET gCards TO AN NVIDIA GRAPHICS CARD OBJECT
+
                     success = gCards.InitializeApi();
 
                     // set the error message if the graphics card API failed to initialize
@@ -375,9 +377,9 @@ namespace GraphicsCardMonitor
                     CoreVoltageTextBox.Text     = gGraphicsCards.GetBaseVoltage(selectedGpu).ToString();
                     GpuCoresTextBox.Text        = gGraphicsCards.GetGpuCoreCount(selectedGpu).ToString();
                     BusIdTextBox.Text           = gGraphicsCards.GetGpuBusId(selectedGpu).ToString();
-                    Max3dTextBox.Text           = gGraphicsCards.GetMax3dPerformanceState(selectedGpu).ToString();
-                    Balanced3dTextBox.Text      = gGraphicsCards.GetBalanced3dPerformanceState(selectedGpu).ToString();
-                    HdTextBox.Text              = gGraphicsCards.GetHighDefVideoPlaybackState(selectedGpu).ToString();
+                    //Max3dTextBox.Text           = gGraphicsCards.GetMax3dPerformanceState(selectedGpu).ToString();
+                    //Balanced3dTextBox.Text      = gGraphicsCards.GetBalanced3dPerformanceState(selectedGpu).ToString();
+                    //HdTextBox.Text              = gGraphicsCards.GetHighDefVideoPlaybackState(selectedGpu).ToString();
                     CoreTempTextBox.Text        = gGraphicsCards.GetGpuCoreTemp(selectedGpu).ToString();
                     BoardTempTextBox.Text       = gGraphicsCards.GetBoardTemp(selectedGpu).ToString();
                     MemoryTempTextBox.Text      = gGraphicsCards.GetMemoryTemp(selectedGpu).ToString();

@@ -30,13 +30,13 @@ namespace GraphicsCards
 		try
 		{
 			// variable to store the API error message
-			NvAPI_ShortString errMsg;
+			NvAPI_ShortString errMsg = "\0";
 
 			// get the API status error message
-			apiStat = NvAPI_GetErrorMessage(apiStat, errMsg);
+			_apiStatus = NvAPI_GetErrorMessage(apiStat, errMsg);
 
 			// if the API status is not ok, default the API error message
-			if (apiStat != NVAPI_OK)
+			if (_apiStatus != NVAPI_OK)
 			{
 				strcpy_s(errMsg, sizeof(errMsg), "Could not determine API error message");
 			}
@@ -304,6 +304,192 @@ namespace GraphicsCards
 			String^ errMsg = "Could not get " + GetTempDeviceName(deviceType) + " temperature. " + ex->Message;
 			throw gcnew Exception(errMsg);
 		}
+	}
+
+	/// <summary>
+	/// Gets the System::String equivalent of the NV_GPU_PUBLIC_ClOCK_ID variable
+	/// </summary>
+	/// <param name="clockId">The NV_GPU_PUBLIC_CLOCK_ID enum variable</param>
+	/// <returns>The GPU public clock ID as a System::String</returns>
+	String^ Nvidia::CommonApiWrapper::GetClockIdType(NV_GPU_PUBLIC_CLOCK_ID clockId)
+	{
+		String^ clockIdType = "";	// the clock ID type
+
+		// determine the type of clock ID from the clockId parameter
+		switch (clockId)
+		{
+			case NVAPI_GPU_PUBLIC_CLOCK_GRAPHICS:
+				clockIdType = "Graphics";
+				break;
+			case NVAPI_GPU_PUBLIC_CLOCK_MEMORY:
+				clockIdType = "Memory";
+				break;
+			case NVAPI_GPU_PUBLIC_CLOCK_PROCESSOR:
+				clockIdType = "Processor";
+				break;
+			case NVAPI_GPU_PUBLIC_CLOCK_VIDEO:
+				clockIdType = "Video";
+				break;
+			case NVAPI_GPU_PUBLIC_CLOCK_UNDEFINED:
+			default:
+				clockIdType = "Unknown";
+				break;
+		}
+
+		// return the clock ID type as a System::String
+		return clockIdType;
+	}
+
+	/// <summary>
+	/// Gets the System::String equivalent of the GPU clock frequency type
+	/// </summary>
+	/// <param name="clockType">The clock frequency type as a NV_GPU_CLOCK_FREQUENCIES_CLOCK_TYPE enum</param>
+	/// <returns>The GPU clock frequency type as a System::String</returns>
+	String^ Nvidia::CommonApiWrapper::GetClockType(NV_GPU_CLOCK_FREQUENCIES_CLOCK_TYPE clockType)
+	{
+		String^ clockTypeString = "";	// the System::String equivalent of the GPU clock type
+
+		// determine the type of clock frequency from the clockType parameter
+		switch (clockType)
+		{
+			case NV_GPU_CLOCK_FREQUENCIES_BASE_CLOCK:
+				clockTypeString = "Base";
+				break;
+			case NV_GPU_CLOCK_FREQUENCIES_BOOST_CLOCK:
+				clockTypeString = "Boost";
+				break;
+			case NV_GPU_CLOCK_FREQUENCIES_CURRENT_FREQ:
+				clockTypeString = "Current";
+				break;
+			case NV_GPU_CLOCK_FREQUENCIES_CLOCK_TYPE_NUM:
+				clockTypeString = "Clock number";
+				break;
+			default:
+				clockTypeString = "Unknown";
+				break;
+		}
+
+		// return the clock type string
+		return clockTypeString;
+	}
+
+	/// <summary>
+	/// Gets the clock frequency for a specified clock and clock type on the GPU in kHz
+	/// </summary>
+	/// <param name="physHandler">The physical GPU handler in memory</param>
+	/// <param name="clockId">The ID of the clock to obtain the data for</param>
+	/// <param name="clockType">The type of clock frequency to get (i.e. base, current, boost)</param>
+	/// <param name="ptrClockSpeed">pointer pointing the data storing the clock frequency</param>
+	/// <returns>true if the API successfully gets the clock frequency; false otherwise</returns>
+	bool Nvidia::CommonApiWrapper::GetClockFrequency(NvPhysicalGpuHandle physHandler, NV_GPU_PUBLIC_CLOCK_ID clockId, NV_GPU_CLOCK_FREQUENCIES_CLOCK_TYPE clockType, float* ptrClockSpeed)
+	{
+		try
+		{
+			bool						success					= true;	// determines if clock frequency is successfully obtained
+			NV_GPU_CLOCK_FREQUENCIES*	ptrClockFrequencies		= 0;	// pointer pointing to all GPU clock data in memory
+
+			// get the clock frequency data for all GPU clocks
+			_apiStatus = NvAPI_GPU_GetAllClockFrequencies(physHandler, ptrClockFrequencies);
+
+			// check if the API successfully obtained all GPU clock frequencies
+			if (_apiStatus == NVAPI_OK)
+			{
+				// set the clock type to be returned
+				ptrClockFrequencies->ClockType = clockType;
+
+				// assign the clock frequency data using the clock ID and clock type
+				*ptrClockSpeed = ptrClockFrequencies->domain[clockId].frequency;
+			}
+			else
+			{
+				// let the user know an API error occurred
+				throw gcnew Exception(GetApiErrMsg(_apiStatus));
+			}
+
+			// return if the clock frequency was successfully obtained or not
+			return success;
+		}
+		catch (Exception^ ex)
+		{
+			// let the user know that the clock frequency could not be obtained
+			String^ errMsg	= "Error getting " + GetClockType(clockType) + " of the " 
+							+ GetClockIdType(clockId) + ". " + ex->Message;
+			throw gcnew Exception(errMsg);
+		}
+	}
+
+	/// <summary>
+	/// Gets the GPU performance state ID code ranging from P0-P20
+	/// </summary>
+	/// <param name="physHandler">The physical handler index in memory</param>
+	/// <returns>The GPU performance state ID as a NV_GPU_PERF_PSTATE_ID enum</returns>
+	NV_GPU_PERF_PSTATE_ID Nvidia::CommonApiWrapper::GetPerformanceStateId(NvPhysicalGpuHandle physHandler)
+	{
+		try
+		{
+			NV_GPU_PERF_PSTATE_ID* ptrGpuStateId;	// pointer to the GPU performance state ID
+
+			// get the GPU performance state
+			_apiStatus = NvAPI_GPU_GetCurrentPstate(physHandler, ptrGpuStateId);
+
+			// check if the API successfully obtained the GPU performance state ID
+			if (_apiStatus == NVAPI_OK)
+			{
+				// return the GPU performance state ID stored
+				return *ptrGpuStateId;
+			}
+			else
+			{
+				// let the user know an API error occurred
+				throw gcnew Exception(GetApiErrMsg(_apiStatus));
+			}
+		}
+		catch (Exception^ ex)
+		{
+			// let the user know the GPU performance state ID could not be obtained
+			String^ errMsg = "Could not get GPU performance state ID. " + ex->Message;
+			throw gcnew Exception(errMsg);
+		}
+	}
+
+	/// <summary>
+	/// Gets the GPU performances state as a System::String
+	/// </summary>
+	/// <param name="perfState">GPU performances state ID (P0-P20)</param>
+	/// <returns>The GPU performance state as a System::String</returns>
+	String^ Nvidia::CommonApiWrapper::GetPerformanceState(NV_GPU_PERF_PSTATE_ID perfState)
+	{
+		String^ performanceState = "";	// the GPU performance state
+
+		// determine the type of performance state the GPU is in
+		// and set the string representation accordingly
+		// performance state ranges and definitions can be found in NVAPI documentation
+		switch (perfState)
+		{
+			case NVAPI_GPU_PERF_PSTATE_P0:
+			case NVAPI_GPU_PERF_PSTATE_P1:
+				performanceState = "Max 3D";
+				break;
+			case NVAPI_GPU_PERF_PSTATE_P2:
+			case NVAPI_GPU_PERF_PSTATE_P3:
+				performanceState = "Balanced 3D";
+				break;
+			case NVAPI_GPU_PERF_PSTATE_P8:
+				performanceState = "Basic HD playback";
+				break;
+			case NVAPI_GPU_PERF_PSTATE_P10:
+				performanceState = "DVD playback";
+				break;
+			case NVAPI_GPU_PERF_PSTATE_P12:
+				performanceState = "Minimum power consumption";
+				break;
+			default:
+				performanceState = "Unknown";
+				break;
+		}
+
+		// return the performance state of the GPU
+		return performanceState;
 	}
 
 	///********************************************************************************
@@ -1096,6 +1282,328 @@ namespace GraphicsCards
 		{
 			// let the user know an error occurred getting the GPU board temperature
 			String^ errMsg = "Could not get GPU board temperature. " + ex->Message;
+			throw gcnew Exception(errMsg);
+		}
+	}
+
+	/// <summary>
+	/// Gets the GPU fanspeed in RPM
+	/// </summary>
+	/// <param name="physHandlerNum">The physical handler index in memory</param>
+	/// <returns>The GPU fanspeed in RPM as an unsigned int</returns>
+	UINT Nvidia::CommonApiWrapper::GetGpuFanSpeed(ULONG physHandlerNum)
+	{
+		try
+		{
+			// check if the API is okay and initialized
+			// also check if the GPU handler is initialized
+			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			{
+				// check if the handler index is valid
+				if (IsHandlerIndexValid(physHandlerNum))
+				{
+					NvU32 fanSpeed = 0;		// the GPU fan speed reading
+
+					// get the GPU fan speed
+					_apiStatus = NvAPI_GPU_GetTachReading(_physicalHandlers[physHandlerNum], &fanSpeed);
+
+					// check if the API successfully obtained the GPU fanspeed
+					if (_apiStatus == NVAPI_OK)
+					{
+						// retunr the GPU fan speed
+						return fanSpeed;
+					}
+					else
+					{
+						// let the user know an error occurred obtaining the GPU fanspeed
+						throw gcnew Exception(GetApiErrMsg(_apiStatus));
+					}
+				}
+			}
+			else
+			{
+				// let the user know there is an issue with the API or handler
+				throw gcnew Exception(GetDefaultErrMsg());
+			}
+		}
+		catch (Exception^ ex)
+		{
+			// let the user know an error occurred getting the GPU fan speed
+			String^ errMsg = "Could not get GPU fan speed. " + ex->Message;
+			throw gcnew Exception(errMsg);
+		}
+	}
+
+	/// <summary>
+	/// Gets the base clock speed of the GPU processor in kHz
+	/// </summary>
+	/// <param name="physHandlerNum">The physical handler index in memory</param>
+	/// <returns>The GPU processor base clock speed in kHz as a float</returns>
+	float Nvidia::CommonApiWrapper::GetProcessorBaseClockFreq(ULONG physHandlerNum)
+	{
+		try
+		{
+			// check if the API is okay and initialized
+			// also check if the GPU handler is initialized
+			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			{
+				// check if the handler index is valid
+				if (IsHandlerIndexValid(physHandlerNum))
+				{
+					float baseClockFreq = 0;	// the processor base clock frequency in kHz
+
+					// get the processor base clock frequency
+					// method throws an exception if an error occurs
+					bool success = GetClockFrequency(	_physicalHandlers[physHandlerNum],		
+														NVAPI_GPU_PUBLIC_CLOCK_PROCESSOR, 
+														NV_GPU_CLOCK_FREQUENCIES_BASE_CLOCK,	
+														&baseClockFreq
+													);
+
+					// check if the processor base clock frequency was successfully obtained
+					if (success)
+					{
+						return baseClockFreq;
+					}
+				}
+			}
+			else
+			{
+				// let the user know there is an issue with the API or handler
+				throw gcnew Exception(GetDefaultErrMsg());
+			}
+		}
+		catch (Exception^ ex)
+		{
+			// let the user know an error occurred getting processor base clock frequency
+			String^ errMsg = "Could not get processor base clock frequency. " + ex->Message;
+			throw gcnew Exception(errMsg);
+		}
+	}
+
+	/// <summary>
+	/// Gets the GPU processor current clock frequency in kHz
+	/// </summary>
+	/// <param name="physHandlerNum">The physical handler index in memory</param>
+	/// <returns>The GPU processor current clock frequency in kHz as a float</returns>
+	float Nvidia::CommonApiWrapper::GetProcessorCurrentClockFreq(ULONG physHandlerNum)
+	{
+		try
+		{
+			// check if the API is okay and initialized
+			// also check if the GPU handler is initialized
+			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			{
+				// check if the handler index is valid
+				if (IsHandlerIndexValid(physHandlerNum))
+				{
+					float currentClockFreq = 0;	// the current clock frequency in kHz
+
+					// get the current processor clock speed
+					// method will throw an exception if any errors occur
+					bool success = GetClockFrequency(	_physicalHandlers[physHandlerNum], 
+														NVAPI_GPU_PUBLIC_CLOCK_PROCESSOR, 
+														NV_GPU_CLOCK_FREQUENCIES_CURRENT_FREQ, 
+														&currentClockFreq
+													);
+
+					// check if the API successfully obtained the current processor clock frequency
+					if (success)
+					{
+						return currentClockFreq;
+					}
+				}
+			}
+			else
+			{
+				// let the user know there is an issue with the API or handler
+				throw gcnew Exception(GetDefaultErrMsg());
+			}
+		}
+		catch (Exception^ ex)
+		{
+			// let the user know an error occurred getting processor current clock frequency
+			String^ errMsg = "Could not get processor current clock frequency. " + ex->Message;
+			throw gcnew Exception(errMsg);
+		}
+	}
+
+	/// <summary>
+	/// Gets the GPU processor boost clock frequency in kHz
+	/// </summary>
+	/// <param name="physHandlerNum">The physical handler index in memory</param>
+	/// <returns>The GPU processor boost clock frequency in kHz as a float</returns>
+	float Nvidia::CommonApiWrapper::GetProcessorBoostClockFreq(ULONG physHandlerNum)
+	{
+		try
+		{
+			// check if the API is okay and initialized
+			// also check if the GPU handler is initialized
+			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			{
+				// check if the handler index is valid or not
+				if (IsHandlerIndexValid(physHandlerNum))
+				{
+					float boostClockFreq = 0;	// the processor boost clock frequency in kHz
+
+					// get the processor boost clock frequency
+					// method throws an exception if an error occurs
+					bool success = GetClockFrequency(	_physicalHandlers[physHandlerNum], 
+														NVAPI_GPU_PUBLIC_CLOCK_PROCESSOR, 
+														NV_GPU_CLOCK_FREQUENCIES_BOOST_CLOCK, 
+														&boostClockFreq
+													);
+
+					// check if the API successfully obtained the boost clock frequency
+					if (success)
+					{
+						return boostClockFreq;
+					}
+				}
+			}
+			else
+			{
+				// let the user know there is an issue with the API or handler
+				throw gcnew Exception(GetDefaultErrMsg());
+			}
+		}
+		catch (Exception^ ex)
+		{
+			// let the user know an error occurred getting processor boost clock frequency
+			String^ errMsg = "Could not get processor boost clock frequency. " + ex->Message;
+			throw gcnew Exception(errMsg);
+		}
+	}
+
+	/// <summary>
+	/// Gets the current performance state setting of the GPU
+	/// </summary>
+	/// <param name="physHandlerNum">The physical handler index in memory</param>
+	/// <returns>The current GPU performance state as a System::String</returns>
+	String^ Nvidia::CommonApiWrapper::GetCurrentPerformanceState(ULONG physHandlerNum)
+	{
+		try
+		{
+			// check if the API is okay and initialized
+			// also check if the GPU handler is initialized
+			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			{
+				// check if the handler index is valid
+				if (IsHandlerIndexValid(physHandlerNum))
+				{
+					// get the current GPU performance state ID
+					// method throws an exception if any errors occur
+					NV_GPU_PERF_PSTATE_ID perfState = GetPerformanceStateId(_physicalHandlers[physHandlerNum]);
+
+					// convert and return the current GPU performance state as a System::String
+					return GetPerformanceState(perfState);
+				}
+			}
+			else
+			{
+				// let the user know there is an issue with the API or handler
+				throw gcnew Exception(GetDefaultErrMsg());
+			}
+		}
+		catch (Exception^ ex)
+		{
+			// let the user know an error occurred getting the current GPU performance state
+			String^ errMsg = "Could not get current GPU performance state. " + ex->Message;
+			throw gcnew Exception(errMsg);
+		}
+	}
+
+	/// <summary>
+	/// Gets the base voltage value in uV for the selected base voltage of the GPU based on the current
+	/// performance state of the GPU.
+	/// </summary>
+	/// <param name="physHandlerNum">The physical handler index in memory</param>
+	/// <param name="baseVoltageNum">The base voltage number for the GPU</param>
+	/// <returns>The base voltage in uV as a float</returns>
+	float Nvidia::CommonApiWrapper::GetBaseVoltage(ULONG physHandlerNum, UINT baseVoltageNum)
+	{
+		try
+		{
+			// check if the API is okay and initialized
+			// also check if the GPU handler is initialized
+			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			{
+				// check if the handler index is valid
+				// also check if the base voltage number is valid as well
+				if (IsHandlerIndexValid(physHandlerNum) && baseVoltageNum <= NVAPI_MAX_GPU_PSTATE20_BASE_VOLTAGES)
+				{
+					// get the current GPU performance state ID
+					// method throws an exception if any errors occur
+					NV_GPU_PERF_PSTATE_ID perfState = GetPerformanceStateId(_physicalHandlers[physHandlerNum]);
+
+					// pointer to the data storing the performance state information
+					NV_GPU_PERF_PSTATES20_INFO_V2* ptrPerfStateInfo = 0;
+
+					// get the GPU performance state information
+					_apiStatus = NvAPI_GPU_GetPstates20(_physicalHandlers[physHandlerNum], ptrPerfStateInfo);
+
+					// check if the API successfully obtained the GPU performance information
+					if (_apiStatus == NVAPI_OK)
+					{
+						float	baseVoltage		= 0;		// the GPU base voltage value
+						bool	perfStateFound	= false;	// determines if the current GPU performance state is found
+
+						// iterate through each performance state to find the current GPU performance state
+						for (int i = 0; i < NVAPI_MAX_GPU_PSTATE20_PSTATES; i++)
+						{
+							// check if performance state info matches the current performance state
+							if (ptrPerfStateInfo->pstates[i].pstateId == perfState)
+							{
+								// the current performance state ID is found
+								// get the base voltage settings for the current performance state
+								NV_GPU_PSTATE20_BASE_VOLTAGE_ENTRY_V1 pStateBaseVoltage = ptrPerfStateInfo->pstates[i].baseVoltages[baseVoltageNum];
+
+								// get the base voltage value and break from the loop
+								baseVoltage		= static_cast<float>(pStateBaseVoltage.volt_uV);
+								perfStateFound	= true;
+								break;
+							}
+						}
+
+						// check if the current performance state was not found
+						if (!perfStateFound)
+						{
+							// let the user know that the GPU base voltage for the current performance
+							// state could not be found
+							throw gcnew Exception("Performance state " + GetPerformanceState(perfState) + " does not provide base voltage value.");
+						}
+						else
+						{
+							// return the base voltage value
+							return baseVoltage;
+						}
+					}
+					else
+					{
+						// let the user know an API error occurred
+						throw gcnew Exception(GetApiErrMsg(_apiStatus));
+					}
+				}
+				else
+				{
+					// the IsHandlerIndexValid method throws an exception if the handler index
+					// is invalid. Executing this chunk means the base voltage number is invalid
+					// throw an exception to let the user know
+					String^ maxBaseVoltages = gcnew String(std::to_string(NVAPI_MAX_GPU_PSTATE20_BASE_VOLTAGES).c_str());
+					throw gcnew Exception("Base voltage number must range between 1 and " + maxBaseVoltages);
+				}
+			}
+			else
+			{
+				// let the user know there is an issue with the API or handler
+				throw gcnew Exception(GetDefaultErrMsg());
+			}
+		}
+		catch (Exception^ ex)
+		{
+			// let the user know an error occrred getting the base voltage
+			String^ baseNum = gcnew String(std::to_string(baseVoltageNum).c_str());
+			String^ errMsg	= "Could not get base voltage for base voltage " + baseNum + ex->Message;
 			throw gcnew Exception(errMsg);
 		}
 	}
