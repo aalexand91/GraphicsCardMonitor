@@ -101,6 +101,44 @@ namespace GraphicsCards
 					/// <returns>true if the selected device temperature is obtained</returns>
 					bool GetDeviceTemperature(NvPhysicalGpuHandle physHandler, NV_THERMAL_TARGET deviceType, float* ptrDeviceTemp);
 
+					/// <summary>
+					/// Gets the System::String equivalent of the NV_GPU_PUBLIC_ClOCK_ID variable
+					/// </summary>
+					/// <param name="clockId">The NV_GPU_PUBLIC_CLOCK_ID enum variable</param>
+					/// <returns>The GPU public clock ID as a System::String</returns>
+					String^ GetClockIdType(NV_GPU_PUBLIC_CLOCK_ID clockId);
+
+					/// <summary>
+					/// Gets the System::String equivalent of the GPU clock frequency type
+					/// </summary>
+					/// <param name="clockType">The clock frequency type as a NV_GPU_CLOCK_FREQUENCIES_CLOCK_TYPE enum</param>
+					/// <returns>The GPU clock frequency type as a System::String</returns>
+					String^ GetClockType(NV_GPU_CLOCK_FREQUENCIES_CLOCK_TYPE clockType);
+
+					/// <summary>
+					/// Gets the clock frequency for a specified clock and clock type on the GPU in kHz
+					/// </summary>
+					/// <param name="physHandler">The physical GPU handler in memory</param>
+					/// <param name="clockId">The ID of the clock to obtain the data for</param>
+					/// <param name="clockType">The type of clock frequency to get (i.e. base, current, boost)</param>
+					/// <param name="ptrClockSpeed">pointer pointing the data storing the clock frequency</param>
+					/// <returns>true if the API successfully gets the clock frequency; false otherwise</returns>
+					bool GetClockFrequency(NvPhysicalGpuHandle physHandler, NV_GPU_PUBLIC_CLOCK_ID clockId, NV_GPU_CLOCK_FREQUENCIES_CLOCK_TYPE clockType, float* ptrClockSpeed);
+
+					/// <summary>
+					/// Gets the GPU performance state ID code ranging from P0-P20
+					/// </summary>
+					/// <param name="physHandler">The physical handler index in memory</param>
+					/// <returns>The GPU performance state ID as a NV_GPU_PERF_PSTATE_ID enum</returns>
+					NV_GPU_PERF_PSTATE_ID GetPerformanceStateId(NvPhysicalGpuHandle physHandler);
+
+					/// <summary>
+					/// Gets the GPU performances state as a System::String
+					/// </summary>
+					/// <param name="perfState">GPU performances state ID (P0-P20)</param>
+					/// <returns>The GPU performance state as a System::String</returns>
+					String^ GetPerformanceState(NV_GPU_PERF_PSTATE_ID perfState);
+
 				///****************************************************************************
 				/// Public Class Methods
 				///****************************************************************************
@@ -242,6 +280,50 @@ namespace GraphicsCards
 					/// <param name="physHandlerNum">The physical handler index in memory</param>
 					/// <returns>The GPU board temperature in celsius as a float</returns>
 					float GetBoardTemp(ULONG physHandlerNum) override;
+
+					/// <summary>
+					/// Gets the GPU fanspeed in RPM
+					/// </summary>
+					/// <param name="physHandlerNum">The physical handler index in memory</param>
+					/// <returns>The GPU fanspeed in RPM as an unsigned int</returns>
+					UINT GetGpuFanSpeed(ULONG physHandlerNum) override;
+
+					/// <summary>
+					/// Gets the base clock speed of the GPU processor in kHz
+					/// </summary>
+					/// <param name="physHandlerNum">The physical handler index in memory</param>
+					/// <returns>The GPU processor base clock speed in kHz as a float</returns>
+					float GetProcessorBaseClockFreq(ULONG physHandlerNum) override;
+
+					/// <summary>
+					/// Gets the GPU processor current clock frequency in kHz
+					/// </summary>
+					/// <param name="physHandlerNum">The physical handler index in memory</param>
+					/// <returns>The GPU processor current clock frequency in kHz as a float</returns>
+					float GetProcessorCurrentClockFreq(ULONG physHandlerNum) override;
+
+					/// <summary>
+					/// Gets the GPU processor boost clock frequency in kHz
+					/// </summary>
+					/// <param name="physHandlerNum">The physical handler index in memory</param>
+					/// <returns>The GPU processor boost clock frequency in kHz as a float</returns>
+					float GetProcessorBoostClockFreq(ULONG physHandlerNum) override;
+
+					/// <summary>
+					/// Gets the current performance state setting of the GPU
+					/// </summary>
+					/// <param name="physHandlerNum">The physical handler index in memory</param>
+					/// <returns>The current GPU performance state as a System::String</returns>
+					String^ GetCurrentPerformanceState(ULONG physHandlerNum) override;
+
+					/// <summary>
+					/// Gets the base voltage value in uV for the selected base voltage of the GPU based on the current
+					/// performance state of the GPU.
+					/// </summary>
+					/// <param name="physHandlerNum">The physical handler index in memory</param>
+					/// <param name="baseVoltageNum">The base voltage number for the GPU</param>
+					/// <returns>The base voltage in uV as a float</returns>
+					float GetBaseVoltage(ULONG physHandlerNum, UINT baseVoltageNum) override;
 			};
 	};
 

@@ -152,12 +152,48 @@ namespace GraphicsCards
 			/// <returns>The GPU board temperature in celsius as a float</returns>
 			virtual float GetBoardTemp(unsigned long physHandlerNum) = 0;
 
-			virtual unsigned int GetMax3dPerformanceState(unsigned long physHandlerNum) = 0;
+			/// <summary>
+			/// Gets the GPU fanspeed in RPM
+			/// </summary>
+			/// <param name="physHandlerNum">The index of the GPU handler in memory</param>
+			/// <returns>The GPU fan speed in RPM as an unsigned int</returns>
+			virtual unsigned int GetGpuFanSpeed(unsigned long physHandlerNum) = 0;
 
-			virtual unsigned int GetBalanced3dPerformanceState(unsigned long physHandlerNum) = 0;
+			/// <summary>
+			/// Gets the base clock speed of the GPU processor in kHz
+			/// </summary>
+			/// <param name="physHandlerNum">The index of the GPU handler in memory</param>
+			/// <returns>The GPU processor base clock speed in kHz as a float</returns>
+			virtual float GetProcessorBaseClockFreq(unsigned long physHandlerNum) = 0;
 
-			virtual unsigned int GetHighDefVideoPlaybackState(unsigned long physHandlerNum) = 0;
+			/// <summary>
+			/// Gets the current clock speed of the GPU processor in kHz
+			/// </summary>
+			/// <param name="physHandlerNum">The index of the GPU handler in memory</param>
+			/// <returns>The GPU processor current clock speend in kHz as a float</returns>
+			virtual float GetProcessorCurrentClockFreq(unsigned long physHandlerNum) = 0;
 
-			virtual float GetBaseVoltage(unsigned long physHandlerNum) = 0;
+			/// <summary>
+			/// Gets the boost clock speed of the GPU processor in kHz
+			/// </summary>
+			/// <param name="physHandlerNum">The index of the GPU handler in memory</param>
+			/// <returns>The GPU processor boost clock speed in kHz as a float</returns>
+			virtual float GetProcessorBoostClockFreq(unsigned long physHandlerNum) = 0;
+
+			/// <summary>
+			/// Gets the current GPU performance state
+			/// </summary>
+			/// <param name="physHandlerNum">The index of the GPU handler in memory</param>
+			/// <returns>The GPU performance state as a System::String</returns>
+			virtual String^ GetCurrentPerformanceState(unsigned long physHandlerNum) = 0;
+
+			/// <summary>
+			/// Gets the base voltage of the selected base voltage value in uV
+			/// based on the current GPU performance state
+			/// </summary>
+			/// <param name="physHandlerNum">The index of the GPU handler in memory</param>
+			/// <param name="baseVoltageNum">The selected base voltage value to read</param>
+			/// <returns>The selected GPU based voltage in uV as a float</returns>
+			virtual float GetBaseVoltage(unsigned long physHandlerNum, unsigned int baseVoltageNum) = 0;
 	};
 }
