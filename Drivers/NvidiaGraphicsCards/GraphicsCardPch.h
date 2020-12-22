@@ -19,6 +19,7 @@
 #define GRAPHICS_CARD_PCH_H
 
 // add headers that you want to pre-compile here
+#include <Windows.h>	// Windows library
 #include <nvapi.h>		// Nvidia's APIs from the NVAPI SDK
 #include <stdexcept>	// exception class
 #include <minwindef.h>

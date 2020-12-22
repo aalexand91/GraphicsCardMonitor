@@ -16,7 +16,7 @@ namespace GraphicsCards
 			/// Class: CommonApiWrapper
 			/// Description: Common class that provides common Nvidia API functions
 			/// </summary>
-			ref class CommonApiWrapper : public IGraphicsCard
+			ref class CommonApiWrapper : IGraphicsCard
 			{
 				//****************************************************************************
 				// Private Class Structures
@@ -161,40 +161,40 @@ namespace GraphicsCards
 					/// true if the Nvidia graphics card API initialized successfully;
 					/// false otherwise
 					/// </returns>
-					bool InitializeApi() override;
+					virtual bool InitializeApi();
 					
 					/// <summary>
 					/// Initializes all handlers for the GPUs in the system
 					/// </summary>
 					/// <returns>true if all GPU handlers successfully initialized; false otherwise</returns>
-					bool InitializeHandlers() override;
+					virtual bool InitializeHandlers();
 
 					/// <summary>
 					/// Gets the total number of GPU handlers in the system
 					/// </summary>
 					/// <returns>The total number of GPU handlers in the system as an unsigned long</returns>
-					ULONG GetNumHandlers() override;
+					virtual ULONG GetNumHandlers();
 
 					/// <summary>
 					/// Gets the total number of GPU cores for the graphics card
 					/// </summary>
 					/// <param name="physHandlerNum">The index number of the physical handler in memory</param>
 					/// <returns>The number of GPU cores for the graphics card as an unsigned long</returns>
-					ULONG GetGpuCoreCount(ULONG physHandlerNum) override;
+					virtual ULONG GetGpuCoreCount(ULONG physHandlerNum);
 
 					/// <summary>
 					/// Gets the full name of the graphics card
 					/// </summary>
 					/// <param name="physHandlerNum">The index number of the physical handler in memory</param>
 					/// <returns>The graphics card name as a System::String type</returns>
-					String^ GetName(ULONG physHandlerNum) override;
+					virtual String^ GetName(ULONG physHandlerNum);
 
 					/// <summary>
 					/// Gets the VBIOS information for the GPU
 					/// </summary>
 					/// <param name="physHandlerNum">The index number of the physical handler in memory</param>
 					/// <returns>The GPU VBIOS information as a System::String</returns>
-					String^ GetVBiosInfo(ULONG physHandlerNum) override;
+					virtual String^ GetVBiosInfo(ULONG physHandlerNum);
 
 					/// <summary>
 					/// Gets the virtual RAM size (physical RAM size and any allocated RAM for the GPU)
@@ -202,119 +202,119 @@ namespace GraphicsCards
 					/// </summary>
 					/// <param name="physHandlerNum">The index number of the physical handler in memory</param>
 					/// <returns>The virtual RAM size used by the GPU in KB as an unsigned int</returns>
-					UINT GetVirtualRamSize(ULONG physHandlerNum) override;
+					virtual UINT GetVirtualRamSize(ULONG physHandlerNum);
 
 					/// <summary>
 					/// Gets the physical RAM size of the GPU in KB
 					/// </summary>
 					/// <param name="physHandlerNum">The index number of the physical handler in memory</param>
 					/// <returns>The physical RAM of the GPU in KB as an unsigned int</returns>
-					UINT GetPhysicalRamSize(ULONG physHandlerNum) override;
+					virtual UINT GetPhysicalRamSize(ULONG physHandlerNum);
 
 					/// <summary>
 					/// Gets the serial number of the graphics card
 					/// </summary>
 					/// <param name="physHandlerNum">The index number of the physical handler in memory</param>
 					/// <returns>The graphics card serial number as a System::String</returns>
-					String^ GetCardSerialNumber(ULONG physHandlerNum) override;
+					virtual String^ GetCardSerialNumber(ULONG physHandlerNum);
 
 					/// <summary>
 					/// Gets the GPU PCI internal device ID
 					/// </summary>
 					/// <param name="physHandlerNum">the physical handler index number in memory</param>
 					/// <returns>the GPU PCI internal device ID as an unsigned int</returns>
-					UINT GetGpuPciInternalDeviceId(ULONG physHandlerNum) override;
+					virtual UINT GetGpuPciInternalDeviceId(ULONG physHandlerNum);
 
 					/// <summary>
 					/// Gets the GPU PCI revision ID
 					/// </summary>
 					/// <param name="physHandlerNum">The physical handler index in memory</param>
 					/// <returns>The GPU PCI revision ID as an unsigned int</returns>
-					UINT GetGpuPciRevId(ULONG physHandlerNum) override;
+					virtual UINT GetGpuPciRevId(ULONG physHandlerNum);
 
 					/// <summary>
 					/// Gets the GPU PCI subsystem ID
 					/// </summary>
 					/// <param name="physHandlerNum">The physical handler index in memory</param>
 					/// <returns>The GPU PCI subsystem ID as an unsigned int</returns>
-					UINT GetGpuPciSubSystemId(ULONG physHandlerNum) override;
+					virtual UINT GetGpuPciSubSystemId(ULONG physHandlerNum);
 
 					/// <summary>
 					/// Gets the GPU PCI external ID
 					/// </summary>
 					/// <param name="physHandlerNum">The physical handler index number in memory</param>
 					/// <returns>The GPU PCI external ID as an unsigned int</returns>
-					UINT GetGpuPciExternalDeviceId(ULONG physHandlerNum) override;
+					virtual UINT GetGpuPciExternalDeviceId(ULONG physHandlerNum);
 
 					/// <summary>
 					/// Gets the GPU Bus ID
 					/// </summary>
 					/// <param name="physHandlerNum">The physical handler index number in memory</param>
 					/// <returns>The GPU Bus ID as an unsigned int</returns>
-					UINT GetGpuBusId(ULONG physHandlerNum) override;
+					virtual UINT GetGpuBusId(ULONG physHandlerNum);
 
 					/// <summary>
 					/// Gets the GPU core temperature in celsius
 					/// </summary>
 					/// <param name="physHandlerNum">The physical handler index in memory</param>
 					/// <returns>The GPU core temperature in celsius as a float</returns>
-					float GetGpuCoreTemp(ULONG physHandlerNum) override;
+					virtual float GetGpuCoreTemp(ULONG physHandlerNum);
 
 					/// <summary>
 					/// Gets the GPU memory temperature in celsius
 					/// </summary>
 					/// <param name="physHandlerNum">The physical handler index in memory</param>
 					/// <returns>GPU memory temperature in celsius as a float</returns>
-					float GetMemoryTemp(ULONG physHandlerNum) override;
+					virtual float GetMemoryTemp(ULONG physHandlerNum);
 
 					/// <summary>
 					/// Gets the GPU power supply temperature in celsius
 					/// </summary>
 					/// <param name="physHandlerNum">The physical handler index in memory</param>
 					/// <returns>The GPU power supply temperature in celsius as a float</returns>
-					float GetPowerSupplyTemp(ULONG physHandlerNum) override;
+					virtual float GetPowerSupplyTemp(ULONG physHandlerNum);
 
 					/// <summary>
 					/// Gets the GPU board temperature in celsius
 					/// </summary>
 					/// <param name="physHandlerNum">The physical handler index in memory</param>
 					/// <returns>The GPU board temperature in celsius as a float</returns>
-					float GetBoardTemp(ULONG physHandlerNum) override;
+					virtual float GetBoardTemp(ULONG physHandlerNum);
 
 					/// <summary>
 					/// Gets the GPU fanspeed in RPM
 					/// </summary>
 					/// <param name="physHandlerNum">The physical handler index in memory</param>
 					/// <returns>The GPU fanspeed in RPM as an unsigned int</returns>
-					UINT GetGpuFanSpeed(ULONG physHandlerNum) override;
+					virtual UINT GetGpuFanSpeed(ULONG physHandlerNum);
 
 					/// <summary>
 					/// Gets the base clock speed of the GPU processor in kHz
 					/// </summary>
 					/// <param name="physHandlerNum">The physical handler index in memory</param>
 					/// <returns>The GPU processor base clock speed in kHz as a float</returns>
-					float GetProcessorBaseClockFreq(ULONG physHandlerNum) override;
+					virtual float GetProcessorBaseClockFreq(ULONG physHandlerNum);
 
 					/// <summary>
 					/// Gets the GPU processor current clock frequency in kHz
 					/// </summary>
 					/// <param name="physHandlerNum">The physical handler index in memory</param>
 					/// <returns>The GPU processor current clock frequency in kHz as a float</returns>
-					float GetProcessorCurrentClockFreq(ULONG physHandlerNum) override;
+					virtual float GetProcessorCurrentClockFreq(ULONG physHandlerNum);
 
 					/// <summary>
 					/// Gets the GPU processor boost clock frequency in kHz
 					/// </summary>
 					/// <param name="physHandlerNum">The physical handler index in memory</param>
 					/// <returns>The GPU processor boost clock frequency in kHz as a float</returns>
-					float GetProcessorBoostClockFreq(ULONG physHandlerNum) override;
+					virtual float GetProcessorBoostClockFreq(ULONG physHandlerNum);
 
 					/// <summary>
 					/// Gets the current performance state setting of the GPU
 					/// </summary>
 					/// <param name="physHandlerNum">The physical handler index in memory</param>
 					/// <returns>The current GPU performance state as a System::String</returns>
-					String^ GetCurrentPerformanceState(ULONG physHandlerNum) override;
+					virtual String^ GetCurrentPerformanceState(ULONG physHandlerNum);
 
 					/// <summary>
 					/// Gets the base voltage value in uV for the selected base voltage of the GPU based on the current
@@ -323,7 +323,7 @@ namespace GraphicsCards
 					/// <param name="physHandlerNum">The physical handler index in memory</param>
 					/// <param name="baseVoltageNum">The base voltage number for the GPU</param>
 					/// <returns>The base voltage in uV as a float</returns>
-					float GetBaseVoltage(ULONG physHandlerNum, UINT baseVoltageNum) override;
+					virtual float GetBaseVoltage(ULONG physHandlerNum, UINT baseVoltageNum);
 			};
 	};
 

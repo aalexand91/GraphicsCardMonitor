@@ -11,7 +11,7 @@ Author(s): Anthony Alexander
 Date:		Author				Description of Change
 07/16/2020	Anthony Alexander	Initial Creation
 ***************************************************************************************/
-#pragma once
+#include "GraphicsCardPch.h"		// pre-compiled header file
 #include "NvidiaGraphicsCards.h"	// contains function prototypes for this class
 
 namespace GraphicsCards
@@ -85,7 +85,7 @@ namespace GraphicsCards
 					// delete any data stored within at the handler address
 					// and re-assign the handler pointer to a nullptr
 					delete _physicalHandlers;
-					_physicalHandlers = nullptr;
+					_physicalHandlers = NULL;
 
 					// throw an exception to let the user know the API error
 					throw gcnew Exception(errMsg);
@@ -272,31 +272,41 @@ namespace GraphicsCards
 	{
 		try
 		{
-			bool						success				= true;	// determines if API successfully get the thermal settings for the selected device
-			NV_GPU_THERMAL_SETTINGS_V2* ptrThermalSettings	= 0;	// pointer to the device thermal settings data
-
-			// get the thermal settings for the thermal device
-			// ptrThermalSettings will point to the address where the data of the thermal device is stored
-			_apiStatus = NvAPI_GPU_GetThermalSettings(physHandler, deviceType, ptrThermalSettings);
-
-			// check if the API successfully obtained the device thermal settings
-			if (_apiStatus == NVAPI_OK)
+			// check if the device temperature pointer is null
+			if (ptrDeviceTemp == NULL)
 			{
-				// the API obtained the device temperature
-				// set the value of the device temperature by dereferencing the pointer
-				*ptrDeviceTemp = static_cast<float>(ptrThermalSettings[0].sensor[0].currentTemp);
+				throw gcnew Exception("Null pointer to device temperature value used.");
 			}
 			else
 			{
-				// set the thermal settings pointer to null to ensure the pointer is not floating
-				ptrThermalSettings = 0;
+				bool						success = true;	// determines if API successfully get the thermal settings for the selected device
+				NV_GPU_THERMAL_SETTINGS_V2* ptrThermalSettings = 0;	// pointer to the device thermal settings data
 
-				// let the user know an API error occurred
-				throw gcnew Exception(GetApiErrMsg(_apiStatus));
+				// get the thermal settings for the thermal device
+				// ptrThermalSettings will point to the address where the data of the thermal device is stored
+				_apiStatus = NvAPI_GPU_GetThermalSettings(physHandler, deviceType, ptrThermalSettings);
+
+				// check if the API successfully obtained the device thermal settings
+				if (_apiStatus == NVAPI_OK && ptrThermalSettings != NULL)
+				{
+					// the API obtained the device temperature
+					// set the value of the device temperature by dereferencing the pointer
+					*ptrDeviceTemp = static_cast<float>(ptrThermalSettings[0].sensor[0].currentTemp);
+				}
+				else
+				{
+					// delete any data from the thermal settings pointer and
+					// set the thermal settings pointer to null to ensure the pointer is not floating
+					delete ptrThermalSettings;
+					ptrThermalSettings = NULL;
+
+					// let the user know an API error occurred
+					throw gcnew Exception(GetApiErrMsg(_apiStatus));
+				}
+
+				// return if thermal settings were successfully obtained
+				return success;
 			}
-
-			// return if thermal settings were successfully obtained
-			return success;
 		}
 		catch (Exception^ ex)
 		{
@@ -385,20 +395,20 @@ namespace GraphicsCards
 	{
 		try
 		{
-			bool						success					= true;	// determines if clock frequency is successfully obtained
-			NV_GPU_CLOCK_FREQUENCIES*	ptrClockFrequencies		= 0;	// pointer pointing to all GPU clock data in memory
+			bool						success					= true;		// determines if clock frequency is successfully obtained
+			NV_GPU_CLOCK_FREQUENCIES	clockFrequencies		= { 0 };	// struct containing all GPU clock data
 
-			// get the clock frequency data for all GPU clocks
-			_apiStatus = NvAPI_GPU_GetAllClockFrequencies(physHandler, ptrClockFrequencies);
+			// get the clock frequency data for specific GPU clock type
+			_apiStatus = NvAPI_GPU_GetAllClockFrequencies(physHandler, &clockFrequencies);
 
 			// check if the API successfully obtained all GPU clock frequencies
 			if (_apiStatus == NVAPI_OK)
 			{
 				// set the clock type to be returned
-				ptrClockFrequencies->ClockType = clockType;
+				clockFrequencies.ClockType = clockType;
 
 				// assign the clock frequency data using the clock ID and clock type
-				*ptrClockSpeed = ptrClockFrequencies->domain[clockId].frequency;
+				*ptrClockSpeed = static_cast<float>(clockFrequencies.domain[clockId].frequency);
 			}
 			else
 			{
@@ -427,16 +437,16 @@ namespace GraphicsCards
 	{
 		try
 		{
-			NV_GPU_PERF_PSTATE_ID* ptrGpuStateId;	// pointer to the GPU performance state ID
+			NV_GPU_PERF_PSTATE_ID gpuStateId;	// the GPU performance state ID
 
 			// get the GPU performance state
-			_apiStatus = NvAPI_GPU_GetCurrentPstate(physHandler, ptrGpuStateId);
+			_apiStatus = NvAPI_GPU_GetCurrentPstate(physHandler, &gpuStateId);
 
 			// check if the API successfully obtained the GPU performance state ID
 			if (_apiStatus == NVAPI_OK)
 			{
 				// return the GPU performance state ID stored
-				return *ptrGpuStateId;
+				return gpuStateId;
 			}
 			else
 			{
@@ -505,7 +515,7 @@ namespace GraphicsCards
 		_apiStatus					= NVAPI_API_NOT_INITIALIZED;
 		_apiInit					= false;
 		_handlersInit				= false;
-		_physicalHandlers			= nullptr;
+		_physicalHandlers			= 0;
 		_numPhysHandlers			= 0;
 		_pciIdentities->hasIdInfo	= false;
 		_pciIdentities->internalId	= 0;
@@ -519,6 +529,11 @@ namespace GraphicsCards
 	/// </summary>
 	Nvidia::CommonApiWrapper::~CommonApiWrapper()
 	{
+		// free the physical GPUs and PCI identifier data from memory
+		// and set the physical GPU handler pointer to null
+		// all other class members will be deleted from memory on their own
+		delete _physicalHandlers, _pciIdentities;
+		_physicalHandlers = NULL;
 	}
 
 	/// <summary>
@@ -539,7 +554,8 @@ namespace GraphicsCards
 			if (_apiStatus == NVAPI_OK)
 			{
 				// the API successfully initialized, return true
-				return _apiInit = true;
+				_apiInit = true;
+				return _apiInit;
 			}
 			else
 			{
@@ -1536,8 +1552,8 @@ namespace GraphicsCards
 					// method throws an exception if any errors occur
 					NV_GPU_PERF_PSTATE_ID perfState = GetPerformanceStateId(_physicalHandlers[physHandlerNum]);
 
-					// pointer to the data storing the performance state information
-					NV_GPU_PERF_PSTATES20_INFO_V2* ptrPerfStateInfo = 0;
+					// pointer to the performance state information
+					NV_GPU_PERF_PSTATES20_INFO_V2* ptrPerfStateInfo = new NV_GPU_PERF_PSTATES20_INFO_V2();
 
 					// get the GPU performance state information
 					_apiStatus = NvAPI_GPU_GetPstates20(_physicalHandlers[physHandlerNum], ptrPerfStateInfo);
@@ -1547,23 +1563,31 @@ namespace GraphicsCards
 					{
 						float	baseVoltage		= 0;		// the GPU base voltage value
 						bool	perfStateFound	= false;	// determines if the current GPU performance state is found
-
+						
 						// iterate through each performance state to find the current GPU performance state
 						for (int i = 0; i < NVAPI_MAX_GPU_PSTATE20_PSTATES; i++)
 						{
 							// check if performance state info matches the current performance state
 							if (ptrPerfStateInfo->pstates[i].pstateId == perfState)
 							{
+								// WARNING: VISUAL STUDIO/RESHAPER C++ CAUSES COMPILER WARNING C6835
+								// IN WHICH IT CANNOT UNDERSTAND THE RELATIONSHIP BETWEEN pStateBaseVoltage AND CURRENT pstate[i].baseVoltages
+								// THIS IS A FALSE ALERT FROM THE ANALYZER SO ONLY IGNORING THE WARNING WITH VISUAL STUDIO
+
 								// the current performance state ID is found
 								// get the base voltage settings for the current performance state
 								NV_GPU_PSTATE20_BASE_VOLTAGE_ENTRY_V1 pStateBaseVoltage = ptrPerfStateInfo->pstates[i].baseVoltages[baseVoltageNum];
 
 								// get the base voltage value and break from the loop
-								baseVoltage		= static_cast<float>(pStateBaseVoltage.volt_uV);
-								perfStateFound	= true;
+								baseVoltage = static_cast<float>(pStateBaseVoltage.volt_uV);
+								perfStateFound = true;
 								break;
 							}
 						}
+
+						// delete the performance state information to free up the memory
+						delete ptrPerfStateInfo;
+						ptrPerfStateInfo = NULL;
 
 						// check if the current performance state was not found
 						if (!perfStateFound)
@@ -1580,6 +1604,10 @@ namespace GraphicsCards
 					}
 					else
 					{
+						// delete the performance state information to free up the memory
+						delete ptrPerfStateInfo;
+						ptrPerfStateInfo = NULL;
+
 						// let the user know an API error occurred
 						throw gcnew Exception(GetApiErrMsg(_apiStatus));
 					}
