@@ -11,7 +11,7 @@ Author(s): Anthony Alexander
 Date:		Author				Description of Change
 07/16/2020	Anthony Alexander	Initial Creation
 ***************************************************************************************/
-#include "GraphicsCardPch.h"		// pre-compiled header file
+#include "GraphicsCards_pch.h"		// pre-compiled header file
 #include "NvidiaGraphicsCards.h"	// contains function prototypes for this class
 
 namespace GraphicsCards

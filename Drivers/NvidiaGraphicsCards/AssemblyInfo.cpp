@@ -1,4 +1,4 @@
-#include "GraphicsCardPch.h"
+#include "GraphicsCards_pch.h"
 
 using namespace System;
 using namespace System::Reflection;
