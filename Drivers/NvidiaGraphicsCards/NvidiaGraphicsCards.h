@@ -1,5 +1,5 @@
 #pragma once
-#include "GraphicsCardPch.h"	// pre-compiled header file
+#include "GraphicsCards_pch.h"	// pre-compiled header file
 #include "IGraphicsCard.h"		// IGraphicsCard interface
 
 using namespace System;
