@@ -12,6 +12,8 @@ namespace GraphicsCardsTestPanel
 {
     public partial class GraphicsCardTestPanel : Form
     {
+        static IGraphicsCard gCard;
+
         public GraphicsCardTestPanel()
         {
             InitializeComponent();

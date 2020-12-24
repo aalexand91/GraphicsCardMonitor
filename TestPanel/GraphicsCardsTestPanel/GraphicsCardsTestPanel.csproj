@@ -33,7 +33,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="GraphicsCards">
-      <HintPath>..\..\Drivers\NvidiaGraphicsCards\GraphicsCards.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Drivers\NvidiaGraphicsCards\Debug\x86\GraphicsCards.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
