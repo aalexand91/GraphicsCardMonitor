@@ -29,10 +29,10 @@
     <ClCompile Include="AssemblyInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CommonApiWrapper.cpp">
+    <ClCompile Include="GraphicsCards_pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsCards_pch.cpp">
+    <ClCompile Include="NvidiaGraphicsCard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

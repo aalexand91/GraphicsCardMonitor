@@ -161,7 +161,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">GraphicsCards_pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)$(Configuration)\$(PlatformTarget)\GraphicsCards.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
-    <ClCompile Include="CommonApiWrapper.cpp">
+    <ClCompile Include="NvidiaGraphicsCard.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">GraphicsCards_pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">GraphicsCards_pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)$(Configuration)\$(PlatformTarget)\GraphicsCards.pch</PrecompiledHeaderOutputFile>

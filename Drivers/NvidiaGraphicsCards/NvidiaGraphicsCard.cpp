@@ -1,15 +1,15 @@
 /**************************************************************************************
-File: CommonApiWrapper.cpp
-
-Description: Source file that implements interface IGraphicsCard functions
-			 and function prototypes for the CommonApiWrapper class.
-			 Wrapper class that wraps Nvidia's API functionality into a class
-			 that can be inherited by other Nvidia graphics card classes
-
-Author(s): Anthony Alexander
-
-Date:		Author				Description of Change
-07/16/2020	Anthony Alexander	Initial Creation
+* File: NvidiaGraphicsCard.cpp
+*
+* Original Author: Anthony Alexander
+*
+* Description:	Source file that implements interface IGraphicsCard functions
+*				and function prototypes for the CommonApiWrapper class.
+*				Wrapper class that wraps Nvidia's API functionality into a class
+*				that can be inherited by other Nvidia graphics card classes
+*
+* Date:			Author:				Description of Change:
+* 07/16/2020	Anthony Alexander	Initial Creation
 ***************************************************************************************/
 #include "GraphicsCards_pch.h"		// pre-compiled header file
 #include "NvidiaGraphicsCards.h"	// contains function prototypes for this class
@@ -25,7 +25,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="apiStat"> The API status</param>
 	/// <returns>The API error message as a System::String type</returns>
-	String^ Nvidia::CommonApiWrapper::GetApiErrMsg(NvAPI_Status apiStat)
+	String^ NvidiaGraphicsCard::GetApiErrMsg(NvAPI_Status apiStat)
 	{
 		try
 		{
@@ -55,7 +55,7 @@ namespace GraphicsCards
 	/// Gets all physical GPU handlers in the system
 	/// </summary>
 	/// <returns>true if API successfully gets all GPU handlers; false otherwise</returns>
-	bool Nvidia::CommonApiWrapper::GetPhysicalHandlers()
+	bool NvidiaGraphicsCard::GetPhysicalHandlers()
 	{
 		try
 		{
@@ -109,7 +109,7 @@ namespace GraphicsCards
 	/// Gets the default error message when the user incorrectly uses the driver
 	/// </summary>
 	/// <returns>An error message as a System::String type</returns>
-	String^ Nvidia::CommonApiWrapper::GetDefaultErrMsg()
+	String^ NvidiaGraphicsCard::GetDefaultErrMsg()
 	{
 		try
 		{
@@ -151,7 +151,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">the physical hander index in memory</param>
 	/// <param name="ptrPciIdentifiers">pointer to the PciIdentifiers member</param>
-	void Nvidia::CommonApiWrapper::GetPciIds(ULONG physHandlerNum, PciIdentifiers^ ptrPciIdentifiers)
+	void NvidiaGraphicsCard::GetPciIds(ULONG physHandlerNum, PciIdentifiers^ ptrPciIdentifiers)
 	{
 		try
 		{
@@ -201,7 +201,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">The physical handler index in memory</param>
 	/// <returns>true, if the handler index is valid</returns>
-	bool Nvidia::CommonApiWrapper::IsHandlerIndexValid(ULONG physHandlerNum)
+	bool NvidiaGraphicsCard::IsHandlerIndexValid(ULONG physHandlerNum)
 	{
 		// check if the handler index number if valid
 		if (physHandlerNum > (_numPhysHandlers - 1))
@@ -219,7 +219,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="deviceType">The NV_THERMAL_TARGET device type</param>
 	/// <returns>Name of the thermal device as a System::String</returns>
-	String^ Nvidia::CommonApiWrapper::GetTempDeviceName(NV_THERMAL_TARGET deviceType)
+	String^ NvidiaGraphicsCard::GetTempDeviceName(NV_THERMAL_TARGET deviceType)
 	{
 		String^ deviceName = "";
 
@@ -268,7 +268,7 @@ namespace GraphicsCards
 	/// <param name="deviceType">The NV_THERMAL_TARGET device type</param>
 	/// <param name="ptrDeviceTemp">Pointer to the data to store the device temperature</param>
 	/// <returns>true if the selected device temperature is obtained</returns>
-	bool Nvidia::CommonApiWrapper::GetDeviceTemperature(NvPhysicalGpuHandle physHandler, NV_THERMAL_TARGET deviceType, float* ptrDeviceTemp)
+	bool NvidiaGraphicsCard::GetDeviceTemperature(NvPhysicalGpuHandle physHandler, NV_THERMAL_TARGET deviceType, float* ptrDeviceTemp)
 	{
 		try
 		{
@@ -321,7 +321,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="clockId">The NV_GPU_PUBLIC_CLOCK_ID enum variable</param>
 	/// <returns>The GPU public clock ID as a System::String</returns>
-	String^ Nvidia::CommonApiWrapper::GetClockIdType(NV_GPU_PUBLIC_CLOCK_ID clockId)
+	String^ NvidiaGraphicsCard::GetClockIdType(NV_GPU_PUBLIC_CLOCK_ID clockId)
 	{
 		String^ clockIdType = "";	// the clock ID type
 
@@ -355,7 +355,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="clockType">The clock frequency type as a NV_GPU_CLOCK_FREQUENCIES_CLOCK_TYPE enum</param>
 	/// <returns>The GPU clock frequency type as a System::String</returns>
-	String^ Nvidia::CommonApiWrapper::GetClockType(NV_GPU_CLOCK_FREQUENCIES_CLOCK_TYPE clockType)
+	String^ NvidiaGraphicsCard::GetClockType(NV_GPU_CLOCK_FREQUENCIES_CLOCK_TYPE clockType)
 	{
 		String^ clockTypeString = "";	// the System::String equivalent of the GPU clock type
 
@@ -391,7 +391,7 @@ namespace GraphicsCards
 	/// <param name="clockType">The type of clock frequency to get (i.e. base, current, boost)</param>
 	/// <param name="ptrClockSpeed">pointer pointing the data storing the clock frequency</param>
 	/// <returns>true if the API successfully gets the clock frequency; false otherwise</returns>
-	bool Nvidia::CommonApiWrapper::GetClockFrequency(NvPhysicalGpuHandle physHandler, NV_GPU_PUBLIC_CLOCK_ID clockId, NV_GPU_CLOCK_FREQUENCIES_CLOCK_TYPE clockType, float* ptrClockSpeed)
+	bool NvidiaGraphicsCard::GetClockFrequency(NvPhysicalGpuHandle physHandler, NV_GPU_PUBLIC_CLOCK_ID clockId, NV_GPU_CLOCK_FREQUENCIES_CLOCK_TYPE clockType, float* ptrClockSpeed)
 	{
 		try
 		{
@@ -433,7 +433,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandler">The physical handler index in memory</param>
 	/// <returns>The GPU performance state ID as a NV_GPU_PERF_PSTATE_ID enum</returns>
-	NV_GPU_PERF_PSTATE_ID Nvidia::CommonApiWrapper::GetPerformanceStateId(NvPhysicalGpuHandle physHandler)
+	NV_GPU_PERF_PSTATE_ID NvidiaGraphicsCard::GetPerformanceStateId(NvPhysicalGpuHandle physHandler)
 	{
 		try
 		{
@@ -467,7 +467,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="perfState">GPU performances state ID (P0-P20)</param>
 	/// <returns>The GPU performance state as a System::String</returns>
-	String^ Nvidia::CommonApiWrapper::GetPerformanceState(NV_GPU_PERF_PSTATE_ID perfState)
+	String^ NvidiaGraphicsCard::GetPerformanceState(NV_GPU_PERF_PSTATE_ID perfState)
 	{
 		String^ performanceState = "";	// the GPU performance state
 
@@ -509,7 +509,7 @@ namespace GraphicsCards
 	/// <summary>
 	/// Constructor for CommonApiWrapper object
 	/// </summary>
-	Nvidia::CommonApiWrapper::CommonApiWrapper()
+	NvidiaGraphicsCard::NvidiaGraphicsCard()
 	{
 		// default all class members
 		_apiStatus					= NVAPI_API_NOT_INITIALIZED;
@@ -527,7 +527,7 @@ namespace GraphicsCards
 	/// <summary>
 	/// Destructor for CommonApiWrapper object
 	/// </summary>
-	Nvidia::CommonApiWrapper::~CommonApiWrapper()
+	NvidiaGraphicsCard::~NvidiaGraphicsCard()
 	{
 		// free the physical GPUs and PCI identifier data from memory
 		// and set the physical GPU handler pointer to null
@@ -543,7 +543,7 @@ namespace GraphicsCards
 	/// true if the Nvidia graphics card API initialized successfully;
 	/// false otherwise
 	/// </returns>
-	bool Nvidia::CommonApiWrapper::InitializeApi()
+	bool NvidiaGraphicsCard::InitializeApi()
 	{
 		try
 		{
@@ -578,7 +578,7 @@ namespace GraphicsCards
 	/// Initializes all handlers for the GPUs in the system
 	/// </summary>
 	/// <returns>true if all GPU handlers successfully initialized; false otherwise</returns>
-	bool Nvidia::CommonApiWrapper::InitializeHandlers()
+	bool NvidiaGraphicsCard::InitializeHandlers()
 	{
 		try
 		{
@@ -597,7 +597,7 @@ namespace GraphicsCards
 	/// Gets the total number of GPU handlers in the system
 	/// </summary>
 	/// <returns>The total number of GPU handlers in the system as an unsigned long</returns>
-	unsigned long Nvidia::CommonApiWrapper::GetNumHandlers()
+	unsigned long NvidiaGraphicsCard::GetNumHandlers()
 	{
 		try
 		{
@@ -629,7 +629,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">The index number of the physical handler in memory</param>
 	/// <returns>The number of GPU cores for the graphics card as an unsigned long</returns>
-	ULONG Nvidia::CommonApiWrapper::GetGpuCoreCount(ULONG physHandlerNum)
+	ULONG NvidiaGraphicsCard::GetGpuCoreCount(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -679,7 +679,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">The index number of the physical handler in memory</param>
 	/// <returns>The graphics card name as a System::String type</returns>
-	String^ Nvidia::CommonApiWrapper::GetName(ULONG physHandlerNum)
+	String^ NvidiaGraphicsCard::GetName(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -729,7 +729,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">The index number of the physical handler in memory</param>
 	/// <returns>The GPU VBIOS information as a System::String</returns>
-	String^ Nvidia::CommonApiWrapper::GetVBiosInfo(ULONG physHandlerNum)
+	String^ NvidiaGraphicsCard::GetVBiosInfo(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -778,7 +778,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">The index number of the physical handler in memory</param>
 	/// <returns>The virtual RAM size used by the GPU in KB as an unsigned int</returns>
-	UINT Nvidia::CommonApiWrapper::GetVirtualRamSize(ULONG physHandlerNum)
+	UINT NvidiaGraphicsCard::GetVirtualRamSize(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -826,7 +826,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">The index number of the physical handler in memory</param>
 	/// <returns>The physical RAM of the GPU in KB as an unsigned int</returns>
-	UINT Nvidia::CommonApiWrapper::GetPhysicalRamSize(ULONG physHandlerNum)
+	UINT NvidiaGraphicsCard::GetPhysicalRamSize(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -875,7 +875,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">The index number of the physical handler in memory</param>
 	/// <returns>The graphics card serial number as a System::String</returns>
-	String^ Nvidia::CommonApiWrapper::GetCardSerialNumber(ULONG physHandlerNum)
+	String^ NvidiaGraphicsCard::GetCardSerialNumber(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -924,7 +924,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">the physical handler index number in memory</param>
 	/// <returns>the GPU PCI internal device ID as an unsigned int</returns>
-	UINT Nvidia::CommonApiWrapper::GetGpuPciInternalDeviceId(ULONG physHandlerNum)
+	UINT NvidiaGraphicsCard::GetGpuPciInternalDeviceId(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -964,7 +964,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">The physical handler index in memory</param>
 	/// <returns>The GPU PCI revision ID as an unsigned int</returns>
-	UINT Nvidia::CommonApiWrapper::GetGpuPciRevId(ULONG physHandlerNum)
+	UINT NvidiaGraphicsCard::GetGpuPciRevId(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -1005,7 +1005,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">The physical handler index in memory</param>
 	/// <returns>The GPU PCI subsystem ID as an unsigned int</returns>
-	UINT Nvidia::CommonApiWrapper::GetGpuPciSubSystemId(ULONG physHandlerNum)
+	UINT NvidiaGraphicsCard::GetGpuPciSubSystemId(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -1046,7 +1046,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">The physical handler index number in memory</param>
 	/// <returns>The GPU PCI external ID as an unsigned int</returns>
-	UINT Nvidia::CommonApiWrapper::GetGpuPciExternalDeviceId(ULONG physHandlerNum)
+	UINT NvidiaGraphicsCard::GetGpuPciExternalDeviceId(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -1087,7 +1087,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">The physical handler index number in memory</param>
 	/// <returns>The GPU Bus ID as an unsigned int</returns>
-	UINT Nvidia::CommonApiWrapper::GetGpuBusId(ULONG physHandlerNum)
+	UINT NvidiaGraphicsCard::GetGpuBusId(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -1134,7 +1134,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">The physical handler index in memory</param>
 	/// <returns>The GPU core temperature in celsius as a float</returns>
-	float Nvidia::CommonApiWrapper::GetGpuCoreTemp(ULONG physHandlerNum)
+	float NvidiaGraphicsCard::GetGpuCoreTemp(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -1178,7 +1178,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">The physical handler index in memory</param>
 	/// <returns>GPU memory temperature in celsius as a float</returns>
-	float Nvidia::CommonApiWrapper::GetMemoryTemp(ULONG physHandlerNum)
+	float NvidiaGraphicsCard::GetMemoryTemp(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -1221,7 +1221,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">The physical handler index in memory</param>
 	/// <returns>The GPU power supply temperature in celsius as a float</returns>
-	float Nvidia::CommonApiWrapper::GetPowerSupplyTemp(ULONG physHandlerNum)
+	float NvidiaGraphicsCard::GetPowerSupplyTemp(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -1264,7 +1264,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">The physical handler index in memory</param>
 	/// <returns>The GPU board temperature in celsius as a float</returns>
-	float Nvidia::CommonApiWrapper::GetBoardTemp(ULONG physHandlerNum)
+	float NvidiaGraphicsCard::GetBoardTemp(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -1307,7 +1307,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">The physical handler index in memory</param>
 	/// <returns>The GPU fanspeed in RPM as an unsigned int</returns>
-	UINT Nvidia::CommonApiWrapper::GetGpuFanSpeed(ULONG physHandlerNum)
+	UINT NvidiaGraphicsCard::GetGpuFanSpeed(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -1355,7 +1355,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">The physical handler index in memory</param>
 	/// <returns>The GPU processor base clock speed in kHz as a float</returns>
-	float Nvidia::CommonApiWrapper::GetProcessorBaseClockFreq(ULONG physHandlerNum)
+	float NvidiaGraphicsCard::GetProcessorBaseClockFreq(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -1402,7 +1402,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">The physical handler index in memory</param>
 	/// <returns>The GPU processor current clock frequency in kHz as a float</returns>
-	float Nvidia::CommonApiWrapper::GetProcessorCurrentClockFreq(ULONG physHandlerNum)
+	float NvidiaGraphicsCard::GetProcessorCurrentClockFreq(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -1449,7 +1449,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">The physical handler index in memory</param>
 	/// <returns>The GPU processor boost clock frequency in kHz as a float</returns>
-	float Nvidia::CommonApiWrapper::GetProcessorBoostClockFreq(ULONG physHandlerNum)
+	float NvidiaGraphicsCard::GetProcessorBoostClockFreq(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -1496,7 +1496,7 @@ namespace GraphicsCards
 	/// </summary>
 	/// <param name="physHandlerNum">The physical handler index in memory</param>
 	/// <returns>The current GPU performance state as a System::String</returns>
-	String^ Nvidia::CommonApiWrapper::GetCurrentPerformanceState(ULONG physHandlerNum)
+	String^ NvidiaGraphicsCard::GetCurrentPerformanceState(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -1529,6 +1529,12 @@ namespace GraphicsCards
 		}
 	}
 
+	// WARNING: VISUAL STUDIO/RESHAPER C++ CAUSES COMPILER WARNING C6835
+	// IN WHICH IT CANNOT UNDERSTAND THE RELATIONSHIP BETWEEN pStateBaseVoltage AND CURRENT pstate[i].baseVoltages
+	// THIS IS A FALSE ALERT FROM THE ANALYZER SO ONLY IGNORING THE WARNING WITH VISUAL STUDIO
+#pragma warning (push)
+#pragma warning (disable : 6385)
+
 	/// <summary>
 	/// Gets the base voltage value in uV for the selected base voltage of the GPU based on the current
 	/// performance state of the GPU.
@@ -1536,7 +1542,7 @@ namespace GraphicsCards
 	/// <param name="physHandlerNum">The physical handler index in memory</param>
 	/// <param name="baseVoltageNum">The base voltage number for the GPU</param>
 	/// <returns>The base voltage in uV as a float</returns>
-	float Nvidia::CommonApiWrapper::GetBaseVoltage(ULONG physHandlerNum, UINT baseVoltageNum)
+	float NvidiaGraphicsCard::GetBaseVoltage(ULONG physHandlerNum, UINT baseVoltageNum)
 	{
 		try
 		{
@@ -1570,10 +1576,6 @@ namespace GraphicsCards
 							// check if performance state info matches the current performance state
 							if (ptrPerfStateInfo->pstates[i].pstateId == perfState)
 							{
-								// WARNING: VISUAL STUDIO/RESHAPER C++ CAUSES COMPILER WARNING C6835
-								// IN WHICH IT CANNOT UNDERSTAND THE RELATIONSHIP BETWEEN pStateBaseVoltage AND CURRENT pstate[i].baseVoltages
-								// THIS IS A FALSE ALERT FROM THE ANALYZER SO ONLY IGNORING THE WARNING WITH VISUAL STUDIO
-
 								// the current performance state ID is found
 								// get the base voltage settings for the current performance state
 								NV_GPU_PSTATE20_BASE_VOLTAGE_ENTRY_V1 pStateBaseVoltage = ptrPerfStateInfo->pstates[i].baseVoltages[baseVoltageNum];
@@ -1635,5 +1637,7 @@ namespace GraphicsCards
 			throw gcnew Exception(errMsg);
 		}
 	}
+
+#pragma warning (pop)	// end #pragma warning (disable : 6385)
 }
 
