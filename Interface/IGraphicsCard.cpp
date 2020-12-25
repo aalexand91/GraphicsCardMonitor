@@ -16,5 +16,3 @@
 
 #include "IGraphicsCard_pch.h"	// pre-compiled header file
 #include "IGraphicsCard.h"		// header file contanining interface definitions
-
-

@@ -4,7 +4,6 @@
 #include"nvapi_lite_surround.h"
 #include"nvapi_lite_stereo.h"
 #include"nvapi_lite_d3dext.h"
-#include <Windows.h>			// added to remove intellisense errors NOT APART OF NVIDIA'S API
  /************************************************************************************************************************************\
 |*                                                                                                                                    *|
 |*     Copyright © 2012 NVIDIA Corporation.  All rights reserved.                                                                     *|

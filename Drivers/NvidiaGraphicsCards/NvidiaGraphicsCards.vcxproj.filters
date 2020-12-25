@@ -21,7 +21,7 @@
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsCardPch.h">
+    <ClInclude Include="GraphicsCards_pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -29,10 +29,10 @@
     <ClCompile Include="AssemblyInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsCardPch.cpp">
+    <ClCompile Include="GraphicsCards_pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CommonApiWrapper.cpp">
+    <ClCompile Include="NvidiaGraphicsCard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
