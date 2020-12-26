@@ -54,7 +54,7 @@ namespace GraphicsCardsTestPanel
             this.BaseVoltage3Button = new System.Windows.Forms.Button();
             this.BaseVoltage4Button = new System.Windows.Forms.Button();
             this.SelectLabel = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.GraphicsCardComboBox = new System.Windows.Forms.ComboBox();
             this.TestButton = new System.Windows.Forms.Button();
             this.ResetButton = new System.Windows.Forms.Button();
             this.ExitButton = new System.Windows.Forms.Button();
@@ -69,6 +69,7 @@ namespace GraphicsCardsTestPanel
             this.CoreCountButton.TabIndex = 0;
             this.CoreCountButton.Text = "Get Gpu Core Count";
             this.CoreCountButton.UseVisualStyleBackColor = true;
+            this.CoreCountButton.Click += new System.EventHandler(this.CoreCountButton_Click);
             // 
             // NameButton
             // 
@@ -79,6 +80,7 @@ namespace GraphicsCardsTestPanel
             this.NameButton.TabIndex = 1;
             this.NameButton.Text = "Get Name";
             this.NameButton.UseVisualStyleBackColor = true;
+            this.NameButton.Click += new System.EventHandler(this.NameButton_Click);
             // 
             // VbiosButton
             // 
@@ -89,6 +91,7 @@ namespace GraphicsCardsTestPanel
             this.VbiosButton.TabIndex = 2;
             this.VbiosButton.Text = "Get VBIOS Info";
             this.VbiosButton.UseVisualStyleBackColor = true;
+            this.VbiosButton.Click += new System.EventHandler(this.VbiosButton_Click);
             // 
             // VirtualRamButton
             // 
@@ -99,6 +102,7 @@ namespace GraphicsCardsTestPanel
             this.VirtualRamButton.TabIndex = 3;
             this.VirtualRamButton.Text = "Get Virtual RAM Size";
             this.VirtualRamButton.UseVisualStyleBackColor = true;
+            this.VirtualRamButton.Click += new System.EventHandler(this.VirtualRamButton_Click);
             // 
             // PhysicalRamButton
             // 
@@ -109,6 +113,7 @@ namespace GraphicsCardsTestPanel
             this.PhysicalRamButton.TabIndex = 4;
             this.PhysicalRamButton.Text = "Get Physical RAM Size";
             this.PhysicalRamButton.UseVisualStyleBackColor = true;
+            this.PhysicalRamButton.Click += new System.EventHandler(this.PhysicalRamButton_Click);
             // 
             // SerialNumberButton
             // 
@@ -119,6 +124,7 @@ namespace GraphicsCardsTestPanel
             this.SerialNumberButton.TabIndex = 5;
             this.SerialNumberButton.Text = "Get Serial Number";
             this.SerialNumberButton.UseVisualStyleBackColor = true;
+            this.SerialNumberButton.Click += new System.EventHandler(this.SerialNumberButton_Click);
             // 
             // PciInternalIdButton
             // 
@@ -129,6 +135,7 @@ namespace GraphicsCardsTestPanel
             this.PciInternalIdButton.TabIndex = 6;
             this.PciInternalIdButton.Text = "Get PCI Internal ID";
             this.PciInternalIdButton.UseVisualStyleBackColor = true;
+            this.PciInternalIdButton.Click += new System.EventHandler(this.PciInternalIdButton_Click);
             // 
             // PciRevButton
             // 
@@ -139,6 +146,7 @@ namespace GraphicsCardsTestPanel
             this.PciRevButton.TabIndex = 7;
             this.PciRevButton.Text = "Get PCI Rev ID";
             this.PciRevButton.UseVisualStyleBackColor = true;
+            this.PciRevButton.Click += new System.EventHandler(this.PciRevButton_Click);
             // 
             // PciSubsystemIdButton
             // 
@@ -149,6 +157,7 @@ namespace GraphicsCardsTestPanel
             this.PciSubsystemIdButton.TabIndex = 8;
             this.PciSubsystemIdButton.Text = "Get PCI Subsystem ID";
             this.PciSubsystemIdButton.UseVisualStyleBackColor = true;
+            this.PciSubsystemIdButton.Click += new System.EventHandler(this.PciSubsystemIdButton_Click);
             // 
             // PciExternalIdButton
             // 
@@ -159,6 +168,7 @@ namespace GraphicsCardsTestPanel
             this.PciExternalIdButton.TabIndex = 9;
             this.PciExternalIdButton.Text = "Get PCI External ID";
             this.PciExternalIdButton.UseVisualStyleBackColor = true;
+            this.PciExternalIdButton.Click += new System.EventHandler(this.PciExternalIdButton_Click);
             // 
             // BusIdButton
             // 
@@ -169,6 +179,7 @@ namespace GraphicsCardsTestPanel
             this.BusIdButton.TabIndex = 10;
             this.BusIdButton.Text = "Get Bus ID";
             this.BusIdButton.UseVisualStyleBackColor = true;
+            this.BusIdButton.Click += new System.EventHandler(this.BusIdButton_Click);
             // 
             // CoreTempButton
             // 
@@ -179,6 +190,7 @@ namespace GraphicsCardsTestPanel
             this.CoreTempButton.TabIndex = 11;
             this.CoreTempButton.Text = "Get GPU Core Temp";
             this.CoreTempButton.UseVisualStyleBackColor = true;
+            this.CoreTempButton.Click += new System.EventHandler(this.CoreTempButton_Click);
             // 
             // MemoryTempButton
             // 
@@ -189,6 +201,7 @@ namespace GraphicsCardsTestPanel
             this.MemoryTempButton.TabIndex = 12;
             this.MemoryTempButton.Text = "Get Memory Temp";
             this.MemoryTempButton.UseVisualStyleBackColor = true;
+            this.MemoryTempButton.Click += new System.EventHandler(this.MemoryTempButton_Click);
             // 
             // PowerSupplyTempButton
             // 
@@ -199,6 +212,7 @@ namespace GraphicsCardsTestPanel
             this.PowerSupplyTempButton.TabIndex = 13;
             this.PowerSupplyTempButton.Text = "Get Power Supply Temp";
             this.PowerSupplyTempButton.UseVisualStyleBackColor = true;
+            this.PowerSupplyTempButton.Click += new System.EventHandler(this.PowerSupplyTempButton_Click);
             // 
             // BoardTempButton
             // 
@@ -209,6 +223,7 @@ namespace GraphicsCardsTestPanel
             this.BoardTempButton.TabIndex = 14;
             this.BoardTempButton.Text = "Get Board Temp";
             this.BoardTempButton.UseVisualStyleBackColor = true;
+            this.BoardTempButton.Click += new System.EventHandler(this.BoardTempButton_Click);
             // 
             // FanSpeedButton
             // 
@@ -219,6 +234,7 @@ namespace GraphicsCardsTestPanel
             this.FanSpeedButton.TabIndex = 15;
             this.FanSpeedButton.Text = "Get GPU Fan Speed";
             this.FanSpeedButton.UseVisualStyleBackColor = true;
+            this.FanSpeedButton.Click += new System.EventHandler(this.FanSpeedButton_Click);
             // 
             // BaseClockFreqButton
             // 
@@ -229,6 +245,7 @@ namespace GraphicsCardsTestPanel
             this.BaseClockFreqButton.TabIndex = 16;
             this.BaseClockFreqButton.Text = "Get Base Clock Frequency";
             this.BaseClockFreqButton.UseVisualStyleBackColor = true;
+            this.BaseClockFreqButton.Click += new System.EventHandler(this.BaseClockFreqButton_Click);
             // 
             // CurrentClockFreqButton
             // 
@@ -239,6 +256,7 @@ namespace GraphicsCardsTestPanel
             this.CurrentClockFreqButton.TabIndex = 17;
             this.CurrentClockFreqButton.Text = "Get Current Clock Frequency";
             this.CurrentClockFreqButton.UseVisualStyleBackColor = true;
+            this.CurrentClockFreqButton.Click += new System.EventHandler(this.CurrentClockFreqButton_Click);
             // 
             // BoostClockFreqButton
             // 
@@ -249,6 +267,7 @@ namespace GraphicsCardsTestPanel
             this.BoostClockFreqButton.TabIndex = 18;
             this.BoostClockFreqButton.Text = "Get Boost Clock Frequency";
             this.BoostClockFreqButton.UseVisualStyleBackColor = true;
+            this.BoostClockFreqButton.Click += new System.EventHandler(this.BoostClockFreqButton_Click);
             // 
             // PerfStateButton
             // 
@@ -259,6 +278,7 @@ namespace GraphicsCardsTestPanel
             this.PerfStateButton.TabIndex = 19;
             this.PerfStateButton.Text = "Get Current Performance State";
             this.PerfStateButton.UseVisualStyleBackColor = true;
+            this.PerfStateButton.Click += new System.EventHandler(this.PerfStateButton_Click);
             // 
             // BaseVoltage1Button
             // 
@@ -269,6 +289,7 @@ namespace GraphicsCardsTestPanel
             this.BaseVoltage1Button.TabIndex = 20;
             this.BaseVoltage1Button.Text = "Get Base Voltage 1";
             this.BaseVoltage1Button.UseVisualStyleBackColor = true;
+            this.BaseVoltage1Button.Click += new System.EventHandler(this.BaseVoltage1Button_Click);
             // 
             // BaseVoltage2Button
             // 
@@ -279,6 +300,7 @@ namespace GraphicsCardsTestPanel
             this.BaseVoltage2Button.TabIndex = 21;
             this.BaseVoltage2Button.Text = "Get Base Voltage 2";
             this.BaseVoltage2Button.UseVisualStyleBackColor = true;
+            this.BaseVoltage2Button.Click += new System.EventHandler(this.BaseVoltage2Button_Click);
             // 
             // BaseVoltage3Button
             // 
@@ -289,6 +311,7 @@ namespace GraphicsCardsTestPanel
             this.BaseVoltage3Button.TabIndex = 22;
             this.BaseVoltage3Button.Text = "Get Base Voltage 3";
             this.BaseVoltage3Button.UseVisualStyleBackColor = true;
+            this.BaseVoltage3Button.Click += new System.EventHandler(this.BaseVoltage3Button_Click);
             // 
             // BaseVoltage4Button
             // 
@@ -299,6 +322,7 @@ namespace GraphicsCardsTestPanel
             this.BaseVoltage4Button.TabIndex = 23;
             this.BaseVoltage4Button.Text = "Get Base Voltage 4";
             this.BaseVoltage4Button.UseVisualStyleBackColor = true;
+            this.BaseVoltage4Button.Click += new System.EventHandler(this.BaseVoltage4Button_Click);
             // 
             // SelectLabel
             // 
@@ -309,13 +333,14 @@ namespace GraphicsCardsTestPanel
             this.SelectLabel.TabIndex = 24;
             this.SelectLabel.Text = "Select Graphics Card to test:";
             // 
-            // comboBox1
+            // GraphicsCardComboBox
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(173, 16);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(303, 21);
-            this.comboBox1.TabIndex = 25;
+            this.GraphicsCardComboBox.FormattingEnabled = true;
+            this.GraphicsCardComboBox.Location = new System.Drawing.Point(173, 16);
+            this.GraphicsCardComboBox.Name = "GraphicsCardComboBox";
+            this.GraphicsCardComboBox.Size = new System.Drawing.Size(303, 21);
+            this.GraphicsCardComboBox.TabIndex = 25;
+            this.GraphicsCardComboBox.SelectedIndexChanged += new System.EventHandler(this.GraphicsCardComboBox_SelectedIndexChanged);
             // 
             // TestButton
             // 
@@ -326,6 +351,7 @@ namespace GraphicsCardsTestPanel
             this.TestButton.TabIndex = 26;
             this.TestButton.Text = "Test";
             this.TestButton.UseVisualStyleBackColor = true;
+            this.TestButton.Click += new System.EventHandler(this.TestButton_Click);
             // 
             // ResetButton
             // 
@@ -335,6 +361,7 @@ namespace GraphicsCardsTestPanel
             this.ResetButton.TabIndex = 27;
             this.ResetButton.Text = "Reset";
             this.ResetButton.UseVisualStyleBackColor = true;
+            this.ResetButton.Click += new System.EventHandler(this.ResetButton_Click);
             // 
             // ExitButton
             // 
@@ -344,6 +371,7 @@ namespace GraphicsCardsTestPanel
             this.ExitButton.TabIndex = 28;
             this.ExitButton.Text = "Exit";
             this.ExitButton.UseVisualStyleBackColor = true;
+            this.ExitButton.Click += new System.EventHandler(this.ExitButton_Click);
             // 
             // GraphicsCardTestPanel
             // 
@@ -353,7 +381,7 @@ namespace GraphicsCardsTestPanel
             this.Controls.Add(this.ExitButton);
             this.Controls.Add(this.ResetButton);
             this.Controls.Add(this.TestButton);
-            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.GraphicsCardComboBox);
             this.Controls.Add(this.SelectLabel);
             this.Controls.Add(this.BaseVoltage4Button);
             this.Controls.Add(this.BaseVoltage3Button);
@@ -413,7 +441,7 @@ namespace GraphicsCardsTestPanel
         private System.Windows.Forms.Button BaseVoltage3Button;
         private System.Windows.Forms.Button BaseVoltage4Button;
         private System.Windows.Forms.Label SelectLabel;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox GraphicsCardComboBox;
         private System.Windows.Forms.Button TestButton;
         private System.Windows.Forms.Button ResetButton;
         private System.Windows.Forms.Button ExitButton;
