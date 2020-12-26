@@ -374,7 +374,7 @@ namespace GraphicsCardMonitor
                     VbiosTextBox.Text           = gGraphicsCards.GetVBiosInfo(selectedGpu);
                     PhysRamTextBox.Text         = gGraphicsCards.GetPhysicalRamSize(selectedGpu).ToString();
                     VirtualRamTextBox.Text      = gGraphicsCards.GetVirtualRamSize(selectedGpu).ToString();
-                    CoreVoltageTextBox.Text     = gGraphicsCards.GetBaseVoltage(selectedGpu).ToString();
+                    //CoreVoltageTextBox.Text     = gGraphicsCards.GetBaseVoltage(selectedGpu).ToString();
                     GpuCoresTextBox.Text        = gGraphicsCards.GetGpuCoreCount(selectedGpu).ToString();
                     BusIdTextBox.Text           = gGraphicsCards.GetGpuBusId(selectedGpu).ToString();
                     CoreTempTextBox.Text        = gGraphicsCards.GetGpuCoreTemp(selectedGpu).ToString();
