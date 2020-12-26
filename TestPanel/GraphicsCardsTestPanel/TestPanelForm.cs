@@ -179,6 +179,33 @@ namespace GraphicsCardsTestPanel
             }
         }
 
+        /// <summary>
+        /// Get the selected base voltage of the GPU and returns the result as a string
+        /// </summary>
+        /// <param name="baseVoltageNum">The base voltage number</param>
+        /// <returns>The selected base voltage value as a string</returns>
+        string GetBaseVoltageResult(uint baseVoltageNum)
+        {
+            string baseVoltageMessage;   // message containing the base voltage result
+
+            try
+            {
+                // get the selected GPU base voltage and convert it to a string
+                // add the unit type for the user
+                baseVoltageMessage  = "GPU base voltage " + baseVoltageNum.ToString() + ": " 
+                                    + s_graphicsCard.GetBaseVoltage(s_selectedGpu, baseVoltageNum).ToString() 
+                                    + " uV";
+            }
+            catch (Exception ex)
+            {
+                // let the user know an error occurred getting the GPU base voltage
+                baseVoltageMessage = "ERROR: Could not get GPU base voltage " + baseVoltageNum.ToString() + ". " + ex.Message;
+            }
+
+            // return the base voltage message
+            return baseVoltageMessage;
+        }
+
         #endregion
 
         #region Constructors and Destructors
@@ -272,11 +299,8 @@ namespace GraphicsCardsTestPanel
 
             try
             {
-                // get the GPU core count for the selected GPU
-                uint coreCount = s_graphicsCard.GetGpuCoreCount(s_selectedGpu);
-
-                // convert the core count into a string to display to the user
-                resultMessage = coreCount.ToString();
+                // get the GPU core count for the selected GPU and convert it to a string
+                resultMessage = "GPU core count: " + s_graphicsCard.GetGpuCoreCount(s_selectedGpu).ToString();
             }
             catch (Exception ex)
             {
@@ -285,7 +309,7 @@ namespace GraphicsCardsTestPanel
             }
             finally
             {
-                MessageBox.Show("Result: " + resultMessage);
+                MessageBox.Show(resultMessage);
             }
         }
 
@@ -301,7 +325,7 @@ namespace GraphicsCardsTestPanel
             try
             {
                 // set the result to the graphics card name of the selected GPU
-                resultMessage = s_graphicsCard.GetName(s_selectedGpu);
+                resultMessage = "Graphics card name: " + s_graphicsCard.GetName(s_selectedGpu);
             }
             catch (Exception ex)
             {
@@ -327,7 +351,7 @@ namespace GraphicsCardsTestPanel
             try
             {
                 // get the VBIOS version info of the selected GPU
-                resultMessage = s_graphicsCard.GetVBiosInfo(s_selectedGpu);
+                resultMessage = "VBIOS info: " + s_graphicsCard.GetVBiosInfo(s_selectedGpu);
             }
             catch (Exception ex)
             {
@@ -354,7 +378,7 @@ namespace GraphicsCardsTestPanel
             {
                 // get the virtual RAM size and convert it to a string
                 // also add the unit type (KB) for the user
-                resultMessage = s_graphicsCard.GetVirtualRamSize(s_selectedGpu).ToString() + " KB";
+                resultMessage = "Virtual RAM size: " + s_graphicsCard.GetVirtualRamSize(s_selectedGpu).ToString() + " KB";
             }
             catch (Exception ex)
             {
@@ -381,7 +405,7 @@ namespace GraphicsCardsTestPanel
             {
                 // get the physical RAM size of the selected GPU and convert it to a string
                 // to display it to the user. Also add the unit type
-                resultMessage = s_graphicsCard.GetPhysicalRamSize(s_selectedGpu).ToString() + " KB";
+                resultMessage = "Physical RAM size: " + s_graphicsCard.GetPhysicalRamSize(s_selectedGpu).ToString() + " KB";
             }
             catch (Exception ex)
             {
@@ -407,7 +431,7 @@ namespace GraphicsCardsTestPanel
             try
             {
                 // get the serial number of the selected GPU and display it to the user
-                resultMessage = s_graphicsCard.GetCardSerialNumber(s_selectedGpu);
+                resultMessage = "Serial Number: " + s_graphicsCard.GetCardSerialNumber(s_selectedGpu);
             }
             catch (Exception ex)
             {
@@ -433,7 +457,7 @@ namespace GraphicsCardsTestPanel
             try
             {
                 // get the GPU PCI internal ID number and convert it to a string
-                resultMessage = s_graphicsCard.GetGpuPciInternalDeviceId(s_selectedGpu).ToString();
+                resultMessage = "GPU PCI internal ID: " + s_graphicsCard.GetGpuPciInternalDeviceId(s_selectedGpu).ToString();
             }
             catch (Exception ex)
             {
@@ -459,7 +483,7 @@ namespace GraphicsCardsTestPanel
             try
             {
                 // get the GPU PCI revision ID and convert it to a string
-                resultMessage = s_graphicsCard.GetGpuPciRevId(s_selectedGpu).ToString();
+                resultMessage = "GPU PCI rev ID: " + s_graphicsCard.GetGpuPciRevId(s_selectedGpu).ToString();
             }
             catch (Exception ex)
             {
@@ -485,7 +509,7 @@ namespace GraphicsCardsTestPanel
             try
             {
                 // get the GPU PCI subsystem ID and convert it to a string
-                resultMessage = s_graphicsCard.GetGpuPciSubSystemId(s_selectedGpu).ToString();
+                resultMessage = "GPU PCI subsystem ID: " + s_graphicsCard.GetGpuPciSubSystemId(s_selectedGpu).ToString();
             }
             catch (Exception ex)
             {
@@ -511,7 +535,7 @@ namespace GraphicsCardsTestPanel
             try
             {
                 // get the GPU PCI external ID and convert it to a string
-                resultMessage = s_graphicsCard.GetGpuPciExternalDeviceId(s_selectedGpu).ToString();
+                resultMessage = "GPU PCI external ID: " + s_graphicsCard.GetGpuPciExternalDeviceId(s_selectedGpu).ToString();
             }
             catch (Exception ex)
             {
@@ -537,7 +561,7 @@ namespace GraphicsCardsTestPanel
             try
             {
                 // get the GPU bus ID and convert it to a string
-                resultMessage = s_graphicsCard.GetGpuBusId(s_selectedGpu).ToString();
+                resultMessage = "GPU bus ID: " + s_graphicsCard.GetGpuBusId(s_selectedGpu).ToString();
             }
             catch (Exception ex)
             {
@@ -564,7 +588,7 @@ namespace GraphicsCardsTestPanel
             {
                 // get the GPU heatsink fan speed and convert it to a string
                 // also add the unit type for the user
-                resultMessage = s_graphicsCard.GetGpuFanSpeed(s_selectedGpu).ToString() + " RPM";
+                resultMessage = "GPU fan speed: " + s_graphicsCard.GetGpuFanSpeed(s_selectedGpu).ToString() + " RPM";
             }
             catch (Exception ex)
             {
@@ -591,7 +615,7 @@ namespace GraphicsCardsTestPanel
             {
                 // get the GPU core temperature and convert it to a string
                 // also add the unit type for the user
-                resultMessage = s_graphicsCard.GetGpuCoreTemp(s_selectedGpu).ToString() + " C";
+                resultMessage = "GPU core temperature: " + s_graphicsCard.GetGpuCoreTemp(s_selectedGpu).ToString() + " C";
             }
             catch (Exception ex)
             {
@@ -618,7 +642,7 @@ namespace GraphicsCardsTestPanel
             {
                 // get the memory (RAM) temperature and convert it to a string
                 // also add the unit type for the user
-                resultMessage = s_graphicsCard.GetMemoryTemp(s_selectedGpu).ToString() + " C";
+                resultMessage = "GPU memory temperature: " + s_graphicsCard.GetMemoryTemp(s_selectedGpu).ToString() + " C";
             }
             catch (Exception ex)
             {
@@ -645,7 +669,7 @@ namespace GraphicsCardsTestPanel
             {
                 // get the GPU power supply temperature and conver it to a string
                 // also add the unit type for the user
-                resultMessage = s_graphicsCard.GetPowerSupplyTemp(s_selectedGpu).ToString() + " C";
+                resultMessage = "GPU power supply temperature: " + s_graphicsCard.GetPowerSupplyTemp(s_selectedGpu).ToString() + " C";
             }
             catch (Exception ex)
             {
@@ -672,7 +696,7 @@ namespace GraphicsCardsTestPanel
             {
                 // get the graphics card board temperature and conver it to a string
                 // also add the unit type for the user
-                resultMessage = s_graphicsCard.GetBoardTemp(s_selectedGpu).ToString() + " C";
+                resultMessage = "Board temperature: " + s_graphicsCard.GetBoardTemp(s_selectedGpu).ToString() + " C";
             }
             catch (Exception ex)
             {
@@ -698,7 +722,7 @@ namespace GraphicsCardsTestPanel
             try
             {
                 // get the current performance state of the graphics card
-                resultMessage = s_graphicsCard.GetCurrentPerformanceState(s_selectedGpu);
+                resultMessage = "Current performance state: " + s_graphicsCard.GetCurrentPerformanceState(s_selectedGpu);
             }
             catch (Exception ex)
             {
@@ -725,7 +749,7 @@ namespace GraphicsCardsTestPanel
             {
                 // get the GPU base clock frequency and convert it to a string
                 // also add the unit type for the user
-                resultMessage = s_graphicsCard.GetProcessorBaseClockFreq(s_selectedGpu).ToString() + " kHz";
+                resultMessage = "Base clock frequency: " + s_graphicsCard.GetProcessorBaseClockFreq(s_selectedGpu).ToString() + " kHz";
             }
             catch (Exception ex)
             {
@@ -752,7 +776,7 @@ namespace GraphicsCardsTestPanel
             {
                 // get the current GPU processor clock frequency and convert it to a string
                 // also add the unit type for the user
-                resultMessage = s_graphicsCard.GetProcessorCurrentClockFreq(s_selectedGpu).ToString() + "kHz";
+                resultMessage = "Current clock frequency: " + s_graphicsCard.GetProcessorCurrentClockFreq(s_selectedGpu).ToString() + "kHz";
             }
             catch (Exception ex)
             {
@@ -779,7 +803,7 @@ namespace GraphicsCardsTestPanel
             {
                 // get the GPU processor boost clock frequency and convert it to a string
                 // also add the unit type for the user
-                resultMessage = s_graphicsCard.GetProcessorBoostClockFreq(s_selectedGpu).ToString() + " kHz";
+                resultMessage = "Boost clock frequency: " + s_graphicsCard.GetProcessorBoostClockFreq(s_selectedGpu).ToString() + " kHz";
             }
             catch (Exception ex) 
             {
@@ -800,24 +824,8 @@ namespace GraphicsCardsTestPanel
         /// <param name="e">Object to the specific event</param>
         private void BaseVoltage1Button_Click(object sender, EventArgs e)
         {
-            string resultMessage = string.Empty;    // the result to display to the user
-
-            try
-            {
-                // get the GPU base voltage 1 and convert it to a string
-                // also add the unit type for the user
-                resultMessage = s_graphicsCard.GetBaseVoltage(s_selectedGpu, 1).ToString() + " uV";
-            }
-            catch (Exception ex)
-            {
-                // let the user know an error occurred getting the GPU base voltage 1
-                resultMessage = "ERROR: Could not get GPU base voltage 1. " + ex.Message;
-            }
-            finally
-            {
-                // display the results to the user
-                MessageBox.Show(resultMessage);
-            }
+            // get the GPU base voltage 1
+            MessageBox.Show(GetBaseVoltageResult(1));
         }
 
         /// <summary>
@@ -827,24 +835,8 @@ namespace GraphicsCardsTestPanel
         /// <param name="e">Object to the specific event</param>
         private void BaseVoltage2Button_Click(object sender, EventArgs e)
         {
-            string resultMessage = string.Empty;    // the result to display to the user
-
-            try
-            {
-                // get the GPU base voltage 2 and convert it to a string
-                // also add the unit type for the user
-                resultMessage = s_graphicsCard.GetBaseVoltage(s_selectedGpu, 2).ToString() + " uV";
-            }
-            catch (Exception ex)
-            {
-                // let the user know an error occurred getting the GPU base voltage 2 value
-                resultMessage = "ERROR: Could note get GPU base voltage 2. " + ex.Message;
-            }
-            finally
-            {
-                // display the results to the user
-                MessageBox.Show(resultMessage);
-            }
+            // get the GPU base voltage 2
+            MessageBox.Show(GetBaseVoltageResult(2));
         }
 
         /// <summary>
@@ -854,24 +846,8 @@ namespace GraphicsCardsTestPanel
         /// <param name="e">Object to the specific event</param>
         private void BaseVoltage3Button_Click(object sender, EventArgs e)
         {
-            string resultMessage = string.Empty;    // the result to display to the user
-
-            try
-            {
-                // get the GPU base voltage 3 and convert it to a string
-                // also add the unit type for the user
-                resultMessage = s_graphicsCard.GetBaseVoltage(s_selectedGpu, 3).ToString() + " uV";
-            }
-            catch (Exception ex)
-            {
-                // let the user know an error occurred getting the GPU base voltage 3
-                resultMessage = "ERROR: Could not get GPU base voltage 3. " + ex.Message;
-            }
-            finally
-            {
-                // display the results to the user
-                MessageBox.Show(resultMessage);
-            }
+            // get the GPU base voltage 3
+            MessageBox.Show(GetBaseVoltageResult(3));
         }
 
         /// <summary>
@@ -881,24 +857,8 @@ namespace GraphicsCardsTestPanel
         /// <param name="e">Object to the specific event</param>
         private void BaseVoltage4Button_Click(object sender, EventArgs e)
         {
-            string resultMessge = string.Empty;     // result to display to the user
-
-            try
-            {
-                // get the GPU base voltage 4 and convert it to a string
-                // also add the unit type for the user
-                resultMessge = s_graphicsCard.GetBaseVoltage(s_selectedGpu, 4).ToString() + " uV";
-            }
-            catch (Exception ex)
-            {
-                // let the user know an error occurred getting the GPU base voltage 4
-                resultMessge = "ERROR: Could not get GPU base voltage 4. " + ex.Message;
-            }
-            finally
-            {
-                // display the results to the user
-                MessageBox.Show(resultMessge);
-            }
+            // get the GPU base voltage 4
+            MessageBox.Show(GetBaseVoltageResult(4));
         }
 
         /// <summary>
