@@ -49,7 +49,7 @@ namespace GraphicsCards
 				strcpy_s(errMsg, sizeof(errMsg), "Could not determine API error message");
 			}
 			
-			return gcnew String(errMsg);
+			return "API error: " + gcnew String(errMsg);
 		}
 		catch (Exception^ ex)
 		{
@@ -917,7 +917,7 @@ namespace GraphicsCards
 				// check if the handler index is valid
 				if (IsHandlerIndexValid(physHandlerNum))
 				{
-					NV_BOARD_INFO boardInfo;	// variable to store the graphics card info
+					NV_BOARD_INFO_V1 boardInfo;	// variable to store the graphics card info
 
 					// get the graphics card information for the selected GPU
 					m_apiStatus = NvAPI_GPU_GetBoardInfo(m_ptrPhysicalHandlers[physHandlerNum], &boardInfo);
