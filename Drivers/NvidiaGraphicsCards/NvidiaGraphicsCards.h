@@ -49,12 +49,12 @@ namespace GraphicsCards
 		// Private Class Members
 		//****************************************************************************
 		private:
-			NvAPI_Status			_apiStatus;			// the API status
-			bool					_apiInit;			// the API initialization status
-			bool					_handlersInit;		// determines if handlers are initialized
-			NvPhysicalGpuHandle*	_physicalHandlers;	// points to location of GPU physical handlers
-			NvU32					_numPhysHandlers;	// the number of physical handlers
-			PciIdentifiers^			_pciIdentities;		// the PCI IDs for the GPU
+			NvAPI_Status			m_apiStatus;			// the API status
+			bool					m_apiInit;				// the API initialization status
+			bool					m_handlersInit;			// determines if handlers are initialized
+			NvPhysicalGpuHandle*	m_ptrPhysicalHandlers;	// points to location of GPU physical handlers
+			NvU32					m_numPhysHandlers;		// the number of physical handlers
+			PciIdentifiers^			m_ptrPciIdentities;		// the PCI IDs for the GPU
 
 		//****************************************************************************
 		// Private Class Methods
