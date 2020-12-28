@@ -154,6 +154,9 @@ namespace GraphicsCardsTestPanel
                 // disable all test buttons
                 DisableTestButtons();
 
+                // clear the graphics card ComboBox text
+                GraphicsCardComboBox.Text = "";
+
                 // clear out the graphics card ComboBox
                 GraphicsCardComboBox.Items.Clear();
 
