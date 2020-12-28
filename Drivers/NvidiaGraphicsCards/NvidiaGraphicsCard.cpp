@@ -16,6 +16,14 @@
 
 namespace GraphicsCards
 {
+	// WARNING: COMPILER ERROR C4715 IS LOGGED FOR EACH METHOD. THIS IS BECAUSE SOME OF THE RETURN
+	// PATHS THROW EXCEPTIONS, RATHER THAN THE RESPECTIVE RETURN TYPE. THIS WAS DONE ON PURPOSE
+	// SO THAT IF THE USER MISUSES THE GRAPHICS CARD DRIVER, AN EXCEPTION IS THROWN
+	// THE RESPECTIVE RETURN TYPE IS ONLY RETURNED IF DRIVER IS USED CORRECTLY
+	// DISABLING WARNING
+#pragma warning (push)
+#pragma warning (disable : 4715)
+
 	///********************************************************************************
 	/// Private Class Methods
 	///********************************************************************************
@@ -74,7 +82,9 @@ namespace GraphicsCards
 				// array of physical GPU handlers in memory
 				NvPhysicalGpuHandle physicalHandlers[NVAPI_MAX_PHYSICAL_GPUS];
 
-				// get all physical GPUs in the system and store them in memory
+				// TODO: GET PHYSICAL GPU HANDLERS FOR GPUS RUNNIN IN TCC AND WDDM MODE
+
+				// get all physical GPUs in the system running in WDDM mode and store them in memory
 				// function adds each physical GPU handler to the array and the total number of handlers found
 				m_apiStatus = NvAPI_EnumPhysicalGPUs(physicalHandlers, &numHandlers);
 
@@ -127,7 +137,7 @@ namespace GraphicsCards
 			throw gcnew Exception(errMsg);
 		}
 	}
-#pragma warning (pop)
+#pragma warning (pop) // end #pragma warning (disable: 6387)
 
 	/// <summary>
 	/// Gets the default error message when the user incorrectly uses the driver
@@ -1660,5 +1670,7 @@ namespace GraphicsCards
 	}
 
 #pragma warning (pop)	// end #pragma warning (disable : 6385)
+
+#pragma warning (pop)	// end #pragma warning (disable: 4715)
 }
 
