@@ -313,27 +313,45 @@ namespace GraphicsCards
 			}
 			else
 			{
-				bool						success = true;	// determines if API successfully get the thermal settings for the selected device
-				NV_GPU_THERMAL_SETTINGS_V2* ptrThermalSettings = 0;	// pointer to the device thermal settings data
+				bool						success			= true;		// determines if API successfully get the thermal settings for the selected device
+				NV_GPU_THERMAL_SETTINGS_V2	thermalSettings = { 0 };	// device thermal settings data
 
-				// get the thermal settings for the thermal device
-				// ptrThermalSettings will point to the address where the data of the thermal device is stored
-				m_apiStatus = NvAPI_GPU_GetThermalSettings(physHandler, deviceType, ptrThermalSettings);
+				// set all thermal settings version
+				thermalSettings.version	= NV_GPU_THERMAL_SETTINGS_VER_2;
+
+				// get the thermal settings for all thermal devices the graphics card has
+				m_apiStatus = NvAPI_GPU_GetThermalSettings(physHandler, NVAPI_THERMAL_TARGET_ALL, &thermalSettings);
 
 				// check if the API successfully obtained the device thermal settings
-				if (m_apiStatus == NVAPI_OK && ptrThermalSettings != NULL)
+				if (m_apiStatus == NVAPI_OK)
 				{
+					bool targetDeviceFound = false;	// determines if the target sensor was found
+
 					// the API obtained the device temperature
-					// set the value of the device temperature by dereferencing the pointer
-					*ptrDeviceTemp = static_cast<float>(ptrThermalSettings[0].sensor[0].currentTemp);
+					// iterate through all possible sensors on the board and determine if the current sensor matches the one under test
+					for (int i = 0; i < NVAPI_MAX_THERMAL_SENSORS_PER_GPU; i++)
+					{
+						// check if the current sensor matches the target device
+						if (thermalSettings.sensor[i].target == deviceType)
+						{
+							// sensor found
+							targetDeviceFound = true;
+
+							// set the value of the device temperature by dereferencing the pointer and break from the loop
+							*ptrDeviceTemp = static_cast<float>(thermalSettings.sensor[0].currentTemp);
+							break;
+						}
+					}
+					
+					// check if the target sensor device was not found
+					if (!targetDeviceFound)
+					{
+						// let the user know that the thermal device does not exists
+						throw gcnew Exception(GetTempDeviceName(deviceType) + " sensor does not exists for graphics card.");
+					}
 				}
 				else
 				{
-					// delete any data from the thermal settings pointer and
-					// set the thermal settings pointer to null to ensure the pointer is not floating
-					delete ptrThermalSettings;
-					ptrThermalSettings = NULL;
-
 					// let the user know an API error occurred
 					throw gcnew Exception(GetApiErrMsg(m_apiStatus));
 				}
@@ -917,7 +935,8 @@ namespace GraphicsCards
 				// check if the handler index is valid
 				if (IsHandlerIndexValid(physHandlerNum))
 				{
-					NV_BOARD_INFO_V1 boardInfo;	// variable to store the graphics card info
+					NV_BOARD_INFO boardInfo = { 0 };	// variable to store the graphics card info
+					boardInfo.version = NV_BOARD_INFO_VER;
 
 					// get the graphics card information for the selected GPU
 					m_apiStatus = NvAPI_GPU_GetBoardInfo(m_ptrPhysicalHandlers[physHandlerNum], &boardInfo);
@@ -927,7 +946,7 @@ namespace GraphicsCards
 					{
 						// the API was successful
 						// store the board serial number
-						return gcnew String((const char*)boardInfo.BoardNum);
+						return gcnew String(reinterpret_cast<const char*>(boardInfo.BoardNum));
 					}
 					else
 					{
