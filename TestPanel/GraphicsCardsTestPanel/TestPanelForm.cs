@@ -752,7 +752,7 @@ namespace GraphicsCardsTestPanel
             {
                 // get the GPU base clock frequency and convert it to a string
                 // also add the unit type for the user
-                resultMessage = "Base clock frequency: " + s_graphicsCard.GetProcessorBaseClockFreq(s_selectedGpu).ToString() + " kHz";
+                resultMessage = "Base clock frequency: " + s_graphicsCard.GetGraphicsBaseClockFreq(s_selectedGpu).ToString() + " kHz";
             }
             catch (Exception ex)
             {
@@ -779,7 +779,7 @@ namespace GraphicsCardsTestPanel
             {
                 // get the current GPU processor clock frequency and convert it to a string
                 // also add the unit type for the user
-                resultMessage = "Current clock frequency: " + s_graphicsCard.GetProcessorCurrentClockFreq(s_selectedGpu).ToString() + "kHz";
+                resultMessage = "Current clock frequency: " + s_graphicsCard.GetGraphicsCurrentClockFreq(s_selectedGpu).ToString() + "kHz";
             }
             catch (Exception ex)
             {
@@ -806,7 +806,7 @@ namespace GraphicsCardsTestPanel
             {
                 // get the GPU processor boost clock frequency and convert it to a string
                 // also add the unit type for the user
-                resultMessage = "Boost clock frequency: " + s_graphicsCard.GetProcessorBoostClockFreq(s_selectedGpu).ToString() + " kHz";
+                resultMessage = "Boost clock frequency: " + s_graphicsCard.GetGraphicsBoostClockFreq(s_selectedGpu).ToString() + " kHz";
             }
             catch (Exception ex) 
             {
