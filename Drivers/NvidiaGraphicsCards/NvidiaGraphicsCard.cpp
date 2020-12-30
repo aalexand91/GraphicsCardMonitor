@@ -450,15 +450,16 @@ namespace GraphicsCards
 			bool						success					= true;		// determines if clock frequency is successfully obtained
 			NV_GPU_CLOCK_FREQUENCIES	clockFrequencies		= { 0 };	// struct containing all GPU clock data
 
+			// set the NV_GPU_CLOCK_FREQUENCIES version and clock type
+			clockFrequencies.version	= NV_GPU_CLOCK_FREQUENCIES_VER_3;
+			clockFrequencies.ClockType	= clockType;
+
 			// get the clock frequency data for specific GPU clock type
 			m_apiStatus = NvAPI_GPU_GetAllClockFrequencies(physHandler, &clockFrequencies);
 
 			// check if the API successfully obtained all GPU clock frequencies
 			if (m_apiStatus == NVAPI_OK)
 			{
-				// set the clock type to be returned
-				clockFrequencies.ClockType = clockType;
-
 				// assign the clock frequency data using the clock ID and clock type
 				*ptrClockSpeed = static_cast<float>(clockFrequencies.domain[clockId].frequency);
 			}
@@ -935,8 +936,8 @@ namespace GraphicsCards
 				// check if the handler index is valid
 				if (IsHandlerIndexValid(physHandlerNum))
 				{
-					NV_BOARD_INFO boardInfo = { 0 };	// variable to store the graphics card info
-					boardInfo.version = NV_BOARD_INFO_VER;
+					NV_BOARD_INFO_V1 boardInfo	= { 0 };	// variable to store the graphics card info
+					boardInfo.version			= NV_BOARD_INFO_VER1;
 
 					// get the graphics card information for the selected GPU
 					m_apiStatus = NvAPI_GPU_GetBoardInfo(m_ptrPhysicalHandlers[physHandlerNum], &boardInfo);
@@ -944,9 +945,20 @@ namespace GraphicsCards
 					// check if the API successfully obtained information for the graphics card
 					if (m_apiStatus == NVAPI_OK)
 					{
+						String^ serialNumber = "";	// the graphics card serial number
+
 						// the API was successful
-						// store the board serial number
-						return gcnew String(reinterpret_cast<const char*>(boardInfo.BoardNum));
+						// get total number of characters the serial number has
+						size_t numElements = (sizeof(boardInfo.BoardNum) / sizeof(boardInfo.BoardNum[0]));
+
+						// iterate through each character and add them to the variable to return
+						for (size_t i = 0; i < numElements; i++)
+						{
+							serialNumber += boardInfo.BoardNum[i];
+						}
+
+						// return the board serial number
+						return serialNumber;
 					}
 					else
 					{
@@ -1376,7 +1388,7 @@ namespace GraphicsCards
 					// check if the API successfully obtained the GPU fanspeed
 					if (m_apiStatus == NVAPI_OK)
 					{
-						// retunr the GPU fan speed
+						// return the GPU fan speed
 						return fanSpeed;
 					}
 					else
@@ -1401,11 +1413,11 @@ namespace GraphicsCards
 	}
 
 	/// <summary>
-	/// Gets the base clock speed of the GPU processor in kHz
+	/// Gets the base clock speed of the graphics processor in kHz
 	/// </summary>
 	/// <param name="physHandlerNum">The physical handler index in memory</param>
-	/// <returns>The GPU processor base clock speed in kHz as a float</returns>
-	float NvidiaGraphicsCard::GetProcessorBaseClockFreq(ULONG physHandlerNum)
+	/// <returns>The graphics processor base clock speed in kHz as a float</returns>
+	float NvidiaGraphicsCard::GetGraphicsBaseClockFreq(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -1421,7 +1433,7 @@ namespace GraphicsCards
 					// get the processor base clock frequency
 					// method throws an exception if an error occurs
 					bool success = GetClockFrequency(	m_ptrPhysicalHandlers[physHandlerNum],		
-														NVAPI_GPU_PUBLIC_CLOCK_PROCESSOR, 
+														NVAPI_GPU_PUBLIC_CLOCK_GRAPHICS, 
 														NV_GPU_CLOCK_FREQUENCIES_BASE_CLOCK,	
 														&baseClockFreq
 													);
@@ -1448,11 +1460,11 @@ namespace GraphicsCards
 	}
 
 	/// <summary>
-	/// Gets the GPU processor current clock frequency in kHz
+	/// Gets the graphics processor current clock frequency in kHz
 	/// </summary>
 	/// <param name="physHandlerNum">The physical handler index in memory</param>
-	/// <returns>The GPU processor current clock frequency in kHz as a float</returns>
-	float NvidiaGraphicsCard::GetProcessorCurrentClockFreq(ULONG physHandlerNum)
+	/// <returns>The graphics processor current clock frequency in kHz as a float</returns>
+	float NvidiaGraphicsCard::GetGraphicsCurrentClockFreq(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -1468,7 +1480,7 @@ namespace GraphicsCards
 					// get the current processor clock speed
 					// method will throw an exception if any errors occur
 					bool success = GetClockFrequency(	m_ptrPhysicalHandlers[physHandlerNum], 
-														NVAPI_GPU_PUBLIC_CLOCK_PROCESSOR, 
+														NVAPI_GPU_PUBLIC_CLOCK_GRAPHICS, 
 														NV_GPU_CLOCK_FREQUENCIES_CURRENT_FREQ, 
 														&currentClockFreq
 													);
@@ -1495,11 +1507,11 @@ namespace GraphicsCards
 	}
 
 	/// <summary>
-	/// Gets the GPU processor boost clock frequency in kHz
+	/// Gets the graphics processor boost clock frequency in kHz
 	/// </summary>
 	/// <param name="physHandlerNum">The physical handler index in memory</param>
-	/// <returns>The GPU processor boost clock frequency in kHz as a float</returns>
-	float NvidiaGraphicsCard::GetProcessorBoostClockFreq(ULONG physHandlerNum)
+	/// <returns>The graphics processor boost clock frequency in kHz as a float</returns>
+	float NvidiaGraphicsCard::GetGraphicsBoostClockFreq(ULONG physHandlerNum)
 	{
 		try
 		{
@@ -1515,7 +1527,7 @@ namespace GraphicsCards
 					// get the processor boost clock frequency
 					// method throws an exception if an error occurs
 					bool success = GetClockFrequency(	m_ptrPhysicalHandlers[physHandlerNum], 
-														NVAPI_GPU_PUBLIC_CLOCK_PROCESSOR, 
+														NVAPI_GPU_PUBLIC_CLOCK_GRAPHICS, 
 														NV_GPU_CLOCK_FREQUENCIES_BOOST_CLOCK, 
 														&boostClockFreq
 													);
