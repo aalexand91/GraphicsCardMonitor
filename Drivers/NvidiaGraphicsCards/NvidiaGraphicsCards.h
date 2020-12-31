@@ -49,12 +49,12 @@ namespace GraphicsCards
 		// Private Class Members
 		//****************************************************************************
 		private:
-			NvAPI_Status			_apiStatus;			// the API status
-			bool					_apiInit;			// the API initialization status
-			bool					_handlersInit;		// determines if handlers are initialized
-			NvPhysicalGpuHandle*	_physicalHandlers;	// points to location of GPU physical handlers
-			NvU32					_numPhysHandlers;	// the number of physical handlers
-			PciIdentifiers^			_pciIdentities;		// the PCI IDs for the GPU
+			NvAPI_Status			m_apiStatus;			// the API status
+			bool					m_apiInit;				// the API initialization status
+			bool					m_handlersInit;			// determines if handlers are initialized
+			NvPhysicalGpuHandle*	m_ptrPhysicalHandlers;	// points to location of GPU physical handlers
+			NvU32					m_numPhysHandlers;		// the number of physical handlers
+			PciIdentifiers^			m_ptrPciIdentities;		// the PCI IDs for the GPU
 
 		//****************************************************************************
 		// Private Class Methods
@@ -302,22 +302,22 @@ namespace GraphicsCards
 			/// Gets the base clock speed of the GPU processor in kHz
 			/// </summary>
 			/// <param name="physHandlerNum">The physical handler index in memory</param>
-			/// <returns>The GPU processor base clock speed in kHz as a float</returns>
-			virtual float GetProcessorBaseClockFreq(ULONG physHandlerNum);
+			/// <returns>The graphics processor base clock speed in kHz as a float</returns>
+			virtual float GetGraphicsBaseClockFreq(ULONG physHandlerNum);
 
 			/// <summary>
 			/// Gets the GPU processor current clock frequency in kHz
 			/// </summary>
 			/// <param name="physHandlerNum">The physical handler index in memory</param>
-			/// <returns>The GPU processor current clock frequency in kHz as a float</returns>
-			virtual float GetProcessorCurrentClockFreq(ULONG physHandlerNum);
+			/// <returns>The graphics processor current clock frequency in kHz as a float</returns>
+			virtual float GetGraphicsCurrentClockFreq(ULONG physHandlerNum);
 
 			/// <summary>
 			/// Gets the GPU processor boost clock frequency in kHz
 			/// </summary>
 			/// <param name="physHandlerNum">The physical handler index in memory</param>
-			/// <returns>The GPU processor boost clock frequency in kHz as a float</returns>
-			virtual float GetProcessorBoostClockFreq(ULONG physHandlerNum);
+			/// <returns>The graphics processor boost clock frequency in kHz as a float</returns>
+			virtual float GetGraphicsBoostClockFreq(ULONG physHandlerNum);
 
 			/// <summary>
 			/// Gets the current performance state setting of the GPU

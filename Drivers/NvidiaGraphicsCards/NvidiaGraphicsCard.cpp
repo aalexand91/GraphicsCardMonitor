@@ -14,8 +14,18 @@
 #include "GraphicsCards_pch.h"		// pre-compiled header file
 #include "NvidiaGraphicsCards.h"	// contains function prototypes for this class
 
+#define NUM_PCI_ID_MEMBERS 5	// the number of members in a PciIdentifiers struct
+
 namespace GraphicsCards
 {
+	// WARNING: COMPILER ERROR C4715 IS LOGGED FOR EACH METHOD. THIS IS BECAUSE SOME OF THE RETURN
+	// PATHS THROW EXCEPTIONS, RATHER THAN THE RESPECTIVE RETURN TYPE. THIS WAS DONE ON PURPOSE
+	// SO THAT IF THE USER MISUSES THE GRAPHICS CARD DRIVER, AN EXCEPTION IS THROWN
+	// THE RESPECTIVE RETURN TYPE IS ONLY RETURNED IF DRIVER IS USED CORRECTLY
+	// DISABLING WARNING
+#pragma warning (push)
+#pragma warning (disable : 4715)
+
 	///********************************************************************************
 	/// Private Class Methods
 	///********************************************************************************
@@ -33,15 +43,15 @@ namespace GraphicsCards
 			NvAPI_ShortString errMsg = "\0";
 
 			// get the API status error message
-			_apiStatus = NvAPI_GetErrorMessage(apiStat, errMsg);
+			m_apiStatus = NvAPI_GetErrorMessage(apiStat, errMsg);
 
 			// if the API status is not ok, default the API error message
-			if (_apiStatus != NVAPI_OK)
+			if (m_apiStatus != NVAPI_OK)
 			{
 				strcpy_s(errMsg, sizeof(errMsg), "Could not determine API error message");
 			}
 			
-			return gcnew String(errMsg);
+			return "API error: " + gcnew String(errMsg);
 		}
 		catch (Exception^ ex)
 		{
@@ -50,6 +60,12 @@ namespace GraphicsCards
 			throw gcnew Exception(msg);
 		}
 	}
+
+	// WARNING: VISUAL STUDIO THROWS COMPILER WARNING ABOUT MEMCPY FUNCTION USING A VARIABLE THAT POSSIBLY
+	// HAS 0 BYTES OF MEMORY. PHYSICAL HANDLER MEMBER HAS AT LEAST TWO BLOCKS OF MEMORY OF NvPhysicalGpuHandle
+	// SIZE ALLOCATED BEFORE EXECUTING MEMCPY FUNCTION. DISABLING WARNING
+#pragma warning (push)
+#pragma warning (disable : 6387)
 
 	/// <summary>
 	/// Gets all physical GPU handlers in the system
@@ -60,32 +76,51 @@ namespace GraphicsCards
 		try
 		{
 			// check if the API has been initialized and is ready for use
-			if (_apiInit && _apiStatus == NVAPI_OK)
+			if (m_apiInit && m_apiStatus == NVAPI_OK)
 			{
 				// variable to store the number of physical handlers in the system
 				NvU32 numHandlers;
 
-				// get all physical GPUs in the system and store them in memory
-				// with the NvPhysicalGpuHandle member pointing to the memory location
-				_apiStatus = NvAPI_EnumTCCPhysicalGPUs(_physicalHandlers, &numHandlers);
+				// array of physical GPU handlers in memory
+				NvPhysicalGpuHandle physicalHandlers[NVAPI_MAX_PHYSICAL_GPUS];
+
+				// TODO: GET PHYSICAL GPU HANDLERS FOR GPUS RUNNIN IN TCC AND WDDM MODE
+
+				// get all physical GPUs in the system running in WDDM mode and store them in memory
+				// function adds each physical GPU handler to the array and the total number of handlers found
+				m_apiStatus = NvAPI_EnumPhysicalGPUs(physicalHandlers, &numHandlers);
 
 				// check if the API successfully obtained all physical handlers
-				if (_apiStatus == NVAPI_OK)
+				if (m_apiStatus == NVAPI_OK)
 				{
-					// API was successful, set number of handlers obtained
-					// return true since successful
-					_numPhysHandlers = numHandlers;
+					// API was successful
+					// allocate memory of the physical handler member
+					m_ptrPhysicalHandlers = (NvPhysicalGpuHandle*)calloc(numHandlers + 1, sizeof(NvPhysicalGpuHandle));
+
+					// copy the contents of the physical GPU handlers obtained to the physical handler member
+					memcpy(m_ptrPhysicalHandlers, physicalHandlers, (numHandlers * sizeof(NvPhysicalGpuHandle)));
+
+					// check if the physical handler member is still null
+					if (m_ptrPhysicalHandlers == NULL)
+					{
+						throw gcnew Exception("Physical handlers in memory was not copied to the NvidiaGraphicsCard NvPhysicalGpuHandle member.");
+					}
+
+					// set the total number of handlers found
+					m_numPhysHandlers = numHandlers;
+
+					// return that all physical handlers were found
 					return true;
 				}
 				else
 				{
 					// get the API error message
-					String^ errMsg = GetApiErrMsg(_apiStatus);
+					String^ errMsg = GetApiErrMsg(m_apiStatus);
 
 					// delete any data stored within at the handler address
 					// and re-assign the handler pointer to a nullptr
-					delete _physicalHandlers;
-					_physicalHandlers = NULL;
+					delete m_ptrPhysicalHandlers;
+					m_ptrPhysicalHandlers = NULL;
 
 					// throw an exception to let the user know the API error
 					throw gcnew Exception(errMsg);
@@ -104,6 +139,7 @@ namespace GraphicsCards
 			throw gcnew Exception(errMsg);
 		}
 	}
+#pragma warning (pop) // end #pragma warning (disable: 6387)
 
 	/// <summary>
 	/// Gets the default error message when the user incorrectly uses the driver
@@ -117,20 +153,20 @@ namespace GraphicsCards
 			String^ defaultMsg = "";
 
 			// if the API is not initialize, let the user know to initialize the API first
-			if (!_apiInit)
+			if (!m_apiInit)
 			{
 				defaultMsg = "API must be initialized first.";
 			}
 
 			// if the API status is not ok, let the user know the API error message
-			if (_apiStatus != NVAPI_OK)
+			if (m_apiStatus != NVAPI_OK)
 			{
-				defaultMsg = GetApiErrMsg(_apiStatus);
+				defaultMsg = GetApiErrMsg(m_apiStatus);
 			}
 
 			// if the GPU handlers have not been initialized, let the user know 
 			// to initialize the handlers first
-			if (!_handlersInit)
+			if (!m_handlersInit)
 			{
 				defaultMsg = "GPU handlers must be initialized first.";
 			}
@@ -161,10 +197,10 @@ namespace GraphicsCards
 			NvU32 externalId	= 0;	// GPU PCI external ID
 
 			// get all PCI IDs for the GPU
-			_apiStatus = NvAPI_GPU_GetPCIIdentifiers(_physicalHandlers[physHandlerNum], &internalId, &subsystemId, &revId, &externalId);
+			m_apiStatus = NvAPI_GPU_GetPCIIdentifiers(m_ptrPhysicalHandlers[physHandlerNum], &internalId, &subsystemId, &revId, &externalId);
 
 			// check if the API successfully obtained the PCI IDs for the GPU
-			if (_apiStatus == NVAPI_OK)
+			if (m_apiStatus == NVAPI_OK)
 			{
 				// the API successfully obtained the PCI IDs
 				// set all PciIdentifier member values
@@ -184,7 +220,7 @@ namespace GraphicsCards
 				ptrPciIdentifiers->externalId	= 0;
 
 				// let the user know there was an API error
-				throw gcnew Exception(GetApiErrMsg(_apiStatus));
+				throw gcnew Exception(GetApiErrMsg(m_apiStatus));
 			}
 		}
 		catch (Exception^ ex)
@@ -204,7 +240,7 @@ namespace GraphicsCards
 	bool NvidiaGraphicsCard::IsHandlerIndexValid(ULONG physHandlerNum)
 	{
 		// check if the handler index number if valid
-		if (physHandlerNum > (_numPhysHandlers - 1))
+		if (physHandlerNum > (m_numPhysHandlers - 1))
 		{
 			// let the user know the handler index is invalid
 			throw gcnew Exception("Physical handler number greater than total number of handlers.");
@@ -279,29 +315,47 @@ namespace GraphicsCards
 			}
 			else
 			{
-				bool						success = true;	// determines if API successfully get the thermal settings for the selected device
-				NV_GPU_THERMAL_SETTINGS_V2* ptrThermalSettings = 0;	// pointer to the device thermal settings data
+				bool						success			= true;		// determines if API successfully get the thermal settings for the selected device
+				NV_GPU_THERMAL_SETTINGS_V2	thermalSettings = { 0 };	// device thermal settings data
 
-				// get the thermal settings for the thermal device
-				// ptrThermalSettings will point to the address where the data of the thermal device is stored
-				_apiStatus = NvAPI_GPU_GetThermalSettings(physHandler, deviceType, ptrThermalSettings);
+				// set all thermal settings version
+				thermalSettings.version	= NV_GPU_THERMAL_SETTINGS_VER_2;
+
+				// get the thermal settings for all thermal devices the graphics card has
+				m_apiStatus = NvAPI_GPU_GetThermalSettings(physHandler, NVAPI_THERMAL_TARGET_ALL, &thermalSettings);
 
 				// check if the API successfully obtained the device thermal settings
-				if (_apiStatus == NVAPI_OK && ptrThermalSettings != NULL)
+				if (m_apiStatus == NVAPI_OK)
 				{
+					bool targetDeviceFound = false;	// determines if the target sensor was found
+
 					// the API obtained the device temperature
-					// set the value of the device temperature by dereferencing the pointer
-					*ptrDeviceTemp = static_cast<float>(ptrThermalSettings[0].sensor[0].currentTemp);
+					// iterate through all possible sensors on the board and determine if the current sensor matches the one under test
+					for (int i = 0; i < NVAPI_MAX_THERMAL_SENSORS_PER_GPU; i++)
+					{
+						// check if the current sensor matches the target device
+						if (thermalSettings.sensor[i].target == deviceType)
+						{
+							// sensor found
+							targetDeviceFound = true;
+
+							// set the value of the device temperature by dereferencing the pointer and break from the loop
+							*ptrDeviceTemp = static_cast<float>(thermalSettings.sensor[0].currentTemp);
+							break;
+						}
+					}
+					
+					// check if the target sensor device was not found
+					if (!targetDeviceFound)
+					{
+						// let the user know that the thermal device does not exists
+						throw gcnew Exception(GetTempDeviceName(deviceType) + " sensor does not exists for graphics card.");
+					}
 				}
 				else
 				{
-					// delete any data from the thermal settings pointer and
-					// set the thermal settings pointer to null to ensure the pointer is not floating
-					delete ptrThermalSettings;
-					ptrThermalSettings = NULL;
-
 					// let the user know an API error occurred
-					throw gcnew Exception(GetApiErrMsg(_apiStatus));
+					throw gcnew Exception(GetApiErrMsg(m_apiStatus));
 				}
 
 				// return if thermal settings were successfully obtained
@@ -398,22 +452,23 @@ namespace GraphicsCards
 			bool						success					= true;		// determines if clock frequency is successfully obtained
 			NV_GPU_CLOCK_FREQUENCIES	clockFrequencies		= { 0 };	// struct containing all GPU clock data
 
+			// set the NV_GPU_CLOCK_FREQUENCIES version and clock type
+			clockFrequencies.version	= NV_GPU_CLOCK_FREQUENCIES_VER_3;
+			clockFrequencies.ClockType	= clockType;
+
 			// get the clock frequency data for specific GPU clock type
-			_apiStatus = NvAPI_GPU_GetAllClockFrequencies(physHandler, &clockFrequencies);
+			m_apiStatus = NvAPI_GPU_GetAllClockFrequencies(physHandler, &clockFrequencies);
 
 			// check if the API successfully obtained all GPU clock frequencies
-			if (_apiStatus == NVAPI_OK)
+			if (m_apiStatus == NVAPI_OK)
 			{
-				// set the clock type to be returned
-				clockFrequencies.ClockType = clockType;
-
 				// assign the clock frequency data using the clock ID and clock type
 				*ptrClockSpeed = static_cast<float>(clockFrequencies.domain[clockId].frequency);
 			}
 			else
 			{
 				// let the user know an API error occurred
-				throw gcnew Exception(GetApiErrMsg(_apiStatus));
+				throw gcnew Exception(GetApiErrMsg(m_apiStatus));
 			}
 
 			// return if the clock frequency was successfully obtained or not
@@ -440,10 +495,10 @@ namespace GraphicsCards
 			NV_GPU_PERF_PSTATE_ID gpuStateId;	// the GPU performance state ID
 
 			// get the GPU performance state
-			_apiStatus = NvAPI_GPU_GetCurrentPstate(physHandler, &gpuStateId);
+			m_apiStatus = NvAPI_GPU_GetCurrentPstate(physHandler, &gpuStateId);
 
 			// check if the API successfully obtained the GPU performance state ID
-			if (_apiStatus == NVAPI_OK)
+			if (m_apiStatus == NVAPI_OK)
 			{
 				// return the GPU performance state ID stored
 				return gpuStateId;
@@ -451,7 +506,7 @@ namespace GraphicsCards
 			else
 			{
 				// let the user know an API error occurred
-				throw gcnew Exception(GetApiErrMsg(_apiStatus));
+				throw gcnew Exception(GetApiErrMsg(m_apiStatus));
 			}
 		}
 		catch (Exception^ ex)
@@ -512,16 +567,12 @@ namespace GraphicsCards
 	NvidiaGraphicsCard::NvidiaGraphicsCard()
 	{
 		// default all class members
-		_apiStatus					= NVAPI_API_NOT_INITIALIZED;
-		_apiInit					= false;
-		_handlersInit				= false;
-		_physicalHandlers			= 0;
-		_numPhysHandlers			= 0;
-		_pciIdentities->hasIdInfo	= false;
-		_pciIdentities->internalId	= 0;
-		_pciIdentities->revId		= 0;
-		_pciIdentities->subsystemId = 0;
-		_pciIdentities->externalId	= 0;
+		m_apiStatus					= NVAPI_API_NOT_INITIALIZED;
+		m_apiInit					= false;
+		m_handlersInit				= false;
+		m_ptrPhysicalHandlers		= nullptr;
+		m_numPhysHandlers			= 0;
+		m_ptrPciIdentities			= gcnew PciIdentifiers;
 	}
 
 	/// <summary>
@@ -530,10 +581,11 @@ namespace GraphicsCards
 	NvidiaGraphicsCard::~NvidiaGraphicsCard()
 	{
 		// free the physical GPUs and PCI identifier data from memory
-		// and set the physical GPU handler pointer to null
+		// and set the physical GPU handler pointer and PCI identities pointer to null
 		// all other class members will be deleted from memory on their own
-		delete _physicalHandlers, _pciIdentities;
-		_physicalHandlers = NULL;
+		delete m_ptrPhysicalHandlers, m_ptrPciIdentities;
+		m_ptrPhysicalHandlers	= nullptr;
+		m_ptrPciIdentities		= nullptr;
 	}
 
 	/// <summary>
@@ -548,22 +600,22 @@ namespace GraphicsCards
 		try
 		{
 			// initialize the Nvidia API
-			_apiStatus = NvAPI_Initialize();
+			m_apiStatus = NvAPI_Initialize();
 
 			// check if the API successfully initialized
-			if (_apiStatus == NVAPI_OK)
+			if (m_apiStatus == NVAPI_OK)
 			{
 				// the API successfully initialized, return true
-				_apiInit = true;
-				return _apiInit;
+				m_apiInit = true;
+				return m_apiInit;
 			}
 			else
 			{
 				// set the API initialization status to false
-				_apiInit = false;
+				m_apiInit = false;
 
 				// throw an exception to let the user know the API error that occurred
-				throw gcnew Exception(GetApiErrMsg(_apiStatus));
+				throw gcnew Exception(GetApiErrMsg(m_apiStatus));
 			}
 		}
 		catch (Exception^ ex)
@@ -583,7 +635,7 @@ namespace GraphicsCards
 		try
 		{
 			// initialize the gpu handlers
-			return _handlersInit = GetPhysicalHandlers();
+			return m_handlersInit = GetPhysicalHandlers();
 		}
 		catch (Exception^ ex)
 		{
@@ -603,11 +655,11 @@ namespace GraphicsCards
 		{
 			// check if API is initialize and okay
 			// also check if the GPU handlers have been initialized
-			if (_apiInit && _apiStatus == NVAPI_OK && _handlersInit)
+			if (m_apiInit && m_apiStatus == NVAPI_OK && m_handlersInit)
 			{
 				// API is good and handlers are initialized
 				// return the number of GPU handlers
-				return _numPhysHandlers;
+				return m_numPhysHandlers;
 			}
 			else
 			{
@@ -635,7 +687,7 @@ namespace GraphicsCards
 		{
 			// check if the API is initialized and ready
 			// also check if the GPU handlers have been initialized
-			if (_apiInit && _apiStatus == NVAPI_OK && _handlersInit)
+			if (m_apiInit && m_apiStatus == NVAPI_OK && m_handlersInit)
 			{
 				// check if the physical handler index is valid
 				if (IsHandlerIndexValid(physHandlerNum))
@@ -643,10 +695,10 @@ namespace GraphicsCards
 					NvU32 numCores; // stores the number of GPU cores
 
 					// get the number of GPU cores for the selected physical handler
-					_apiStatus = NvAPI_GPU_GetGpuCoreCount(_physicalHandlers[physHandlerNum], &numCores);
+					m_apiStatus = NvAPI_GPU_GetGpuCoreCount(m_ptrPhysicalHandlers[physHandlerNum], &numCores);
 
 					// check if the API okay after trying to obtain number of GPU cores
-					if (_apiStatus == NVAPI_OK)
+					if (m_apiStatus == NVAPI_OK)
 					{
 						// API is okay, return the number of GPU cores
 						return numCores;
@@ -655,7 +707,7 @@ namespace GraphicsCards
 					{
 						// error occurred with API
 						// determine API error and throw it as an exception
-						throw gcnew Exception(GetApiErrMsg(_apiStatus));
+						throw gcnew Exception(GetApiErrMsg(m_apiStatus));
 					}
 				}
 			}
@@ -685,7 +737,7 @@ namespace GraphicsCards
 		{
 			// check if API is initialized and ok
 			// also check if the GPU handlers have been initialized
-			if (_apiInit && _apiStatus == NVAPI_OK && _handlersInit)
+			if (m_apiInit && m_apiStatus == NVAPI_OK && m_handlersInit)
 			{
 				// check if the physical handler index is valid
 				if (IsHandlerIndexValid(physHandlerNum))
@@ -693,10 +745,10 @@ namespace GraphicsCards
 					NvAPI_ShortString name;	// stores the graphics card name
 
 					// use the physical handler to get the selected graphics card name
-					_apiStatus = NvAPI_GPU_GetFullName(_physicalHandlers[physHandlerNum], name);
+					m_apiStatus = NvAPI_GPU_GetFullName(m_ptrPhysicalHandlers[physHandlerNum], name);
 
 					// check if the API status is ok
-					if (_apiStatus == NVAPI_OK)
+					if (m_apiStatus == NVAPI_OK)
 					{
 						// API is ok, return the graphics card name
 						return gcnew String(name);
@@ -705,7 +757,7 @@ namespace GraphicsCards
 					{
 						// an API error occurred
 						// throw an exception to let the user know
-						throw gcnew Exception(GetApiErrMsg(_apiStatus));
+						throw gcnew Exception(GetApiErrMsg(m_apiStatus));
 					}
 				}
 			}
@@ -735,7 +787,7 @@ namespace GraphicsCards
 		{
 			// check if API is initialized and ok
 			// also check if GPU handlers have been initialized
-			if (_apiInit && _apiStatus == NVAPI_OK && _handlersInit)
+			if (m_apiInit && m_apiStatus == NVAPI_OK && m_handlersInit)
 			{
 				// check if the selected handler index is invalid
 				if (IsHandlerIndexValid(physHandlerNum))
@@ -743,10 +795,10 @@ namespace GraphicsCards
 					NvAPI_ShortString vbiosInfo;	// stores the VBIOS info
 
 					// get the VBIO information for the selected GPU
-					_apiStatus = NvAPI_GPU_GetVbiosVersionString(_physicalHandlers[physHandlerNum], vbiosInfo);
+					m_apiStatus = NvAPI_GPU_GetVbiosVersionString(m_ptrPhysicalHandlers[physHandlerNum], vbiosInfo);
 
 					// check if API is ok
-					if (_apiStatus == NVAPI_OK)
+					if (m_apiStatus == NVAPI_OK)
 					{
 						// API is okay, return the VBIO info
 						return gcnew String(vbiosInfo);
@@ -754,7 +806,7 @@ namespace GraphicsCards
 					else
 					{
 						// let the user know an API error occurred
-						throw gcnew Exception(GetApiErrMsg(_apiStatus));
+						throw gcnew Exception(GetApiErrMsg(m_apiStatus));
 					}
 				}
 			}
@@ -784,7 +836,7 @@ namespace GraphicsCards
 		{
 			// check if API is initialized and ok
 			// also check if GPU handlers are initialized
-			if (_apiInit && _apiStatus == NVAPI_OK && _handlersInit)
+			if (m_apiInit && m_apiStatus == NVAPI_OK && m_handlersInit)
 			{
 				// check if handler index selected is valid
 				if (IsHandlerIndexValid(physHandlerNum))
@@ -792,10 +844,10 @@ namespace GraphicsCards
 					NvU32 virtualRamSize;	// stores virtual RAM size in KB
 
 					// get the virtual RAM size of the selected handler
-					_apiStatus = NvAPI_GPU_GetVirtualFrameBufferSize(_physicalHandlers[physHandlerNum], &virtualRamSize);
+					m_apiStatus = NvAPI_GPU_GetVirtualFrameBufferSize(m_ptrPhysicalHandlers[physHandlerNum], &virtualRamSize);
 
 					// check if the API status is ok
-					if (_apiStatus == NVAPI_OK)
+					if (m_apiStatus == NVAPI_OK)
 					{
 						// API is ok, return the virtual RAM size in KB
 						return virtualRamSize;
@@ -803,7 +855,7 @@ namespace GraphicsCards
 					else
 					{
 						// let the user know an API error occurred
-						throw gcnew Exception(GetApiErrMsg(_apiStatus));
+						throw gcnew Exception(GetApiErrMsg(m_apiStatus));
 					}
 				}
 			}
@@ -832,7 +884,7 @@ namespace GraphicsCards
 		{
 			// check if the API is okay and initialized
 			// also check if the GPU handlers are initialized
-			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			if (m_apiStatus == NVAPI_OK && m_apiInit && m_handlersInit)
 			{
 				// check if the handler index is valid
 				if (IsHandlerIndexValid(physHandlerNum))
@@ -840,10 +892,10 @@ namespace GraphicsCards
 					NvU32 physRamSize; // the physical GPU RAM size in KB
 
 					// get the physical RAM size of the selected GPU
-					_apiStatus = NvAPI_GPU_GetPhysicalFrameBufferSize(_physicalHandlers[physHandlerNum], &physRamSize);
+					m_apiStatus = NvAPI_GPU_GetPhysicalFrameBufferSize(m_ptrPhysicalHandlers[physHandlerNum], &physRamSize);
 
 					// check if the API succesfully obtained the GPU Physical RAM size
-					if (_apiStatus == NVAPI_OK)
+					if (m_apiStatus == NVAPI_OK)
 					{
 						// API successfully obtained physical RAM size
 						// return the GPU physical RAM size in KB
@@ -852,7 +904,7 @@ namespace GraphicsCards
 					else
 					{
 						// let the user know an error occurred with the API
-						throw gcnew Exception(GetApiErrMsg(_apiStatus));
+						throw gcnew Exception(GetApiErrMsg(m_apiStatus));
 					}
 				}
 			}
@@ -881,27 +933,39 @@ namespace GraphicsCards
 		{
 			// check if the API is okay and initialized
 			// also check if the GPU handler have been initialized
-			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			if (m_apiStatus == NVAPI_OK && m_apiInit && m_handlersInit)
 			{
 				// check if the handler index is valid
 				if (IsHandlerIndexValid(physHandlerNum))
 				{
-					NV_BOARD_INFO boardInfo;	// variable to store the graphics card info
+					NV_BOARD_INFO_V1 boardInfo	= { 0 };	// variable to store the graphics card info
+					boardInfo.version			= NV_BOARD_INFO_VER1;
 
 					// get the graphics card information for the selected GPU
-					_apiStatus = NvAPI_GPU_GetBoardInfo(_physicalHandlers[physHandlerNum], &boardInfo);
+					m_apiStatus = NvAPI_GPU_GetBoardInfo(m_ptrPhysicalHandlers[physHandlerNum], &boardInfo);
 
 					// check if the API successfully obtained information for the graphics card
-					if (_apiStatus == NVAPI_OK)
+					if (m_apiStatus == NVAPI_OK)
 					{
+						String^ serialNumber = "";	// the graphics card serial number
+
 						// the API was successful
-						// store the board serial number
-						return gcnew String((const char*)boardInfo.BoardNum);
+						// get total number of characters the serial number has
+						size_t numElements = (sizeof(boardInfo.BoardNum) / sizeof(boardInfo.BoardNum[0]));
+
+						// iterate through each character and add them to the variable to return
+						for (size_t i = 0; i < numElements; i++)
+						{
+							serialNumber += boardInfo.BoardNum[i];
+						}
+
+						// return the board serial number
+						return serialNumber;
 					}
 					else
 					{
 						// let the user know an error occurred with the API
-						throw gcnew Exception(GetApiErrMsg(_apiStatus));
+						throw gcnew Exception(GetApiErrMsg(m_apiStatus));
 					}
 				}
 			}
@@ -930,19 +994,19 @@ namespace GraphicsCards
 		{
 			// check if the API is okay and initialized
 			// also check if the GPU handler have been initialized
-			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			if (m_apiStatus == NVAPI_OK && m_apiInit && m_handlersInit)
 			{
 				// check if the handler index is valid
 				if (IsHandlerIndexValid(physHandlerNum))
 				{
 					// check if the the PCI IDs have not been obtained
-					if (!_pciIdentities->hasIdInfo)
+					if (!m_ptrPciIdentities->hasIdInfo)
 					{
-						GetPciIds(physHandlerNum, _pciIdentities);
+						GetPciIds(physHandlerNum, m_ptrPciIdentities);
 					}
 
 					// return the internal GPU PCI ID
-					return _pciIdentities->internalId;
+					return m_ptrPciIdentities->internalId;
 				}
 			}
 			else
@@ -970,20 +1034,20 @@ namespace GraphicsCards
 		{
 			// check if the API is okay and initialized
 			// also check if the GPU handler has been initialized
-			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			if (m_apiStatus == NVAPI_OK && m_apiInit && m_handlersInit)
 			{
 				// check if the handler index is valid
 				if (IsHandlerIndexValid(physHandlerNum))
 				{
 					// check if the PCI IDs have not been obtained yet
-					if (!_pciIdentities->hasIdInfo)
+					if (!m_ptrPciIdentities->hasIdInfo)
 					{
 						// PCI IDs have not been obtained yet so get them first
-						GetPciIds(physHandlerNum, _pciIdentities);
+						GetPciIds(physHandlerNum, m_ptrPciIdentities);
 					}
 
 					// return the PCI revision ID
-					return _pciIdentities->revId;
+					return m_ptrPciIdentities->revId;
 				}
 			}
 			else
@@ -1011,20 +1075,20 @@ namespace GraphicsCards
 		{
 			// check if the API is okay and initialized
 			// also check if the GPU handler has been initialized
-			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			if (m_apiStatus == NVAPI_OK && m_apiInit && m_handlersInit)
 			{
 				// check if the handler index if valid
 				if (IsHandlerIndexValid(physHandlerNum))
 				{
 					// check if the PCI IDs have not been obtained
-					if (!_pciIdentities->hasIdInfo)
+					if (!m_ptrPciIdentities->hasIdInfo)
 					{
 						// GPU PCI IDs have not been obtained yet so go get them
-						GetPciIds(physHandlerNum, _pciIdentities);
+						GetPciIds(physHandlerNum, m_ptrPciIdentities);
 					}
 
 					// return the PCI subsystem ID
-					return _pciIdentities->subsystemId;
+					return m_ptrPciIdentities->subsystemId;
 				}
 			}
 			else
@@ -1052,20 +1116,20 @@ namespace GraphicsCards
 		{
 			// check if the API is okay and initialized
 			// also check if the GPU handler has been initialized
-			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			if (m_apiStatus == NVAPI_OK && m_apiInit && m_handlersInit)
 			{
 				// check if the handler index is valid
 				if (IsHandlerIndexValid(physHandlerNum))
 				{
 					// check if the GPU PCI IDs have not been obtained
-					if (!_pciIdentities->hasIdInfo)
+					if (!m_ptrPciIdentities->hasIdInfo)
 					{
 						// GPU PCI IDs have not been obtained yet so go get them
-						GetPciIds(physHandlerNum, _pciIdentities);
+						GetPciIds(physHandlerNum, m_ptrPciIdentities);
 					}
 
 					// return the PCI external ID
-					return _pciIdentities->externalId;
+					return m_ptrPciIdentities->externalId;
 				}
 			}
 			else
@@ -1093,7 +1157,7 @@ namespace GraphicsCards
 		{
 			// check if the API is okay and initialized
 			// also check if the GPU handlers have been initialized
-			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			if (m_apiStatus == NVAPI_OK && m_apiInit && m_handlersInit)
 			{
 				// check if the handler index is valid
 				if (IsHandlerIndexValid(physHandlerNum))
@@ -1101,17 +1165,17 @@ namespace GraphicsCards
 					NvU32 busID = 0;	// the GPU Bus ID
 
 					// get the GPU Bus ID
-					_apiStatus = NvAPI_GPU_GetBusId(_physicalHandlers[physHandlerNum], &busID);
+					m_apiStatus = NvAPI_GPU_GetBusId(m_ptrPhysicalHandlers[physHandlerNum], &busID);
 
 					// check if the API successfully obtained the GPU bus ID
-					if (_apiStatus == NVAPI_OK)
+					if (m_apiStatus == NVAPI_OK)
 					{
 						return busID;
 					}
 					else
 					{
 						// let the user know an API error occurred
-						throw gcnew Exception(GetApiErrMsg(_apiStatus));
+						throw gcnew Exception(GetApiErrMsg(m_apiStatus));
 					}
 				}
 			}
@@ -1140,7 +1204,7 @@ namespace GraphicsCards
 		{
 			// check if the API is okay and initialized
 			// also check if the GPU handler is initialized
-			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			if (m_apiStatus == NVAPI_OK && m_apiInit && m_handlersInit)
 			{
 				// check if the handler index is valid
 				if (IsHandlerIndexValid(physHandlerNum))
@@ -1149,7 +1213,7 @@ namespace GraphicsCards
 
 					// get the GPU core temperature
 					// method throws an exception if any errors occurr
-					bool success = GetDeviceTemperature(_physicalHandlers[physHandlerNum], NVAPI_THERMAL_TARGET_GPU, &coreTemp);
+					bool success = GetDeviceTemperature(m_ptrPhysicalHandlers[physHandlerNum], NVAPI_THERMAL_TARGET_GPU, &coreTemp);
 
 					// check if the API successfully obtained the GPU temperature
 					if (success)
@@ -1184,7 +1248,7 @@ namespace GraphicsCards
 		{
 			// check if the API is okay and initialized
 			// also check if the GPU handler is initialized
-			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			if (m_apiStatus == NVAPI_OK && m_apiInit && m_handlersInit)
 			{
 				// check if the handler index is valid
 				if (IsHandlerIndexValid(physHandlerNum))
@@ -1193,7 +1257,7 @@ namespace GraphicsCards
 
 					// get the GPU memory temperature
 					// method throws an exception if any errors occurr
-					bool success = GetDeviceTemperature(_physicalHandlers[physHandlerNum], NVAPI_THERMAL_TARGET_MEMORY, &memoryTemp);
+					bool success = GetDeviceTemperature(m_ptrPhysicalHandlers[physHandlerNum], NVAPI_THERMAL_TARGET_MEMORY, &memoryTemp);
 
 					// check if the memory temperature was obtained successfully
 					if (success)
@@ -1227,7 +1291,7 @@ namespace GraphicsCards
 		{
 			// check if the API is okay and initialized
 			// also check if the GPU handler is initialized
-			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			if (m_apiStatus == NVAPI_OK && m_apiInit && m_handlersInit)
 			{
 				// check if the handler index is valid
 				if (IsHandlerIndexValid(physHandlerNum))
@@ -1236,7 +1300,7 @@ namespace GraphicsCards
 
 					// get the GPU power supply temperature
 					// method throws an exception if any errors occurr
-					bool success = GetDeviceTemperature(_physicalHandlers[physHandlerNum], NVAPI_THERMAL_TARGET_POWER_SUPPLY, &powerSupplyTemp);
+					bool success = GetDeviceTemperature(m_ptrPhysicalHandlers[physHandlerNum], NVAPI_THERMAL_TARGET_POWER_SUPPLY, &powerSupplyTemp);
 
 					// check if the GPU power supply temperature was successfully obtained
 					if (success)
@@ -1270,7 +1334,7 @@ namespace GraphicsCards
 		{
 			// check if the API is okay and initialized
 			// also check if the GPU handler is initialized
-			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			if (m_apiStatus == NVAPI_OK && m_apiInit && m_handlersInit)
 			{
 				// check if the handler index is valid
 				if (IsHandlerIndexValid(physHandlerNum))
@@ -1279,7 +1343,7 @@ namespace GraphicsCards
 
 					// get the GPU board temperature
 					// method throws an exception if any errors occur
-					bool success = GetDeviceTemperature(_physicalHandlers[physHandlerNum], NVAPI_THERMAL_TARGET_BOARD, &boardTemp);
+					bool success = GetDeviceTemperature(m_ptrPhysicalHandlers[physHandlerNum], NVAPI_THERMAL_TARGET_BOARD, &boardTemp);
 
 					// check if the board temperature was succesfully obtained
 					if (success)
@@ -1313,7 +1377,7 @@ namespace GraphicsCards
 		{
 			// check if the API is okay and initialized
 			// also check if the GPU handler is initialized
-			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			if (m_apiStatus == NVAPI_OK && m_apiInit && m_handlersInit)
 			{
 				// check if the handler index is valid
 				if (IsHandlerIndexValid(physHandlerNum))
@@ -1321,18 +1385,18 @@ namespace GraphicsCards
 					NvU32 fanSpeed = 0;		// the GPU fan speed reading
 
 					// get the GPU fan speed
-					_apiStatus = NvAPI_GPU_GetTachReading(_physicalHandlers[physHandlerNum], &fanSpeed);
+					m_apiStatus = NvAPI_GPU_GetTachReading(m_ptrPhysicalHandlers[physHandlerNum], &fanSpeed);
 
 					// check if the API successfully obtained the GPU fanspeed
-					if (_apiStatus == NVAPI_OK)
+					if (m_apiStatus == NVAPI_OK)
 					{
-						// retunr the GPU fan speed
+						// return the GPU fan speed
 						return fanSpeed;
 					}
 					else
 					{
 						// let the user know an error occurred obtaining the GPU fanspeed
-						throw gcnew Exception(GetApiErrMsg(_apiStatus));
+						throw gcnew Exception(GetApiErrMsg(m_apiStatus));
 					}
 				}
 			}
@@ -1351,17 +1415,17 @@ namespace GraphicsCards
 	}
 
 	/// <summary>
-	/// Gets the base clock speed of the GPU processor in kHz
+	/// Gets the base clock speed of the graphics processor in kHz
 	/// </summary>
 	/// <param name="physHandlerNum">The physical handler index in memory</param>
-	/// <returns>The GPU processor base clock speed in kHz as a float</returns>
-	float NvidiaGraphicsCard::GetProcessorBaseClockFreq(ULONG physHandlerNum)
+	/// <returns>The graphics processor base clock speed in kHz as a float</returns>
+	float NvidiaGraphicsCard::GetGraphicsBaseClockFreq(ULONG physHandlerNum)
 	{
 		try
 		{
 			// check if the API is okay and initialized
 			// also check if the GPU handler is initialized
-			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			if (m_apiStatus == NVAPI_OK && m_apiInit && m_handlersInit)
 			{
 				// check if the handler index is valid
 				if (IsHandlerIndexValid(physHandlerNum))
@@ -1370,8 +1434,8 @@ namespace GraphicsCards
 
 					// get the processor base clock frequency
 					// method throws an exception if an error occurs
-					bool success = GetClockFrequency(	_physicalHandlers[physHandlerNum],		
-														NVAPI_GPU_PUBLIC_CLOCK_PROCESSOR, 
+					bool success = GetClockFrequency(	m_ptrPhysicalHandlers[physHandlerNum],		
+														NVAPI_GPU_PUBLIC_CLOCK_GRAPHICS, 
 														NV_GPU_CLOCK_FREQUENCIES_BASE_CLOCK,	
 														&baseClockFreq
 													);
@@ -1398,17 +1462,17 @@ namespace GraphicsCards
 	}
 
 	/// <summary>
-	/// Gets the GPU processor current clock frequency in kHz
+	/// Gets the graphics processor current clock frequency in kHz
 	/// </summary>
 	/// <param name="physHandlerNum">The physical handler index in memory</param>
-	/// <returns>The GPU processor current clock frequency in kHz as a float</returns>
-	float NvidiaGraphicsCard::GetProcessorCurrentClockFreq(ULONG physHandlerNum)
+	/// <returns>The graphics processor current clock frequency in kHz as a float</returns>
+	float NvidiaGraphicsCard::GetGraphicsCurrentClockFreq(ULONG physHandlerNum)
 	{
 		try
 		{
 			// check if the API is okay and initialized
 			// also check if the GPU handler is initialized
-			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			if (m_apiStatus == NVAPI_OK && m_apiInit && m_handlersInit)
 			{
 				// check if the handler index is valid
 				if (IsHandlerIndexValid(physHandlerNum))
@@ -1417,8 +1481,8 @@ namespace GraphicsCards
 
 					// get the current processor clock speed
 					// method will throw an exception if any errors occur
-					bool success = GetClockFrequency(	_physicalHandlers[physHandlerNum], 
-														NVAPI_GPU_PUBLIC_CLOCK_PROCESSOR, 
+					bool success = GetClockFrequency(	m_ptrPhysicalHandlers[physHandlerNum], 
+														NVAPI_GPU_PUBLIC_CLOCK_GRAPHICS, 
 														NV_GPU_CLOCK_FREQUENCIES_CURRENT_FREQ, 
 														&currentClockFreq
 													);
@@ -1445,17 +1509,17 @@ namespace GraphicsCards
 	}
 
 	/// <summary>
-	/// Gets the GPU processor boost clock frequency in kHz
+	/// Gets the graphics processor boost clock frequency in kHz
 	/// </summary>
 	/// <param name="physHandlerNum">The physical handler index in memory</param>
-	/// <returns>The GPU processor boost clock frequency in kHz as a float</returns>
-	float NvidiaGraphicsCard::GetProcessorBoostClockFreq(ULONG physHandlerNum)
+	/// <returns>The graphics processor boost clock frequency in kHz as a float</returns>
+	float NvidiaGraphicsCard::GetGraphicsBoostClockFreq(ULONG physHandlerNum)
 	{
 		try
 		{
 			// check if the API is okay and initialized
 			// also check if the GPU handler is initialized
-			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			if (m_apiStatus == NVAPI_OK && m_apiInit && m_handlersInit)
 			{
 				// check if the handler index is valid or not
 				if (IsHandlerIndexValid(physHandlerNum))
@@ -1464,8 +1528,8 @@ namespace GraphicsCards
 
 					// get the processor boost clock frequency
 					// method throws an exception if an error occurs
-					bool success = GetClockFrequency(	_physicalHandlers[physHandlerNum], 
-														NVAPI_GPU_PUBLIC_CLOCK_PROCESSOR, 
+					bool success = GetClockFrequency(	m_ptrPhysicalHandlers[physHandlerNum], 
+														NVAPI_GPU_PUBLIC_CLOCK_GRAPHICS, 
 														NV_GPU_CLOCK_FREQUENCIES_BOOST_CLOCK, 
 														&boostClockFreq
 													);
@@ -1502,14 +1566,14 @@ namespace GraphicsCards
 		{
 			// check if the API is okay and initialized
 			// also check if the GPU handler is initialized
-			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			if (m_apiStatus == NVAPI_OK && m_apiInit && m_handlersInit)
 			{
 				// check if the handler index is valid
 				if (IsHandlerIndexValid(physHandlerNum))
 				{
 					// get the current GPU performance state ID
 					// method throws an exception if any errors occur
-					NV_GPU_PERF_PSTATE_ID perfState = GetPerformanceStateId(_physicalHandlers[physHandlerNum]);
+					NV_GPU_PERF_PSTATE_ID perfState = GetPerformanceStateId(m_ptrPhysicalHandlers[physHandlerNum]);
 
 					// convert and return the current GPU performance state as a System::String
 					return GetPerformanceState(perfState);
@@ -1548,7 +1612,7 @@ namespace GraphicsCards
 		{
 			// check if the API is okay and initialized
 			// also check if the GPU handler is initialized
-			if (_apiStatus == NVAPI_OK && _apiInit && _handlersInit)
+			if (m_apiStatus == NVAPI_OK && m_apiInit && m_handlersInit)
 			{
 				// check if the handler index is valid
 				// also check if the base voltage number is valid as well
@@ -1556,16 +1620,19 @@ namespace GraphicsCards
 				{
 					// get the current GPU performance state ID
 					// method throws an exception if any errors occur
-					NV_GPU_PERF_PSTATE_ID perfState = GetPerformanceStateId(_physicalHandlers[physHandlerNum]);
+					NV_GPU_PERF_PSTATE_ID perfStateId = GetPerformanceStateId(m_ptrPhysicalHandlers[physHandlerNum]);
 
-					// pointer to the performance state information
-					NV_GPU_PERF_PSTATES20_INFO_V2* ptrPerfStateInfo = new NV_GPU_PERF_PSTATES20_INFO_V2();
+					// the performance state information
+					NV_GPU_PERF_PSTATES20_INFO_V2 perfStateInfo;
+
+					// set the performance state info version
+					perfStateInfo.version = NV_GPU_PERF_PSTATES20_INFO_VER3;
 
 					// get the GPU performance state information
-					_apiStatus = NvAPI_GPU_GetPstates20(_physicalHandlers[physHandlerNum], ptrPerfStateInfo);
+					m_apiStatus = NvAPI_GPU_GetPstates20(m_ptrPhysicalHandlers[physHandlerNum], &perfStateInfo);
 
 					// check if the API successfully obtained the GPU performance information
-					if (_apiStatus == NVAPI_OK)
+					if (m_apiStatus == NVAPI_OK)
 					{
 						float	baseVoltage		= 0;		// the GPU base voltage value
 						bool	perfStateFound	= false;	// determines if the current GPU performance state is found
@@ -1574,11 +1641,11 @@ namespace GraphicsCards
 						for (int i = 0; i < NVAPI_MAX_GPU_PSTATE20_PSTATES; i++)
 						{
 							// check if performance state info matches the current performance state
-							if (ptrPerfStateInfo->pstates[i].pstateId == perfState)
+							if (perfStateInfo.pstates[i].pstateId == perfStateId)
 							{
 								// the current performance state ID is found
 								// get the base voltage settings for the current performance state
-								NV_GPU_PSTATE20_BASE_VOLTAGE_ENTRY_V1 pStateBaseVoltage = ptrPerfStateInfo->pstates[i].baseVoltages[baseVoltageNum];
+								NV_GPU_PSTATE20_BASE_VOLTAGE_ENTRY_V1 pStateBaseVoltage = perfStateInfo.pstates[i].baseVoltages[baseVoltageNum];
 
 								// get the base voltage value and break from the loop
 								baseVoltage = static_cast<float>(pStateBaseVoltage.volt_uV);
@@ -1587,16 +1654,12 @@ namespace GraphicsCards
 							}
 						}
 
-						// delete the performance state information to free up the memory
-						delete ptrPerfStateInfo;
-						ptrPerfStateInfo = NULL;
-
 						// check if the current performance state was not found
 						if (!perfStateFound)
 						{
 							// let the user know that the GPU base voltage for the current performance
 							// state could not be found
-							throw gcnew Exception("Performance state " + GetPerformanceState(perfState) + " does not provide base voltage value.");
+							throw gcnew Exception("Performance state " + GetPerformanceState(perfStateId) + " does not provide base voltage value.");
 						}
 						else
 						{
@@ -1606,12 +1669,8 @@ namespace GraphicsCards
 					}
 					else
 					{
-						// delete the performance state information to free up the memory
-						delete ptrPerfStateInfo;
-						ptrPerfStateInfo = NULL;
-
 						// let the user know an API error occurred
-						throw gcnew Exception(GetApiErrMsg(_apiStatus));
+						throw gcnew Exception(GetApiErrMsg(m_apiStatus));
 					}
 				}
 				else
@@ -1639,5 +1698,7 @@ namespace GraphicsCards
 	}
 
 #pragma warning (pop)	// end #pragma warning (disable : 6385)
+
+#pragma warning (pop)	// end #pragma warning (disable: 4715)
 }
 
