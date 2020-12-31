@@ -14,6 +14,8 @@
 #include "GraphicsCards_pch.h"		// pre-compiled header file
 #include "NvidiaGraphicsCards.h"	// contains function prototypes for this class
 
+#define NUM_PCI_ID_MEMBERS 5	// the number of members in a PciIdentifiers struct
+
 namespace GraphicsCards
 {
 	// WARNING: COMPILER ERROR C4715 IS LOGGED FOR EACH METHOD. THIS IS BECAUSE SOME OF THE RETURN
@@ -570,7 +572,7 @@ namespace GraphicsCards
 		m_handlersInit				= false;
 		m_ptrPhysicalHandlers		= nullptr;
 		m_numPhysHandlers			= 0;
-		m_ptrPciIdentities			= nullptr;
+		m_ptrPciIdentities			= gcnew PciIdentifiers;
 	}
 
 	/// <summary>
@@ -1618,13 +1620,16 @@ namespace GraphicsCards
 				{
 					// get the current GPU performance state ID
 					// method throws an exception if any errors occur
-					NV_GPU_PERF_PSTATE_ID perfState = GetPerformanceStateId(m_ptrPhysicalHandlers[physHandlerNum]);
+					NV_GPU_PERF_PSTATE_ID perfStateId = GetPerformanceStateId(m_ptrPhysicalHandlers[physHandlerNum]);
 
-					// pointer to the performance state information
-					NV_GPU_PERF_PSTATES20_INFO_V2* ptrPerfStateInfo = new NV_GPU_PERF_PSTATES20_INFO_V2();
+					// the performance state information
+					NV_GPU_PERF_PSTATES20_INFO_V2 perfStateInfo;
+
+					// set the performance state info version
+					perfStateInfo.version = NV_GPU_PERF_PSTATES20_INFO_VER3;
 
 					// get the GPU performance state information
-					m_apiStatus = NvAPI_GPU_GetPstates20(m_ptrPhysicalHandlers[physHandlerNum], ptrPerfStateInfo);
+					m_apiStatus = NvAPI_GPU_GetPstates20(m_ptrPhysicalHandlers[physHandlerNum], &perfStateInfo);
 
 					// check if the API successfully obtained the GPU performance information
 					if (m_apiStatus == NVAPI_OK)
@@ -1636,11 +1641,11 @@ namespace GraphicsCards
 						for (int i = 0; i < NVAPI_MAX_GPU_PSTATE20_PSTATES; i++)
 						{
 							// check if performance state info matches the current performance state
-							if (ptrPerfStateInfo->pstates[i].pstateId == perfState)
+							if (perfStateInfo.pstates[i].pstateId == perfStateId)
 							{
 								// the current performance state ID is found
 								// get the base voltage settings for the current performance state
-								NV_GPU_PSTATE20_BASE_VOLTAGE_ENTRY_V1 pStateBaseVoltage = ptrPerfStateInfo->pstates[i].baseVoltages[baseVoltageNum];
+								NV_GPU_PSTATE20_BASE_VOLTAGE_ENTRY_V1 pStateBaseVoltage = perfStateInfo.pstates[i].baseVoltages[baseVoltageNum];
 
 								// get the base voltage value and break from the loop
 								baseVoltage = static_cast<float>(pStateBaseVoltage.volt_uV);
@@ -1649,16 +1654,12 @@ namespace GraphicsCards
 							}
 						}
 
-						// delete the performance state information to free up the memory
-						delete ptrPerfStateInfo;
-						ptrPerfStateInfo = NULL;
-
 						// check if the current performance state was not found
 						if (!perfStateFound)
 						{
 							// let the user know that the GPU base voltage for the current performance
 							// state could not be found
-							throw gcnew Exception("Performance state " + GetPerformanceState(perfState) + " does not provide base voltage value.");
+							throw gcnew Exception("Performance state " + GetPerformanceState(perfStateId) + " does not provide base voltage value.");
 						}
 						else
 						{
@@ -1668,10 +1669,6 @@ namespace GraphicsCards
 					}
 					else
 					{
-						// delete the performance state information to free up the memory
-						delete ptrPerfStateInfo;
-						ptrPerfStateInfo = NULL;
-
 						// let the user know an API error occurred
 						throw gcnew Exception(GetApiErrMsg(m_apiStatus));
 					}
