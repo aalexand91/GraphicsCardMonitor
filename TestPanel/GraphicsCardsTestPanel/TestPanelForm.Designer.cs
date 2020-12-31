@@ -408,7 +408,7 @@ namespace GraphicsCardsTestPanel
             this.Controls.Add(this.NameButton);
             this.Controls.Add(this.CoreCountButton);
             this.Name = "GraphicsCardTestPanel";
-            this.Text = "Graphics Card Driver Test Panel";
+            this.Text = "Graphics Card Driver Test Panel, Version 1.0";
             this.ResumeLayout(false);
             this.PerformLayout();
 
