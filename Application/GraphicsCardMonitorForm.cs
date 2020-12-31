@@ -10,6 +10,9 @@ using GraphicsCards;        // namespace containining graphics card interfaces a
 
 namespace GraphicsCardMonitor
 {
+    /// <summary>
+    /// The Graphics Card Monitor Application
+    /// </summary>
     public partial class GraphicsCardMonitorForm : Form
     {
         #region Constants
@@ -26,12 +29,12 @@ namespace GraphicsCardMonitor
         /// <summary>
         /// interface for the graphics cards
         /// </summary>
-        readonly IGraphicsCard gGraphicsCards;
+        readonly IGraphicsCard g_GraphicsCards;
 
         /// <summary>
         /// the total number of graphics cards in the system
         /// </summary>
-        uint gNumGraphicsCards = 0;
+        uint g_NumGraphicsCards = 0;
 
         #endregion Global Variables
 
@@ -145,9 +148,9 @@ namespace GraphicsCardMonitor
                 // get the total number of grahics cards in the system
                 try
                 {
-                    gNumGraphicsCards = gCards.GetNumHandlers();
+                    g_NumGraphicsCards = gCards.GetNumHandlers();
 
-                    if (gNumGraphicsCards == 0)
+                    if (g_NumGraphicsCards == 0)
                     {
                         success = false;
                         // let the user know no graphics cards were found in the system
@@ -188,7 +191,7 @@ namespace GraphicsCardMonitor
             {
                 // iterate through all the available graphics cards
                 // and add them to the the combo box
-                for (uint i = 0; i < gNumGraphicsCards; i++)
+                for (uint i = 0; i < g_NumGraphicsCards; i++)
                 {
                     comboBox.Items.Add(gCards.GetName(i));
                 }
@@ -244,11 +247,11 @@ namespace GraphicsCardMonitor
                 // if the number of graphics cards in the system is 0
                 // it is possible the application is first being initialized
                 // find all graphics cards in the system
-                GetGraphicsCards(gGraphicsCards);
+                GetGraphicsCards(g_GraphicsCards);
 
                 // fill the selectable graphics card ComboBox with
                 // the avaialable graphics cards in the system
-                FillComboBox(GraphicsCardComboBox, gGraphicsCards);
+                FillComboBox(GraphicsCardComboBox, g_GraphicsCards);
 
                 // default the graphcis card ComboBox to the first item
                 DefaultComboBox(GraphicsCardComboBox);
@@ -279,16 +282,13 @@ namespace GraphicsCardMonitor
                 VbiosTextBox.Text           = "";
                 PhysRamTextBox.Text         = "";
                 VirtualRamTextBox.Text      = "";
-                CoreVoltageTextBox.Text     = "";
                 GpuCoresTextBox.Text        = "";
                 BusIdTextBox.Text           = "";
-                Max3dTextBox.Text           = "";
-                Balanced3dTextBox.Text      = "";
-                HdTextBox.Text              = "";
+                PerfStateTextBox.Text       = "";
+                BaseVoltageTextBox1.Text    = "";
+                BaseVoltageTextBox2.Text    = "";
                 CoreTempTextBox.Text        = "";
-                BoardTempTextBox.Text       = "";
                 MemoryTempTextBox.Text      = "";
-                SupplyTempTextBox.Text      = "";
                 PciInternalIdTextBox.Text   = "";
                 PciRevTextBox.Text          = "";
                 PciSubsystemTextBox.Text    = "";
@@ -371,21 +371,18 @@ namespace GraphicsCardMonitor
                     uint selectedGpu = (uint)GraphicsCardComboBox.SelectedIndex;
 
                     // update all TextBox text to relevant graphics card information
-                    //CardInfoTextBox.Text        = gGraphicsCards.GetCardInfo(selectedGpu);
-                    VbiosTextBox.Text           = gGraphicsCards.GetVBiosInfo(selectedGpu);
-                    PhysRamTextBox.Text         = gGraphicsCards.GetPhysicalRamSize(selectedGpu).ToString();
-                    VirtualRamTextBox.Text      = gGraphicsCards.GetVirtualRamSize(selectedGpu).ToString();
-                    //CoreVoltageTextBox.Text     = gGraphicsCards.GetBaseVoltage(selectedGpu).ToString();
-                    GpuCoresTextBox.Text        = gGraphicsCards.GetGpuCoreCount(selectedGpu).ToString();
-                    BusIdTextBox.Text           = gGraphicsCards.GetGpuBusId(selectedGpu).ToString();
-                    CoreTempTextBox.Text        = gGraphicsCards.GetGpuCoreTemp(selectedGpu).ToString();
-                    BoardTempTextBox.Text       = gGraphicsCards.GetBoardTemp(selectedGpu).ToString();
-                    MemoryTempTextBox.Text      = gGraphicsCards.GetMemoryTemp(selectedGpu).ToString();
-                    SupplyTempTextBox.Text      = gGraphicsCards.GetPowerSupplyTemp(selectedGpu).ToString();
-                    PciInternalIdTextBox.Text   = gGraphicsCards.GetGpuPciInternalDeviceId(selectedGpu).ToString();
-                    PciRevTextBox.Text          = gGraphicsCards.GetGpuPciRevId(selectedGpu).ToString();
-                    PciSubsystemTextBox.Text    = gGraphicsCards.GetGpuPciSubSystemId(selectedGpu).ToString();
-                    PciExternalIdTextBox.Text   = gGraphicsCards.GetGpuPciExternalDeviceId(selectedGpu).ToString();
+                    CardInfoTextBox.Text        = g_GraphicsCards.GetCardSerialNumber(selectedGpu);
+                    VbiosTextBox.Text           = g_GraphicsCards.GetVBiosInfo(selectedGpu);
+                    PhysRamTextBox.Text         = g_GraphicsCards.GetPhysicalRamSize(selectedGpu).ToString();
+                    VirtualRamTextBox.Text      = g_GraphicsCards.GetVirtualRamSize(selectedGpu).ToString();
+                    GpuCoresTextBox.Text        = g_GraphicsCards.GetGpuCoreCount(selectedGpu).ToString();
+                    BusIdTextBox.Text           = g_GraphicsCards.GetGpuBusId(selectedGpu).ToString();
+                    CoreTempTextBox.Text        = g_GraphicsCards.GetGpuCoreTemp(selectedGpu).ToString();
+                    MemoryTempTextBox.Text      = g_GraphicsCards.GetMemoryTemp(selectedGpu).ToString();
+                    PciInternalIdTextBox.Text   = g_GraphicsCards.GetGpuPciInternalDeviceId(selectedGpu).ToString();
+                    PciRevTextBox.Text          = g_GraphicsCards.GetGpuPciRevId(selectedGpu).ToString();
+                    PciSubsystemTextBox.Text    = g_GraphicsCards.GetGpuPciSubSystemId(selectedGpu).ToString();
+                    PciExternalIdTextBox.Text   = g_GraphicsCards.GetGpuPciExternalDeviceId(selectedGpu).ToString();
 
                     // delay for some time before refreshing the application again
                     System.Threading.Thread.Sleep(REFRESH_TIME);

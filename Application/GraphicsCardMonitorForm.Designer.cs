@@ -47,30 +47,34 @@
             this.PciRevTextBox = new System.Windows.Forms.TextBox();
             this.PciInternalIdTextBox = new System.Windows.Forms.TextBox();
             this.GeneralGroupBox = new System.Windows.Forms.GroupBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.BoostClockSpeedLabel = new System.Windows.Forms.Label();
+            this.BaseClockSpeedTextBox = new System.Windows.Forms.TextBox();
+            this.CurrentClockSpeedTextBox = new System.Windows.Forms.TextBox();
+            this.BaseClockSpeedLabel = new System.Windows.Forms.Label();
+            this.CurrentClockSpeedLabel = new System.Windows.Forms.Label();
             this.BusIdTextBox = new System.Windows.Forms.TextBox();
             this.GpuCoresTextBox = new System.Windows.Forms.TextBox();
-            this.CoreVoltageTextBox = new System.Windows.Forms.TextBox();
             this.VirtualRamTextBox = new System.Windows.Forms.TextBox();
             this.PhysRamTextBox = new System.Windows.Forms.TextBox();
             this.VbiosTextBox = new System.Windows.Forms.TextBox();
-            this.VoltageLabel = new System.Windows.Forms.Label();
             this.CardInfoTextBox = new System.Windows.Forms.TextBox();
             this.BusIdLabel = new System.Windows.Forms.Label();
             this.CoreTempLabel = new System.Windows.Forms.Label();
             this.MemoryTempLabel = new System.Windows.Forms.Label();
-            this.SupplyTempLabel = new System.Windows.Forms.Label();
-            this.BoardTempLabel = new System.Windows.Forms.Label();
-            this.Max3dLabel = new System.Windows.Forms.Label();
-            this.Balance3dLabel = new System.Windows.Forms.Label();
-            this.HdLabel = new System.Windows.Forms.Label();
-            this.VideoGroupBox = new System.Windows.Forms.GroupBox();
-            this.HdTextBox = new System.Windows.Forms.TextBox();
-            this.Balanced3dTextBox = new System.Windows.Forms.TextBox();
-            this.Max3dTextBox = new System.Windows.Forms.TextBox();
+            this.PerfStateLabel = new System.Windows.Forms.Label();
+            this.BaseVoltage1Label = new System.Windows.Forms.Label();
+            this.BaseVoltage2Label = new System.Windows.Forms.Label();
+            this.PerformanceGroupBox = new System.Windows.Forms.GroupBox();
+            this.BaseVoltageTextBox4 = new System.Windows.Forms.TextBox();
+            this.BaseVoltageLabel4 = new System.Windows.Forms.Label();
+            this.BaseVoltageTextBox3 = new System.Windows.Forms.TextBox();
+            this.BaseVoltageLabel3 = new System.Windows.Forms.Label();
+            this.BaseVoltageTextBox2 = new System.Windows.Forms.TextBox();
+            this.BaseVoltageTextBox1 = new System.Windows.Forms.TextBox();
+            this.PerfStateTextBox = new System.Windows.Forms.TextBox();
             this.TemperatureGroupBox = new System.Windows.Forms.GroupBox();
-            this.SupplyTempTextBox = new System.Windows.Forms.TextBox();
             this.MemoryTempTextBox = new System.Windows.Forms.TextBox();
-            this.BoardTempTextBox = new System.Windows.Forms.TextBox();
             this.CoreTempTextBox = new System.Windows.Forms.TextBox();
             this.RefreshButton = new System.Windows.Forms.Button();
             this.ExitButton = new System.Windows.Forms.Button();
@@ -85,7 +89,7 @@
             this.ApiBackGroundWorker = new System.ComponentModel.BackgroundWorker();
             this.PciGroupBox.SuspendLayout();
             this.GeneralGroupBox.SuspendLayout();
-            this.VideoGroupBox.SuspendLayout();
+            this.PerformanceGroupBox.SuspendLayout();
             this.TemperatureGroupBox.SuspendLayout();
             this.MenuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -94,7 +98,7 @@
             // 
             this.CoreCountLabel.AutoSize = true;
             this.CoreCountLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CoreCountLabel.Location = new System.Drawing.Point(6, 157);
+            this.CoreCountLabel.Location = new System.Drawing.Point(6, 126);
             this.CoreCountLabel.Name = "CoreCountLabel";
             this.CoreCountLabel.Size = new System.Drawing.Size(61, 13);
             this.CoreCountLabel.TabIndex = 0;
@@ -146,9 +150,9 @@
             this.CardInfoLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.CardInfoLabel.Location = new System.Drawing.Point(6, 24);
             this.CardInfoLabel.Name = "CardInfoLabel";
-            this.CardInfoLabel.Size = new System.Drawing.Size(53, 13);
+            this.CardInfoLabel.Size = new System.Drawing.Size(76, 13);
             this.CardInfoLabel.TabIndex = 5;
-            this.CardInfoLabel.Text = "Card Info:";
+            this.CardInfoLabel.Text = "Serial Number:";
             // 
             // PciInternalIdLabel
             // 
@@ -190,9 +194,9 @@
             this.PciGroupBox.Controls.Add(this.PciInternalIdLabel);
             this.PciGroupBox.Controls.Add(this.PciRevIDLabel);
             this.PciGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.PciGroupBox.Location = new System.Drawing.Point(301, 200);
+            this.PciGroupBox.Location = new System.Drawing.Point(301, 147);
             this.PciGroupBox.Name = "PciGroupBox";
-            this.PciGroupBox.Size = new System.Drawing.Size(193, 139);
+            this.PciGroupBox.Size = new System.Drawing.Size(193, 143);
             this.PciGroupBox.TabIndex = 9;
             this.PciGroupBox.TabStop = false;
             this.PciGroupBox.Text = "PCI Information";
@@ -256,13 +260,17 @@
             // 
             // GeneralGroupBox
             // 
+            this.GeneralGroupBox.Controls.Add(this.textBox1);
+            this.GeneralGroupBox.Controls.Add(this.BoostClockSpeedLabel);
+            this.GeneralGroupBox.Controls.Add(this.BaseClockSpeedTextBox);
+            this.GeneralGroupBox.Controls.Add(this.CurrentClockSpeedTextBox);
+            this.GeneralGroupBox.Controls.Add(this.BaseClockSpeedLabel);
+            this.GeneralGroupBox.Controls.Add(this.CurrentClockSpeedLabel);
             this.GeneralGroupBox.Controls.Add(this.BusIdTextBox);
             this.GeneralGroupBox.Controls.Add(this.GpuCoresTextBox);
-            this.GeneralGroupBox.Controls.Add(this.CoreVoltageTextBox);
             this.GeneralGroupBox.Controls.Add(this.VirtualRamTextBox);
             this.GeneralGroupBox.Controls.Add(this.PhysRamTextBox);
             this.GeneralGroupBox.Controls.Add(this.VbiosTextBox);
-            this.GeneralGroupBox.Controls.Add(this.VoltageLabel);
             this.GeneralGroupBox.Controls.Add(this.CardInfoTextBox);
             this.GeneralGroupBox.Controls.Add(this.CardInfoLabel);
             this.GeneralGroupBox.Controls.Add(this.VBiosLabel);
@@ -273,16 +281,67 @@
             this.GeneralGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.GeneralGroupBox.Location = new System.Drawing.Point(15, 55);
             this.GeneralGroupBox.Name = "GeneralGroupBox";
-            this.GeneralGroupBox.Size = new System.Drawing.Size(280, 178);
+            this.GeneralGroupBox.Size = new System.Drawing.Size(280, 235);
             this.GeneralGroupBox.TabIndex = 10;
             this.GeneralGroupBox.TabStop = false;
             this.GeneralGroupBox.Text = "General Information";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(145, 208);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(107, 20);
+            this.textBox1.TabIndex = 31;
+            // 
+            // BoostClockSpeedLabel
+            // 
+            this.BoostClockSpeedLabel.AutoSize = true;
+            this.BoostClockSpeedLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BoostClockSpeedLabel.Location = new System.Drawing.Point(7, 211);
+            this.BoostClockSpeedLabel.Name = "BoostClockSpeedLabel";
+            this.BoostClockSpeedLabel.Size = new System.Drawing.Size(132, 13);
+            this.BoostClockSpeedLabel.TabIndex = 30;
+            this.BoostClockSpeedLabel.Text = "Boost Clock Speed (MHz):";
+            // 
+            // BaseClockSpeedTextBox
+            // 
+            this.BaseClockSpeedTextBox.Location = new System.Drawing.Point(142, 182);
+            this.BaseClockSpeedTextBox.Name = "BaseClockSpeedTextBox";
+            this.BaseClockSpeedTextBox.Size = new System.Drawing.Size(110, 20);
+            this.BaseClockSpeedTextBox.TabIndex = 29;
+            // 
+            // CurrentClockSpeedTextBox
+            // 
+            this.CurrentClockSpeedTextBox.Location = new System.Drawing.Point(152, 156);
+            this.CurrentClockSpeedTextBox.Name = "CurrentClockSpeedTextBox";
+            this.CurrentClockSpeedTextBox.Size = new System.Drawing.Size(100, 20);
+            this.CurrentClockSpeedTextBox.TabIndex = 28;
+            // 
+            // BaseClockSpeedLabel
+            // 
+            this.BaseClockSpeedLabel.AutoSize = true;
+            this.BaseClockSpeedLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BaseClockSpeedLabel.Location = new System.Drawing.Point(7, 186);
+            this.BaseClockSpeedLabel.Name = "BaseClockSpeedLabel";
+            this.BaseClockSpeedLabel.Size = new System.Drawing.Size(129, 13);
+            this.BaseClockSpeedLabel.TabIndex = 27;
+            this.BaseClockSpeedLabel.Text = "Base Clock Speed (MHz):";
+            // 
+            // CurrentClockSpeedLabel
+            // 
+            this.CurrentClockSpeedLabel.AutoSize = true;
+            this.CurrentClockSpeedLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CurrentClockSpeedLabel.Location = new System.Drawing.Point(7, 159);
+            this.CurrentClockSpeedLabel.Name = "CurrentClockSpeedLabel";
+            this.CurrentClockSpeedLabel.Size = new System.Drawing.Size(139, 13);
+            this.CurrentClockSpeedLabel.TabIndex = 26;
+            this.CurrentClockSpeedLabel.Text = "Current Clock Speed (MHz):";
             // 
             // BusIdTextBox
             // 
             this.BusIdTextBox.Enabled = false;
             this.BusIdTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BusIdTextBox.Location = new System.Drawing.Point(178, 152);
+            this.BusIdTextBox.Location = new System.Drawing.Point(182, 123);
             this.BusIdTextBox.Name = "BusIdTextBox";
             this.BusIdTextBox.Size = new System.Drawing.Size(52, 20);
             this.BusIdTextBox.TabIndex = 25;
@@ -291,19 +350,10 @@
             // 
             this.GpuCoresTextBox.Enabled = false;
             this.GpuCoresTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.GpuCoresTextBox.Location = new System.Drawing.Point(73, 152);
+            this.GpuCoresTextBox.Location = new System.Drawing.Point(73, 123);
             this.GpuCoresTextBox.Name = "GpuCoresTextBox";
             this.GpuCoresTextBox.Size = new System.Drawing.Size(51, 20);
             this.GpuCoresTextBox.TabIndex = 24;
-            // 
-            // CoreVoltageTextBox
-            // 
-            this.CoreVoltageTextBox.Enabled = false;
-            this.CoreVoltageTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CoreVoltageTextBox.Location = new System.Drawing.Point(124, 126);
-            this.CoreVoltageTextBox.Name = "CoreVoltageTextBox";
-            this.CoreVoltageTextBox.Size = new System.Drawing.Size(135, 20);
-            this.CoreVoltageTextBox.TabIndex = 23;
             // 
             // VirtualRamTextBox
             // 
@@ -332,30 +382,20 @@
             this.VbiosTextBox.Size = new System.Drawing.Size(184, 20);
             this.VbiosTextBox.TabIndex = 20;
             // 
-            // VoltageLabel
-            // 
-            this.VoltageLabel.AutoSize = true;
-            this.VoltageLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.VoltageLabel.Location = new System.Drawing.Point(6, 129);
-            this.VoltageLabel.Name = "VoltageLabel";
-            this.VoltageLabel.Size = new System.Drawing.Size(114, 13);
-            this.VoltageLabel.TabIndex = 19;
-            this.VoltageLabel.Text = "Base Core Voltage (V):";
-            // 
             // CardInfoTextBox
             // 
             this.CardInfoTextBox.Enabled = false;
             this.CardInfoTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CardInfoTextBox.Location = new System.Drawing.Point(65, 19);
+            this.CardInfoTextBox.Location = new System.Drawing.Point(88, 19);
             this.CardInfoTextBox.Name = "CardInfoTextBox";
-            this.CardInfoTextBox.Size = new System.Drawing.Size(194, 20);
+            this.CardInfoTextBox.Size = new System.Drawing.Size(171, 20);
             this.CardInfoTextBox.TabIndex = 6;
             // 
             // BusIdLabel
             // 
             this.BusIdLabel.AutoSize = true;
             this.BusIdLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BusIdLabel.Location = new System.Drawing.Point(130, 157);
+            this.BusIdLabel.Location = new System.Drawing.Point(134, 126);
             this.BusIdLabel.Name = "BusIdLabel";
             this.BusIdLabel.Size = new System.Drawing.Size(42, 13);
             this.BusIdLabel.TabIndex = 11;
@@ -375,146 +415,142 @@
             // 
             this.MemoryTempLabel.AutoSize = true;
             this.MemoryTempLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MemoryTempLabel.Location = new System.Drawing.Point(7, 81);
+            this.MemoryTempLabel.Location = new System.Drawing.Point(7, 53);
             this.MemoryTempLabel.Name = "MemoryTempLabel";
             this.MemoryTempLabel.Size = new System.Drawing.Size(63, 13);
             this.MemoryTempLabel.TabIndex = 13;
             this.MemoryTempLabel.Text = "Memory (C):";
             // 
-            // SupplyTempLabel
+            // PerfStateLabel
             // 
-            this.SupplyTempLabel.AutoSize = true;
-            this.SupplyTempLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SupplyTempLabel.Location = new System.Drawing.Point(6, 108);
-            this.SupplyTempLabel.Name = "SupplyTempLabel";
-            this.SupplyTempLabel.Size = new System.Drawing.Size(91, 13);
-            this.SupplyTempLabel.TabIndex = 14;
-            this.SupplyTempLabel.Text = "Power Supply (C):";
+            this.PerfStateLabel.AutoSize = true;
+            this.PerfStateLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PerfStateLabel.Location = new System.Drawing.Point(6, 23);
+            this.PerfStateLabel.Name = "PerfStateLabel";
+            this.PerfStateLabel.Size = new System.Drawing.Size(35, 13);
+            this.PerfStateLabel.TabIndex = 16;
+            this.PerfStateLabel.Text = "State:";
             // 
-            // BoardTempLabel
+            // BaseVoltage1Label
             // 
-            this.BoardTempLabel.AutoSize = true;
-            this.BoardTempLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BoardTempLabel.Location = new System.Drawing.Point(6, 54);
-            this.BoardTempLabel.Name = "BoardTempLabel";
-            this.BoardTempLabel.Size = new System.Drawing.Size(54, 13);
-            this.BoardTempLabel.TabIndex = 15;
-            this.BoardTempLabel.Text = "Board (C):";
+            this.BaseVoltage1Label.AutoSize = true;
+            this.BaseVoltage1Label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BaseVoltage1Label.Location = new System.Drawing.Point(2, 50);
+            this.BaseVoltage1Label.Name = "BaseVoltage1Label";
+            this.BaseVoltage1Label.Size = new System.Drawing.Size(65, 13);
+            this.BaseVoltage1Label.TabIndex = 17;
+            this.BaseVoltage1Label.Text = "Vbase 1 (V):";
             // 
-            // Max3dLabel
+            // BaseVoltage2Label
             // 
-            this.Max3dLabel.AutoSize = true;
-            this.Max3dLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Max3dLabel.Location = new System.Drawing.Point(6, 23);
-            this.Max3dLabel.Name = "Max3dLabel";
-            this.Max3dLabel.Size = new System.Drawing.Size(47, 13);
-            this.Max3dLabel.TabIndex = 16;
-            this.Max3dLabel.Text = "Max 3D:";
+            this.BaseVoltage2Label.AutoSize = true;
+            this.BaseVoltage2Label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BaseVoltage2Label.Location = new System.Drawing.Point(2, 76);
+            this.BaseVoltage2Label.Name = "BaseVoltage2Label";
+            this.BaseVoltage2Label.Size = new System.Drawing.Size(65, 13);
+            this.BaseVoltage2Label.TabIndex = 18;
+            this.BaseVoltage2Label.Text = "Vbase 2 (V):";
             // 
-            // Balance3dLabel
+            // PerformanceGroupBox
             // 
-            this.Balance3dLabel.AutoSize = true;
-            this.Balance3dLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Balance3dLabel.Location = new System.Drawing.Point(6, 50);
-            this.Balance3dLabel.Name = "Balance3dLabel";
-            this.Balance3dLabel.Size = new System.Drawing.Size(72, 13);
-            this.Balance3dLabel.TabIndex = 17;
-            this.Balance3dLabel.Text = "Balanced 3D:";
+            this.PerformanceGroupBox.Controls.Add(this.BaseVoltageTextBox4);
+            this.PerformanceGroupBox.Controls.Add(this.BaseVoltageLabel4);
+            this.PerformanceGroupBox.Controls.Add(this.BaseVoltageTextBox3);
+            this.PerformanceGroupBox.Controls.Add(this.BaseVoltageLabel3);
+            this.PerformanceGroupBox.Controls.Add(this.BaseVoltageTextBox2);
+            this.PerformanceGroupBox.Controls.Add(this.BaseVoltage2Label);
+            this.PerformanceGroupBox.Controls.Add(this.BaseVoltageTextBox1);
+            this.PerformanceGroupBox.Controls.Add(this.BaseVoltage1Label);
+            this.PerformanceGroupBox.Controls.Add(this.PerfStateTextBox);
+            this.PerformanceGroupBox.Controls.Add(this.PerfStateLabel);
+            this.PerformanceGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PerformanceGroupBox.Location = new System.Drawing.Point(500, 55);
+            this.PerformanceGroupBox.Name = "PerformanceGroupBox";
+            this.PerformanceGroupBox.Size = new System.Drawing.Size(175, 160);
+            this.PerformanceGroupBox.TabIndex = 19;
+            this.PerformanceGroupBox.TabStop = false;
+            this.PerformanceGroupBox.Text = "Performance State";
             // 
-            // HdLabel
+            // BaseVoltageTextBox4
             // 
-            this.HdLabel.AutoSize = true;
-            this.HdLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.HdLabel.Location = new System.Drawing.Point(6, 77);
-            this.HdLabel.Name = "HdLabel";
-            this.HdLabel.Size = new System.Drawing.Size(73, 13);
-            this.HdLabel.TabIndex = 18;
-            this.HdLabel.Text = "HD Playback:";
+            this.BaseVoltageTextBox4.Location = new System.Drawing.Point(74, 125);
+            this.BaseVoltageTextBox4.Name = "BaseVoltageTextBox4";
+            this.BaseVoltageTextBox4.Size = new System.Drawing.Size(71, 20);
+            this.BaseVoltageTextBox4.TabIndex = 22;
             // 
-            // VideoGroupBox
+            // BaseVoltageLabel4
             // 
-            this.VideoGroupBox.Controls.Add(this.HdTextBox);
-            this.VideoGroupBox.Controls.Add(this.HdLabel);
-            this.VideoGroupBox.Controls.Add(this.Balanced3dTextBox);
-            this.VideoGroupBox.Controls.Add(this.Balance3dLabel);
-            this.VideoGroupBox.Controls.Add(this.Max3dTextBox);
-            this.VideoGroupBox.Controls.Add(this.Max3dLabel);
-            this.VideoGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.VideoGroupBox.Location = new System.Drawing.Point(15, 239);
-            this.VideoGroupBox.Name = "VideoGroupBox";
-            this.VideoGroupBox.Size = new System.Drawing.Size(280, 100);
-            this.VideoGroupBox.TabIndex = 19;
-            this.VideoGroupBox.TabStop = false;
-            this.VideoGroupBox.Text = "Video Performance";
+            this.BaseVoltageLabel4.AutoSize = true;
+            this.BaseVoltageLabel4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BaseVoltageLabel4.Location = new System.Drawing.Point(3, 128);
+            this.BaseVoltageLabel4.Name = "BaseVoltageLabel4";
+            this.BaseVoltageLabel4.Size = new System.Drawing.Size(65, 13);
+            this.BaseVoltageLabel4.TabIndex = 21;
+            this.BaseVoltageLabel4.Text = "Vbase 4 (V):";
             // 
-            // HdTextBox
+            // BaseVoltageTextBox3
             // 
-            this.HdTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.HdTextBox.Location = new System.Drawing.Point(85, 74);
-            this.HdTextBox.Name = "HdTextBox";
-            this.HdTextBox.Size = new System.Drawing.Size(174, 20);
-            this.HdTextBox.TabIndex = 2;
+            this.BaseVoltageTextBox3.Location = new System.Drawing.Point(74, 99);
+            this.BaseVoltageTextBox3.Name = "BaseVoltageTextBox3";
+            this.BaseVoltageTextBox3.Size = new System.Drawing.Size(71, 20);
+            this.BaseVoltageTextBox3.TabIndex = 20;
             // 
-            // Balanced3dTextBox
+            // BaseVoltageLabel3
             // 
-            this.Balanced3dTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Balanced3dTextBox.Location = new System.Drawing.Point(84, 47);
-            this.Balanced3dTextBox.Name = "Balanced3dTextBox";
-            this.Balanced3dTextBox.Size = new System.Drawing.Size(175, 20);
-            this.Balanced3dTextBox.TabIndex = 1;
+            this.BaseVoltageLabel3.AutoSize = true;
+            this.BaseVoltageLabel3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BaseVoltageLabel3.Location = new System.Drawing.Point(3, 102);
+            this.BaseVoltageLabel3.Name = "BaseVoltageLabel3";
+            this.BaseVoltageLabel3.Size = new System.Drawing.Size(65, 13);
+            this.BaseVoltageLabel3.TabIndex = 19;
+            this.BaseVoltageLabel3.Text = "Vbase 3 (V):";
             // 
-            // Max3dTextBox
+            // BaseVoltageTextBox2
             // 
-            this.Max3dTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Max3dTextBox.Location = new System.Drawing.Point(59, 20);
-            this.Max3dTextBox.Name = "Max3dTextBox";
-            this.Max3dTextBox.Size = new System.Drawing.Size(200, 20);
-            this.Max3dTextBox.TabIndex = 0;
+            this.BaseVoltageTextBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BaseVoltageTextBox2.Location = new System.Drawing.Point(73, 73);
+            this.BaseVoltageTextBox2.Name = "BaseVoltageTextBox2";
+            this.BaseVoltageTextBox2.Size = new System.Drawing.Size(72, 20);
+            this.BaseVoltageTextBox2.TabIndex = 2;
+            // 
+            // BaseVoltageTextBox1
+            // 
+            this.BaseVoltageTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BaseVoltageTextBox1.Location = new System.Drawing.Point(73, 47);
+            this.BaseVoltageTextBox1.Name = "BaseVoltageTextBox1";
+            this.BaseVoltageTextBox1.Size = new System.Drawing.Size(72, 20);
+            this.BaseVoltageTextBox1.TabIndex = 1;
+            // 
+            // PerfStateTextBox
+            // 
+            this.PerfStateTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PerfStateTextBox.Location = new System.Drawing.Point(47, 21);
+            this.PerfStateTextBox.Name = "PerfStateTextBox";
+            this.PerfStateTextBox.Size = new System.Drawing.Size(98, 20);
+            this.PerfStateTextBox.TabIndex = 0;
             // 
             // TemperatureGroupBox
             // 
-            this.TemperatureGroupBox.Controls.Add(this.SupplyTempTextBox);
             this.TemperatureGroupBox.Controls.Add(this.MemoryTempTextBox);
-            this.TemperatureGroupBox.Controls.Add(this.BoardTempTextBox);
             this.TemperatureGroupBox.Controls.Add(this.CoreTempTextBox);
             this.TemperatureGroupBox.Controls.Add(this.CoreTempLabel);
-            this.TemperatureGroupBox.Controls.Add(this.SupplyTempLabel);
-            this.TemperatureGroupBox.Controls.Add(this.BoardTempLabel);
             this.TemperatureGroupBox.Controls.Add(this.MemoryTempLabel);
             this.TemperatureGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.TemperatureGroupBox.Location = new System.Drawing.Point(301, 55);
             this.TemperatureGroupBox.Name = "TemperatureGroupBox";
-            this.TemperatureGroupBox.Size = new System.Drawing.Size(193, 139);
+            this.TemperatureGroupBox.Size = new System.Drawing.Size(193, 86);
             this.TemperatureGroupBox.TabIndex = 20;
             this.TemperatureGroupBox.TabStop = false;
             this.TemperatureGroupBox.Text = "Temperature Readings";
-            // 
-            // SupplyTempTextBox
-            // 
-            this.SupplyTempTextBox.Enabled = false;
-            this.SupplyTempTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SupplyTempTextBox.Location = new System.Drawing.Point(103, 105);
-            this.SupplyTempTextBox.Name = "SupplyTempTextBox";
-            this.SupplyTempTextBox.Size = new System.Drawing.Size(84, 20);
-            this.SupplyTempTextBox.TabIndex = 18;
             // 
             // MemoryTempTextBox
             // 
             this.MemoryTempTextBox.Enabled = false;
             this.MemoryTempTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MemoryTempTextBox.Location = new System.Drawing.Point(76, 78);
+            this.MemoryTempTextBox.Location = new System.Drawing.Point(87, 50);
             this.MemoryTempTextBox.Name = "MemoryTempTextBox";
-            this.MemoryTempTextBox.Size = new System.Drawing.Size(111, 20);
+            this.MemoryTempTextBox.Size = new System.Drawing.Size(100, 20);
             this.MemoryTempTextBox.TabIndex = 17;
-            // 
-            // BoardTempTextBox
-            // 
-            this.BoardTempTextBox.Enabled = false;
-            this.BoardTempTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BoardTempTextBox.Location = new System.Drawing.Point(67, 51);
-            this.BoardTempTextBox.Name = "BoardTempTextBox";
-            this.BoardTempTextBox.Size = new System.Drawing.Size(120, 20);
-            this.BoardTempTextBox.TabIndex = 16;
             // 
             // CoreTempTextBox
             // 
@@ -532,6 +568,8 @@
             this.RefreshButton.Size = new System.Drawing.Size(97, 23);
             this.RefreshButton.TabIndex = 21;
             this.RefreshButton.Text = "Refresh";
+            this.RefreshToolTip.SetToolTip(this.RefreshButton, "Refresh the application");
+            this.ExitToolTip.SetToolTip(this.RefreshButton, "Exits the application");
             this.RefreshButton.UseVisualStyleBackColor = true;
             this.RefreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
             // 
@@ -552,7 +590,7 @@
             this.helpToolStripMenuItem});
             this.MenuStrip.Location = new System.Drawing.Point(0, 0);
             this.MenuStrip.Name = "MenuStrip";
-            this.MenuStrip.Size = new System.Drawing.Size(508, 24);
+            this.MenuStrip.Size = new System.Drawing.Size(726, 24);
             this.MenuStrip.TabIndex = 23;
             this.MenuStrip.Text = "menuStrip1";
             // 
@@ -600,11 +638,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(508, 351);
+            this.ClientSize = new System.Drawing.Size(726, 301);
             this.Controls.Add(this.ExitButton);
             this.Controls.Add(this.RefreshButton);
             this.Controls.Add(this.TemperatureGroupBox);
-            this.Controls.Add(this.VideoGroupBox);
+            this.Controls.Add(this.PerformanceGroupBox);
             this.Controls.Add(this.GeneralGroupBox);
             this.Controls.Add(this.PciGroupBox);
             this.Controls.Add(this.GraphicsCardComboBox);
@@ -618,8 +656,8 @@
             this.PciGroupBox.PerformLayout();
             this.GeneralGroupBox.ResumeLayout(false);
             this.GeneralGroupBox.PerformLayout();
-            this.VideoGroupBox.ResumeLayout(false);
-            this.VideoGroupBox.PerformLayout();
+            this.PerformanceGroupBox.ResumeLayout(false);
+            this.PerformanceGroupBox.PerformLayout();
             this.TemperatureGroupBox.ResumeLayout(false);
             this.TemperatureGroupBox.PerformLayout();
             this.MenuStrip.ResumeLayout(false);
@@ -652,26 +690,20 @@
         private System.Windows.Forms.Label CoreTempLabel;
         private System.Windows.Forms.Label MemoryTempLabel;
         private System.Windows.Forms.TextBox CardInfoTextBox;
-        private System.Windows.Forms.Label SupplyTempLabel;
-        private System.Windows.Forms.Label BoardTempLabel;
-        private System.Windows.Forms.Label Max3dLabel;
-        private System.Windows.Forms.Label Balance3dLabel;
-        private System.Windows.Forms.Label HdLabel;
-        private System.Windows.Forms.Label VoltageLabel;
+        private System.Windows.Forms.Label PerfStateLabel;
+        private System.Windows.Forms.Label BaseVoltage1Label;
+        private System.Windows.Forms.Label BaseVoltage2Label;
         private System.Windows.Forms.TextBox BusIdTextBox;
         private System.Windows.Forms.TextBox GpuCoresTextBox;
-        private System.Windows.Forms.TextBox CoreVoltageTextBox;
         private System.Windows.Forms.TextBox VirtualRamTextBox;
         private System.Windows.Forms.TextBox PhysRamTextBox;
         private System.Windows.Forms.TextBox VbiosTextBox;
-        private System.Windows.Forms.GroupBox VideoGroupBox;
-        private System.Windows.Forms.TextBox Balanced3dTextBox;
-        private System.Windows.Forms.TextBox Max3dTextBox;
-        private System.Windows.Forms.TextBox HdTextBox;
+        private System.Windows.Forms.GroupBox PerformanceGroupBox;
+        private System.Windows.Forms.TextBox BaseVoltageTextBox1;
+        private System.Windows.Forms.TextBox PerfStateTextBox;
+        private System.Windows.Forms.TextBox BaseVoltageTextBox2;
         private System.Windows.Forms.GroupBox TemperatureGroupBox;
-        private System.Windows.Forms.TextBox SupplyTempTextBox;
         private System.Windows.Forms.TextBox MemoryTempTextBox;
-        private System.Windows.Forms.TextBox BoardTempTextBox;
         private System.Windows.Forms.TextBox CoreTempTextBox;
         private System.Windows.Forms.Button RefreshButton;
         private System.Windows.Forms.Button ExitButton;
@@ -684,6 +716,16 @@
         private System.Windows.Forms.ToolTip RefreshToolTip;
         private System.Windows.Forms.ToolTip ExitToolTip;
         private System.ComponentModel.BackgroundWorker ApiBackGroundWorker;
+        private System.Windows.Forms.TextBox BaseVoltageTextBox3;
+        private System.Windows.Forms.Label BaseVoltageLabel3;
+        private System.Windows.Forms.TextBox BaseVoltageTextBox4;
+        private System.Windows.Forms.Label BaseVoltageLabel4;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label BoostClockSpeedLabel;
+        private System.Windows.Forms.TextBox BaseClockSpeedTextBox;
+        private System.Windows.Forms.TextBox CurrentClockSpeedTextBox;
+        private System.Windows.Forms.Label BaseClockSpeedLabel;
+        private System.Windows.Forms.Label CurrentClockSpeedLabel;
     }
 }
 
