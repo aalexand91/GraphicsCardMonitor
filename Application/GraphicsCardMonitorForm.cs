@@ -103,11 +103,12 @@ namespace GraphicsCardMonitor
                 // varialbe to store the error message if any errors occur
                 string errorMsg = "";
 
+                // instanitate a NvidiaGraphicsCard object
+                gCards = new NvidiaGraphicsCard();
+
                 // initialize the graphics card API
                 try
                 {
-                    // TODO: SET gCards TO AN NVIDIA GRAPHICS CARD OBJECT
-
                     success = gCards.InitializeApi();
 
                     // set the error message if the graphics card API failed to initialize
