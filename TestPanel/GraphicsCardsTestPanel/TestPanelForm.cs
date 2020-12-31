@@ -1,4 +1,18 @@
-﻿using System;
+﻿/*********************************************************************************************
+ * File: TestPanelForm.cs
+ * 
+ * Original Author: Anthony Alexander
+ * 
+ * Summary: Windows executable to test graphics card functionality via the Interface and
+ *          Driver files. The user can select the various graphics cards that are testable
+ *          and uses each button to test the various interface functions implemented by the
+ *          driver file.
+ * 
+ * Date:        Name:               Description:
+ * 12/31/2020   Anthony Alexander   Initial Creation
+ *********************************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,6 +24,9 @@ using GraphicsCards;
 
 namespace GraphicsCardsTestPanel
 {
+    /// <summary>
+    /// The GraphicsCardTestPanel application
+    /// </summary>
     public partial class GraphicsCardTestPanel : Form
     {
         #region Private Static Variables
@@ -193,11 +210,11 @@ namespace GraphicsCardsTestPanel
 
             try
             {
-                // get the selected GPU base voltage and convert it to a string
-                // add the unit type for the user
-                baseVoltageMessage  = "GPU base voltage " + baseVoltageNum.ToString() + ": " 
-                                    + s_graphicsCard.GetBaseVoltage(s_selectedGpu, baseVoltageNum).ToString() 
-                                    + " uV";
+                // get the selected GPU base voltage and convert from uV to V
+                float baseVoltage = s_graphicsCard.GetBaseVoltage(s_selectedGpu, baseVoltageNum) / 1000000.0f;
+
+                // add base voltage measurement and unit type for the user
+                baseVoltageMessage  = "GPU base voltage " + baseVoltageNum.ToString() + ": " + baseVoltage.ToString() + " V";
             }
             catch (Exception ex)
             {

@@ -3,10 +3,10 @@
 *
 * Original Author: Anthony Alexander
 *
-* Description:	Source file that implements interface IGraphicsCard functions
-*				and function prototypes for the CommonApiWrapper class.
-*				Wrapper class that wraps Nvidia's API functionality into a class
-*				that can be inherited by other Nvidia graphics card classes
+* Summary:	Source file that implements interface IGraphicsCard functions
+*			and function prototypes for the CommonApiWrapper class.
+*			Wrapper class that wraps Nvidia's API functionality into a class
+*			that can be inherited by other Nvidia graphics card classes
 *
 * Date:			Author:				Description of Change:
 * 07/16/2020	Anthony Alexander	Initial Creation
