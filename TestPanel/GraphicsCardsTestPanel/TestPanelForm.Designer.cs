@@ -45,14 +45,14 @@ namespace GraphicsCardsTestPanel
             this.PowerSupplyTempButton = new System.Windows.Forms.Button();
             this.BoardTempButton = new System.Windows.Forms.Button();
             this.FanSpeedButton = new System.Windows.Forms.Button();
-            this.BaseClockFreqButton = new System.Windows.Forms.Button();
-            this.CurrentClockFreqButton = new System.Windows.Forms.Button();
-            this.BoostClockFreqButton = new System.Windows.Forms.Button();
+            this.GraphicsBaseClockFreqButton = new System.Windows.Forms.Button();
+            this.GraphicsCurrentClockFreqButton = new System.Windows.Forms.Button();
+            this.GraphicsBoostClockFreqButton = new System.Windows.Forms.Button();
             this.PerfStateButton = new System.Windows.Forms.Button();
+            this.MemoryBaseClockFreqButton = new System.Windows.Forms.Button();
+            this.MemoryCurrentClockFreqButton = new System.Windows.Forms.Button();
+            this.MemoryBoostClockFreqButton = new System.Windows.Forms.Button();
             this.BaseVoltage1Button = new System.Windows.Forms.Button();
-            this.BaseVoltage2Button = new System.Windows.Forms.Button();
-            this.BaseVoltage3Button = new System.Windows.Forms.Button();
-            this.BaseVoltage4Button = new System.Windows.Forms.Button();
             this.SelectLabel = new System.Windows.Forms.Label();
             this.GraphicsCardComboBox = new System.Windows.Forms.ComboBox();
             this.TestButton = new System.Windows.Forms.Button();
@@ -236,38 +236,38 @@ namespace GraphicsCardsTestPanel
             this.FanSpeedButton.UseVisualStyleBackColor = true;
             this.FanSpeedButton.Click += new System.EventHandler(this.FanSpeedButton_Click);
             // 
-            // BaseClockFreqButton
+            // GraphicsBaseClockFreqButton
             // 
-            this.BaseClockFreqButton.Enabled = false;
-            this.BaseClockFreqButton.Location = new System.Drawing.Point(301, 337);
-            this.BaseClockFreqButton.Name = "BaseClockFreqButton";
-            this.BaseClockFreqButton.Size = new System.Drawing.Size(130, 54);
-            this.BaseClockFreqButton.TabIndex = 16;
-            this.BaseClockFreqButton.Text = "Get Base Clock Frequency";
-            this.BaseClockFreqButton.UseVisualStyleBackColor = true;
-            this.BaseClockFreqButton.Click += new System.EventHandler(this.BaseClockFreqButton_Click);
+            this.GraphicsBaseClockFreqButton.Enabled = false;
+            this.GraphicsBaseClockFreqButton.Location = new System.Drawing.Point(301, 337);
+            this.GraphicsBaseClockFreqButton.Name = "GraphicsBaseClockFreqButton";
+            this.GraphicsBaseClockFreqButton.Size = new System.Drawing.Size(130, 54);
+            this.GraphicsBaseClockFreqButton.TabIndex = 16;
+            this.GraphicsBaseClockFreqButton.Text = "Get Graphics Base Clock Frequency";
+            this.GraphicsBaseClockFreqButton.UseVisualStyleBackColor = true;
+            this.GraphicsBaseClockFreqButton.Click += new System.EventHandler(this.GraphicsBaseClockFreqButton_Click);
             // 
-            // CurrentClockFreqButton
+            // GraphicsCurrentClockFreqButton
             // 
-            this.CurrentClockFreqButton.Enabled = false;
-            this.CurrentClockFreqButton.Location = new System.Drawing.Point(439, 43);
-            this.CurrentClockFreqButton.Name = "CurrentClockFreqButton";
-            this.CurrentClockFreqButton.Size = new System.Drawing.Size(130, 53);
-            this.CurrentClockFreqButton.TabIndex = 17;
-            this.CurrentClockFreqButton.Text = "Get Current Clock Frequency";
-            this.CurrentClockFreqButton.UseVisualStyleBackColor = true;
-            this.CurrentClockFreqButton.Click += new System.EventHandler(this.CurrentClockFreqButton_Click);
+            this.GraphicsCurrentClockFreqButton.Enabled = false;
+            this.GraphicsCurrentClockFreqButton.Location = new System.Drawing.Point(439, 43);
+            this.GraphicsCurrentClockFreqButton.Name = "GraphicsCurrentClockFreqButton";
+            this.GraphicsCurrentClockFreqButton.Size = new System.Drawing.Size(130, 53);
+            this.GraphicsCurrentClockFreqButton.TabIndex = 17;
+            this.GraphicsCurrentClockFreqButton.Text = "Get Graphics Current Clock Frequency";
+            this.GraphicsCurrentClockFreqButton.UseVisualStyleBackColor = true;
+            this.GraphicsCurrentClockFreqButton.Click += new System.EventHandler(this.GraphicsCurrentClockFreqButton_Click);
             // 
-            // BoostClockFreqButton
+            // GraphicsBoostClockFreqButton
             // 
-            this.BoostClockFreqButton.Enabled = false;
-            this.BoostClockFreqButton.Location = new System.Drawing.Point(439, 102);
-            this.BoostClockFreqButton.Name = "BoostClockFreqButton";
-            this.BoostClockFreqButton.Size = new System.Drawing.Size(130, 53);
-            this.BoostClockFreqButton.TabIndex = 18;
-            this.BoostClockFreqButton.Text = "Get Boost Clock Frequency";
-            this.BoostClockFreqButton.UseVisualStyleBackColor = true;
-            this.BoostClockFreqButton.Click += new System.EventHandler(this.BoostClockFreqButton_Click);
+            this.GraphicsBoostClockFreqButton.Enabled = false;
+            this.GraphicsBoostClockFreqButton.Location = new System.Drawing.Point(439, 102);
+            this.GraphicsBoostClockFreqButton.Name = "GraphicsBoostClockFreqButton";
+            this.GraphicsBoostClockFreqButton.Size = new System.Drawing.Size(130, 53);
+            this.GraphicsBoostClockFreqButton.TabIndex = 18;
+            this.GraphicsBoostClockFreqButton.Text = "Get Graphics Boost Clock Frequency";
+            this.GraphicsBoostClockFreqButton.UseVisualStyleBackColor = true;
+            this.GraphicsBoostClockFreqButton.Click += new System.EventHandler(this.GraphicsBoostClockFreqButton_Click);
             // 
             // PerfStateButton
             // 
@@ -280,49 +280,49 @@ namespace GraphicsCardsTestPanel
             this.PerfStateButton.UseVisualStyleBackColor = true;
             this.PerfStateButton.Click += new System.EventHandler(this.PerfStateButton_Click);
             // 
+            // MemoryBaseClockFreqButton
+            // 
+            this.MemoryBaseClockFreqButton.Enabled = false;
+            this.MemoryBaseClockFreqButton.Location = new System.Drawing.Point(439, 161);
+            this.MemoryBaseClockFreqButton.Name = "MemoryBaseClockFreqButton";
+            this.MemoryBaseClockFreqButton.Size = new System.Drawing.Size(130, 53);
+            this.MemoryBaseClockFreqButton.TabIndex = 20;
+            this.MemoryBaseClockFreqButton.Text = "Get Memory Base Clock Frequency";
+            this.MemoryBaseClockFreqButton.UseVisualStyleBackColor = true;
+            this.MemoryBaseClockFreqButton.Click += new System.EventHandler(this.MemoryBaseClockFreqButton_Click);
+            // 
+            // MemoryCurrentClockFreqButton
+            // 
+            this.MemoryCurrentClockFreqButton.Enabled = false;
+            this.MemoryCurrentClockFreqButton.Location = new System.Drawing.Point(439, 220);
+            this.MemoryCurrentClockFreqButton.Name = "MemoryCurrentClockFreqButton";
+            this.MemoryCurrentClockFreqButton.Size = new System.Drawing.Size(131, 53);
+            this.MemoryCurrentClockFreqButton.TabIndex = 21;
+            this.MemoryCurrentClockFreqButton.Text = "Get Memory Current Clock Frequency";
+            this.MemoryCurrentClockFreqButton.UseVisualStyleBackColor = true;
+            this.MemoryCurrentClockFreqButton.Click += new System.EventHandler(this.MemoryCurrentClockFreqButton_Click);
+            // 
+            // MemoryBoostClockFreqButton
+            // 
+            this.MemoryBoostClockFreqButton.Enabled = false;
+            this.MemoryBoostClockFreqButton.Location = new System.Drawing.Point(440, 279);
+            this.MemoryBoostClockFreqButton.Name = "MemoryBoostClockFreqButton";
+            this.MemoryBoostClockFreqButton.Size = new System.Drawing.Size(130, 53);
+            this.MemoryBoostClockFreqButton.TabIndex = 22;
+            this.MemoryBoostClockFreqButton.Text = "Get Memory Boost Clock Frequency";
+            this.MemoryBoostClockFreqButton.UseVisualStyleBackColor = true;
+            this.MemoryBoostClockFreqButton.Click += new System.EventHandler(this.MemoryBoostClockFreqButton_Click);
+            // 
             // BaseVoltage1Button
             // 
             this.BaseVoltage1Button.Enabled = false;
-            this.BaseVoltage1Button.Location = new System.Drawing.Point(439, 161);
+            this.BaseVoltage1Button.Location = new System.Drawing.Point(440, 337);
             this.BaseVoltage1Button.Name = "BaseVoltage1Button";
-            this.BaseVoltage1Button.Size = new System.Drawing.Size(130, 53);
-            this.BaseVoltage1Button.TabIndex = 20;
+            this.BaseVoltage1Button.Size = new System.Drawing.Size(130, 54);
+            this.BaseVoltage1Button.TabIndex = 23;
             this.BaseVoltage1Button.Text = "Get Base Voltage 1";
             this.BaseVoltage1Button.UseVisualStyleBackColor = true;
             this.BaseVoltage1Button.Click += new System.EventHandler(this.BaseVoltage1Button_Click);
-            // 
-            // BaseVoltage2Button
-            // 
-            this.BaseVoltage2Button.Enabled = false;
-            this.BaseVoltage2Button.Location = new System.Drawing.Point(439, 220);
-            this.BaseVoltage2Button.Name = "BaseVoltage2Button";
-            this.BaseVoltage2Button.Size = new System.Drawing.Size(131, 53);
-            this.BaseVoltage2Button.TabIndex = 21;
-            this.BaseVoltage2Button.Text = "Get Base Voltage 2";
-            this.BaseVoltage2Button.UseVisualStyleBackColor = true;
-            this.BaseVoltage2Button.Click += new System.EventHandler(this.BaseVoltage2Button_Click);
-            // 
-            // BaseVoltage3Button
-            // 
-            this.BaseVoltage3Button.Enabled = false;
-            this.BaseVoltage3Button.Location = new System.Drawing.Point(440, 279);
-            this.BaseVoltage3Button.Name = "BaseVoltage3Button";
-            this.BaseVoltage3Button.Size = new System.Drawing.Size(130, 53);
-            this.BaseVoltage3Button.TabIndex = 22;
-            this.BaseVoltage3Button.Text = "Get Base Voltage 3";
-            this.BaseVoltage3Button.UseVisualStyleBackColor = true;
-            this.BaseVoltage3Button.Click += new System.EventHandler(this.BaseVoltage3Button_Click);
-            // 
-            // BaseVoltage4Button
-            // 
-            this.BaseVoltage4Button.Enabled = false;
-            this.BaseVoltage4Button.Location = new System.Drawing.Point(440, 337);
-            this.BaseVoltage4Button.Name = "BaseVoltage4Button";
-            this.BaseVoltage4Button.Size = new System.Drawing.Size(130, 54);
-            this.BaseVoltage4Button.TabIndex = 23;
-            this.BaseVoltage4Button.Text = "Get Base Voltage 4";
-            this.BaseVoltage4Button.UseVisualStyleBackColor = true;
-            this.BaseVoltage4Button.Click += new System.EventHandler(this.BaseVoltage4Button_Click);
             // 
             // SelectLabel
             // 
@@ -383,14 +383,14 @@ namespace GraphicsCardsTestPanel
             this.Controls.Add(this.TestButton);
             this.Controls.Add(this.GraphicsCardComboBox);
             this.Controls.Add(this.SelectLabel);
-            this.Controls.Add(this.BaseVoltage4Button);
-            this.Controls.Add(this.BaseVoltage3Button);
-            this.Controls.Add(this.BaseVoltage2Button);
             this.Controls.Add(this.BaseVoltage1Button);
+            this.Controls.Add(this.MemoryBoostClockFreqButton);
+            this.Controls.Add(this.MemoryCurrentClockFreqButton);
+            this.Controls.Add(this.MemoryBaseClockFreqButton);
             this.Controls.Add(this.PerfStateButton);
-            this.Controls.Add(this.BoostClockFreqButton);
-            this.Controls.Add(this.CurrentClockFreqButton);
-            this.Controls.Add(this.BaseClockFreqButton);
+            this.Controls.Add(this.GraphicsBoostClockFreqButton);
+            this.Controls.Add(this.GraphicsCurrentClockFreqButton);
+            this.Controls.Add(this.GraphicsBaseClockFreqButton);
             this.Controls.Add(this.FanSpeedButton);
             this.Controls.Add(this.BoardTempButton);
             this.Controls.Add(this.PowerSupplyTempButton);
@@ -432,14 +432,14 @@ namespace GraphicsCardsTestPanel
         private System.Windows.Forms.Button PowerSupplyTempButton;
         private System.Windows.Forms.Button BoardTempButton;
         private System.Windows.Forms.Button FanSpeedButton;
-        private System.Windows.Forms.Button BaseClockFreqButton;
-        private System.Windows.Forms.Button CurrentClockFreqButton;
-        private System.Windows.Forms.Button BoostClockFreqButton;
+        private System.Windows.Forms.Button GraphicsBaseClockFreqButton;
+        private System.Windows.Forms.Button GraphicsCurrentClockFreqButton;
+        private System.Windows.Forms.Button GraphicsBoostClockFreqButton;
         private System.Windows.Forms.Button PerfStateButton;
+        private System.Windows.Forms.Button MemoryBaseClockFreqButton;
+        private System.Windows.Forms.Button MemoryCurrentClockFreqButton;
+        private System.Windows.Forms.Button MemoryBoostClockFreqButton;
         private System.Windows.Forms.Button BaseVoltage1Button;
-        private System.Windows.Forms.Button BaseVoltage2Button;
-        private System.Windows.Forms.Button BaseVoltage3Button;
-        private System.Windows.Forms.Button BaseVoltage4Button;
         private System.Windows.Forms.Label SelectLabel;
         private System.Windows.Forms.ComboBox GraphicsCardComboBox;
         private System.Windows.Forms.Button TestButton;

@@ -118,13 +118,13 @@ namespace GraphicsCardsTestPanel
             PowerSupplyTempButton.Enabled   = false;
             BoardTempButton.Enabled         = false;
             PerfStateButton.Enabled         = false;
-            BaseClockFreqButton.Enabled     = false;
-            CurrentClockFreqButton.Enabled  = false;
-            BoostClockFreqButton.Enabled    = false;
+            GraphicsBaseClockFreqButton.Enabled     = false;
+            GraphicsCurrentClockFreqButton.Enabled  = false;
+            GraphicsBoostClockFreqButton.Enabled    = false;
+            MemoryBaseClockFreqButton.Enabled      = false;
+            MemoryCurrentClockFreqButton.Enabled      = false;
+            MemoryBoostClockFreqButton.Enabled      = false;
             BaseVoltage1Button.Enabled      = false;
-            BaseVoltage2Button.Enabled      = false;
-            BaseVoltage3Button.Enabled      = false;
-            BaseVoltage4Button.Enabled      = false;
             TestButton.Enabled              = false;
         }
 
@@ -152,13 +152,13 @@ namespace GraphicsCardsTestPanel
             PowerSupplyTempButton.Enabled   = true;
             BoardTempButton.Enabled         = true;
             PerfStateButton.Enabled         = true;
-            BaseClockFreqButton.Enabled     = true;
-            CurrentClockFreqButton.Enabled  = true;
-            BoostClockFreqButton.Enabled    = true;
+            GraphicsBaseClockFreqButton.Enabled     = true;
+            GraphicsCurrentClockFreqButton.Enabled  = true;
+            GraphicsBoostClockFreqButton.Enabled    = true;
+            MemoryBaseClockFreqButton.Enabled      = true;
+            MemoryCurrentClockFreqButton.Enabled      = true;
+            MemoryBoostClockFreqButton.Enabled      = true;
             BaseVoltage1Button.Enabled      = true;
-            BaseVoltage2Button.Enabled      = true;
-            BaseVoltage3Button.Enabled      = true;
-            BaseVoltage4Button.Enabled      = true;
         }
 
         /// <summary>
@@ -757,24 +757,26 @@ namespace GraphicsCardsTestPanel
         }
 
         /// <summary>
-        /// Event that occurs when the user clicks the "Get Base Clock Frequency" button
+        /// Event that occurs when the user clicks the "Get Graphics Base Clock Frequency" button
         /// </summary>
         /// <param name="sender">Reference to the object that raised the event</param>
         /// <param name="e">Object to the specific event</param>
-        private void BaseClockFreqButton_Click(object sender, EventArgs e)
+        private void GraphicsBaseClockFreqButton_Click(object sender, EventArgs e)
         {
             string resultMessage = string.Empty;    // the result to display to the user
 
             try
             {
-                // get the GPU base clock frequency and convert it to a string
-                // also add the unit type for the user
-                resultMessage = "Base clock frequency: " + s_graphicsCard.GetGraphicsBaseClockFreq(s_selectedGpu).ToString() + " kHz";
+                // get the graphics processor base clock frequency and convert it to MHz
+                float graphicsBaseClockFreq = s_graphicsCard.GetGraphicsBaseClockFreq(s_selectedGpu) / 1000.0f;
+
+                // add the graphics processor base clock frequency and unit to the result message
+                resultMessage = "Graphics processor base clock frequency: " + graphicsBaseClockFreq.ToString() + " MHz";
             }
             catch (Exception ex)
             {
-                // let the user know an error occured getting the base clock frequency of the GPU
-                resultMessage = "ERROR: Could not get base clock frequency. " + ex.Message;
+                // let the user know an error occured getting the graphics base clock frequency of the GPU
+                resultMessage = "ERROR: Could not get graphics processor base clock frequency. " + ex.Message;
             }
             finally
             {
@@ -784,24 +786,26 @@ namespace GraphicsCardsTestPanel
         }
 
         /// <summary>
-        /// Event that occurs when the user clicks the "Get Current Clock Frequency" button
+        /// Event that occurs when the user clicks the "Get Graphics Current Clock Frequency" button
         /// </summary>
         /// <param name="sender">Reference to the object that raised the event</param>
         /// <param name="e">Object to the specific event</param>
-        private void CurrentClockFreqButton_Click(object sender, EventArgs e)
+        private void GraphicsCurrentClockFreqButton_Click(object sender, EventArgs e)
         {
             string resultMessage = string.Empty;    // the result to display to the user
 
             try
             {
-                // get the current GPU processor clock frequency and convert it to a string
-                // also add the unit type for the user
-                resultMessage = "Current clock frequency: " + s_graphicsCard.GetGraphicsCurrentClockFreq(s_selectedGpu).ToString() + "kHz";
+                // get the current graphics processor clock frequency and convert it to MHz
+                float graphicsCurrClockFreq = s_graphicsCard.GetGraphicsCurrentClockFreq(s_selectedGpu) / 1000.0f;
+
+                // add the current graphics processor clock frequency and the unit to the result message 
+                resultMessage = "Graphics processor current clock frequency: " + graphicsCurrClockFreq.ToString() + " MHz";
             }
             catch (Exception ex)
             {
-                // let the user know an error occurred getting the current GPU processor clock frequency
-                resultMessage = "ERROR: Could not get current clock frequency. " + ex.Message;
+                // let the user know an error occurred getting the current graphics processor clock frequency
+                resultMessage = "ERROR: Could not get graphics processor current clock frequency. " + ex.Message;
             }
             finally
             {
@@ -815,24 +819,113 @@ namespace GraphicsCardsTestPanel
         /// </summary>
         /// <param name="sender">Reference to the object that raised the event</param>
         /// <param name="e">Object to the specific event</param>
-        private void BoostClockFreqButton_Click(object sender, EventArgs e)
+        private void GraphicsBoostClockFreqButton_Click(object sender, EventArgs e)
         {
-            string resultMessage = string.Empty;
+            string resultMessage = string.Empty;    // the result to display to the user
 
             try
             {
-                // get the GPU processor boost clock frequency and convert it to a string
-                // also add the unit type for the user
-                resultMessage = "Boost clock frequency: " + s_graphicsCard.GetGraphicsBoostClockFreq(s_selectedGpu).ToString() + " kHz";
+                // get the graphics processor boost clock frequency and convert it to MHz
+                float graphicsBoostClockFreq = s_graphicsCard.GetGraphicsBoostClockFreq(s_selectedGpu) / 1000.0f;
+
+                // add the graphics processor boost clock frequency and unit to the result message
+                resultMessage = "Graphics processor boost clock frequency: " + graphicsBoostClockFreq.ToString() + " MHz";
             }
             catch (Exception ex) 
             {
-                // let the user know an error occurred getting the GPU processor boost clock frequency
+                // let the user know an error occurred getting the graphics processor boost clock frequency
                 resultMessage = "ERROR: Could not get boost clock frequency. " + ex.Message;
             }
             finally
             {
                 // display the results to the user
+                MessageBox.Show(resultMessage);
+            }
+        }
+
+        /// <summary>
+        /// Event that occurs when the user clicks the "Get Memory Base Clock Frequency" button
+        /// </summary>
+        /// <param name="sender">Reference to the object that raised the event</param>
+        /// <param name="e">Object to the specific event</param>
+        private void MemoryBaseClockFreqButton_Click(object sender, EventArgs e)
+        {
+            string resultMessage = string.Empty;    // the result to display to the user
+
+            try
+            {
+                // get the memory processor base clock frequency and convert it to MHz
+                float memBaseClockFreq = s_graphicsCard.GetMemoryBaseClockFreq(s_selectedGpu) / 1000.0f;
+
+                // convert the frequency to a string and add the value to the result message
+                resultMessage = "Memory processor current clock frequency: " + memBaseClockFreq.ToString() + " MHz";
+            }
+            catch (Exception ex)
+            {
+                // let the user know an error occurred getting the memory processor base clock frequency
+                resultMessage = "ERROR: Could not get memory processor base clock frequency. " + ex.Message;
+            }
+            finally
+            {
+                // display the result to the user
+                MessageBox.Show(resultMessage);
+            }
+        }
+
+        /// <summary>
+        /// Event that occurs when the user clicks the "Get Memory Current Clock Frequency" button
+        /// </summary>
+        /// <param name="sender">Reference to the object that raised the event</param>
+        /// <param name="e">Object to the specific event</param>
+        private void MemoryCurrentClockFreqButton_Click(object sender, EventArgs e)
+        {
+            string resultMessage = string.Empty;    // the result to display to the user
+
+            try
+            {
+                // get the memory processor current clock frequency and convert it to MHz
+                float memCurrClockFreq = s_graphicsCard.GetMemoryCurrentClockFreq(s_selectedGpu) / 1000.0f;
+
+                // convert the frequency to a string and add the value to the result message
+                resultMessage = "Memory processor current clock frequency: " + memCurrClockFreq.ToString() + " MHz";
+            }
+            catch (Exception ex)
+            {
+                // let the user know an error occurred getting the memory processor current clock frequency
+                resultMessage = "ERROR: Could not get memory processor current clock frequency. " + ex.Message;
+            }
+            finally
+            {
+                // display the result to the user
+                MessageBox.Show(resultMessage);
+            }
+        }
+
+        /// <summary>
+        /// Event that occurs when the user clicks the "Get Memory Boost Clock Frequency" button
+        /// </summary>
+        /// <param name="sender">Reference to the object that raised the event</param>
+        /// <param name="e">Object to the specific event</param>
+        private void MemoryBoostClockFreqButton_Click(object sender, EventArgs e)
+        {
+            string resultMessage = string.Empty;    // the result to display to the user
+
+            try
+            {
+                // get the memory processor boost clock frequency and convert it to MHz
+                float memCurrClockFreq = s_graphicsCard.GetMemoryBoostClockFreq(s_selectedGpu) / 1000.0f;
+
+                // convert the frequency to a string and add the value to the result message
+                resultMessage = "Memory processor boost clock frequency: " + memCurrClockFreq.ToString() + " MHz";
+            }
+            catch (Exception ex)
+            {
+                // let the user know an error occurred getting the memory processor boost clock frequency
+                resultMessage = "ERROR: Could not get memory processor boost clock frequency. " + ex.Message;
+            }
+            finally
+            {
+                // display the result to the user
                 MessageBox.Show(resultMessage);
             }
         }
@@ -846,39 +939,6 @@ namespace GraphicsCardsTestPanel
         {
             // get the GPU base voltage 1
             MessageBox.Show(GetBaseVoltageResult(1));
-        }
-
-        /// <summary>
-        /// Event that occurs when the user clicks the "Get Base Voltage 2" button
-        /// </summary>
-        /// <param name="sender">Reference to the object that raised the event</param>
-        /// <param name="e">Object to the specific event</param>
-        private void BaseVoltage2Button_Click(object sender, EventArgs e)
-        {
-            // get the GPU base voltage 2
-            MessageBox.Show(GetBaseVoltageResult(2));
-        }
-
-        /// <summary>
-        /// Event that occurs when the user clicks the "Get Base Voltage 3" button
-        /// </summary>
-        /// <param name="sender">Reference to the object that raised the event</param>
-        /// <param name="e">Object to the specific event</param>
-        private void BaseVoltage3Button_Click(object sender, EventArgs e)
-        {
-            // get the GPU base voltage 3
-            MessageBox.Show(GetBaseVoltageResult(3));
-        }
-
-        /// <summary>
-        /// Event that occurs when the user clicks the "Get Base Voltage 4" button
-        /// </summary>
-        /// <param name="sender">Reference to the object that raised the event</param>
-        /// <param name="e">Object to the specific event</param>
-        private void BaseVoltage4Button_Click(object sender, EventArgs e)
-        {
-            // get the GPU base voltage 4
-            MessageBox.Show(GetBaseVoltageResult(4));
         }
 
         /// <summary>
