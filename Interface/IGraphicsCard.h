@@ -181,6 +181,27 @@ namespace GraphicsCards
 			virtual float GetGraphicsBoostClockFreq(unsigned long physHandlerNum) = 0;
 
 			/// <summary>
+			/// Gets the base clock speed of the memory processor in kHz
+			/// </summary>
+			/// <param name="physHandlerNum">The index of the GPU handler in memory</param>
+			/// <returns>The memory processor base clock speed in kHz as a float</returns>
+			virtual float GetMemoryBaseClockFreq(unsigned long physHandlerNum) = 0;
+
+			/// <summary>
+			/// Gets the current clock speed of the memory processor in kHz
+			/// </summary>
+			/// <param name="physHandlerNum">The index of the GPU handler in memory</param>
+			/// <returns>The memory processor current clock speed in kHz as a float</returns>
+			virtual float GetMemoryCurrentClockFreq(unsigned long physHandlerNum) = 0;
+
+			/// <summary>
+			/// Gets the boost clock speed of the memory processor in kHz
+			/// </summary>
+			/// <param name="physHandlerNum">The index of the GPU handler in memory</param>
+			/// <returns>The memory processor boost clock speed in kHz as a float</returns>
+			virtual float GetMemoryBoostClockFreq(unsigned long physHandlerNum) = 0;
+
+			/// <summary>
 			/// Gets the current GPU performance state
 			/// </summary>
 			/// <param name="physHandlerNum">The index of the GPU handler in memory</param>

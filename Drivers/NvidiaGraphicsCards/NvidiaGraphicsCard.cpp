@@ -1556,6 +1556,147 @@ namespace GraphicsCards
 	}
 
 	/// <summary>
+	/// Gets the graphics card memory processor base clock frequency in kHz
+	/// </summary>
+	/// <param name="physHandlerNum">The physical handler index in memory</param>
+	/// <returns>The memory processor base clock frequency in kHz as a float</returns>
+	float NvidiaGraphicsCard::GetMemoryBaseClockFreq(ULONG physHandlerNum)
+	{
+		try
+		{
+			// check if the API is okay and initialized
+			// also check if the GPU handler is initialized
+			if (m_apiStatus == NVAPI_OK && m_apiInit && m_handlersInit)
+			{
+				// check if the handler index is valid
+				if (IsHandlerIndexValid(physHandlerNum))
+				{
+					float baseClockFreq = 0;	// the memory base clock frequency
+
+					// get the memory base clock frequency
+					// method throws an exception if an error occurs
+					bool success = GetClockFrequency(	m_ptrPhysicalHandlers[physHandlerNum], 
+														NVAPI_GPU_PUBLIC_CLOCK_MEMORY, 
+														NV_GPU_CLOCK_FREQUENCIES_BASE_CLOCK, 
+														&baseClockFreq
+													);
+
+					// check if the API successfully obtained the memory base clock frequency
+					if (success)
+					{
+						return baseClockFreq;
+					}
+				}
+			}
+			else
+			{
+				// let the user know there is an issue with the API or GPU handler
+				throw gcnew Exception(GetDefaultErrMsg());
+			}
+		}
+		catch (Exception^ ex)
+		{
+			// let the user know an error occurred getting the memory processor base clock speed
+			String^ errMsg = "Could not get memory base clock speed. " + ex->Message;
+			throw gcnew Exception(errMsg);
+		}
+	}
+
+	/// <summary>
+	/// Gets the graphics card memory processor current clock speed in kHz
+	/// </summary>
+	/// <param name="physHandlerNum">The physical handler index in memory</param>
+	/// <returns>The memory processor current clock speed in kHz as a float</returns>
+	float NvidiaGraphicsCard::GetMemoryCurrentClockFreq(ULONG physHandlerNum)
+	{
+		try
+		{
+			// check if the API is okay and initialized
+			// also check if the GPU handler is initialized
+			if (m_apiStatus == NVAPI_OK && m_apiInit && m_handlersInit)
+			{
+				// check if the handler index is valid
+				if (IsHandlerIndexValid(physHandlerNum))
+				{
+					float currentClockFreq = 0;	// the memory current clock frequency
+
+					// get the memory current clock frequency
+					// method throws an exception if an error occurs
+					bool success = GetClockFrequency(	m_ptrPhysicalHandlers[physHandlerNum],
+														NVAPI_GPU_PUBLIC_CLOCK_MEMORY,
+														NV_GPU_CLOCK_FREQUENCIES_CURRENT_FREQ,
+														&currentClockFreq
+													);
+
+					// check if the API successfully obtained the memory current clock frequency
+					if (success)
+					{
+						return currentClockFreq;
+					}
+				}
+			}
+			else
+			{
+				// let the user know there is an issue with the API or GPU handler
+				throw gcnew Exception(GetDefaultErrMsg());
+			}
+		}
+		catch (Exception^ ex)
+		{
+			// let the user know an error occurred getting the memory processor current clock speed
+			String^ errMsg = "Could not get memory current clock speed. " + ex->Message;
+			throw gcnew Exception(errMsg);
+		}
+	}
+
+	/// <summary>
+	/// Gets the graphics card memory processor boost clock frequency in kHz
+	/// </summary>
+	/// <param name="physHandlerNum">The physical handler index in memory</param>
+	/// <returns>The memory processor boost clock frequency in kHz as a float</returns>
+	float NvidiaGraphicsCard::GetMemoryBoostClockFreq(ULONG physHandlerNum)
+	{
+		try
+		{
+			// check if the API is okay and initialized
+			// also check if the GPU handler is initialized
+			if (m_apiStatus == NVAPI_OK && m_apiInit && m_handlersInit)
+			{
+				// check if the handler index is valid
+				if (IsHandlerIndexValid(physHandlerNum))
+				{
+					float boostClockFreq = 0;	// the memory boost clock frequency
+
+					// get the memory boost clock frequency
+					// method throws an exception if an error occurs
+					bool success = GetClockFrequency(	m_ptrPhysicalHandlers[physHandlerNum],
+														NVAPI_GPU_PUBLIC_CLOCK_MEMORY,
+														NV_GPU_CLOCK_FREQUENCIES_BOOST_CLOCK,
+														&boostClockFreq
+													);
+
+					// check if the API successfully obtained the memory boost clock frequency
+					if (success)
+					{
+						return boostClockFreq;
+					}
+				}
+			}
+			else
+			{
+				// let the user know there is an issue with the API or GPU handler
+				throw gcnew Exception(GetDefaultErrMsg());
+			}
+		}
+		catch (Exception^ ex)
+		{
+			// let the user know an error occurred getting the memory processor boost clock speed
+			String^ errMsg = "Could not get memory boost clock speed. " + ex->Message;
+			throw gcnew Exception(errMsg);
+		}
+	}
+
+	/// <summary>
 	/// Gets the current performance state setting of the GPU
 	/// </summary>
 	/// <param name="physHandlerNum">The physical handler index in memory</param>
@@ -1626,7 +1767,7 @@ namespace GraphicsCards
 					NV_GPU_PERF_PSTATES20_INFO_V2 perfStateInfo;
 
 					// set the performance state info version
-					perfStateInfo.version = NV_GPU_PERF_PSTATES20_INFO_VER3;
+					perfStateInfo.version = NV_GPU_PERF_PSTATES20_INFO_VER2;
 
 					// get the GPU performance state information
 					m_apiStatus = NvAPI_GPU_GetPstates20(m_ptrPhysicalHandlers[physHandlerNum], &perfStateInfo);

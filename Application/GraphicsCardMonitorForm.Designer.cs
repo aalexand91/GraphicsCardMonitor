@@ -590,7 +590,7 @@
             this.helpToolStripMenuItem});
             this.MenuStrip.Location = new System.Drawing.Point(0, 0);
             this.MenuStrip.Name = "MenuStrip";
-            this.MenuStrip.Size = new System.Drawing.Size(726, 24);
+            this.MenuStrip.Size = new System.Drawing.Size(689, 24);
             this.MenuStrip.TabIndex = 23;
             this.MenuStrip.Text = "menuStrip1";
             // 
@@ -638,7 +638,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(726, 301);
+            this.ClientSize = new System.Drawing.Size(689, 301);
             this.Controls.Add(this.ExitButton);
             this.Controls.Add(this.RefreshButton);
             this.Controls.Add(this.TemperatureGroupBox);
