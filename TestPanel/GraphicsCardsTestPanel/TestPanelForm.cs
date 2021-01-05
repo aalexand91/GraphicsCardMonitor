@@ -101,31 +101,31 @@ namespace GraphicsCardsTestPanel
         {
             // disable all test buttons in order to prevent user from trying
             // to test a graphics card before selecting one
-            CoreCountButton.Enabled         = false;
-            NameButton.Enabled              = false;
-            VbiosButton.Enabled             = false;
-            VirtualRamButton.Enabled        = false;
-            PhysicalRamButton.Enabled       = false;
-            SerialNumberButton.Enabled      = false;
-            PciInternalIdButton.Enabled     = false;
-            PciRevButton.Enabled            = false;
-            PciSubsystemIdButton.Enabled    = false;
-            PciExternalIdButton.Enabled     = false;
-            BusIdButton.Enabled             = false;
-            FanSpeedButton.Enabled          = false;
-            CoreTempButton.Enabled          = false;
-            MemoryTempButton.Enabled        = false;
-            PowerSupplyTempButton.Enabled   = false;
-            BoardTempButton.Enabled         = false;
-            PerfStateButton.Enabled         = false;
+            CoreCountButton.Enabled                 = false;
+            NameButton.Enabled                      = false;
+            VbiosButton.Enabled                     = false;
+            VirtualRamButton.Enabled                = false;
+            PhysicalRamButton.Enabled               = false;
+            SerialNumberButton.Enabled              = false;
+            PciInternalIdButton.Enabled             = false;
+            PciRevButton.Enabled                    = false;
+            PciSubsystemIdButton.Enabled            = false;
+            PciExternalIdButton.Enabled             = false;
+            BusIdButton.Enabled                     = false;
+            FanSpeedButton.Enabled                  = false;
+            CoreTempButton.Enabled                  = false;
+            MemoryTempButton.Enabled                = false;
+            PowerSupplyTempButton.Enabled           = false;
+            BoardTempButton.Enabled                 = false;
+            PerfStateButton.Enabled                 = false;
             GraphicsBaseClockFreqButton.Enabled     = false;
             GraphicsCurrentClockFreqButton.Enabled  = false;
             GraphicsBoostClockFreqButton.Enabled    = false;
-            MemoryBaseClockFreqButton.Enabled      = false;
-            MemoryCurrentClockFreqButton.Enabled      = false;
+            MemoryBaseClockFreqButton.Enabled       = false;
+            MemoryCurrentClockFreqButton.Enabled    = false;
             MemoryBoostClockFreqButton.Enabled      = false;
-            BaseVoltage1Button.Enabled      = false;
-            TestButton.Enabled              = false;
+            BaseVoltage1Button.Enabled              = false;
+            TestButton.Enabled                      = false;
         }
 
         /// <summary>
@@ -135,30 +135,30 @@ namespace GraphicsCardsTestPanel
         {
             // disable all test buttons in order to prevent user from trying
             // to test a graphics card before selecting one
-            CoreCountButton.Enabled         = true;
-            NameButton.Enabled              = true;
-            VbiosButton.Enabled             = true;
-            VirtualRamButton.Enabled        = true;
-            PhysicalRamButton.Enabled       = true;
-            SerialNumberButton.Enabled      = true;
-            PciInternalIdButton.Enabled     = true;
-            PciRevButton.Enabled            = true;
-            PciSubsystemIdButton.Enabled    = true;
-            PciExternalIdButton.Enabled     = true;
-            BusIdButton.Enabled             = true;
-            FanSpeedButton.Enabled          = true;
-            CoreTempButton.Enabled          = true;
-            MemoryTempButton.Enabled        = true;
-            PowerSupplyTempButton.Enabled   = true;
-            BoardTempButton.Enabled         = true;
-            PerfStateButton.Enabled         = true;
+            CoreCountButton.Enabled                 = true;
+            NameButton.Enabled                      = true;
+            VbiosButton.Enabled                     = true;
+            VirtualRamButton.Enabled                = true;
+            PhysicalRamButton.Enabled               = true;
+            SerialNumberButton.Enabled              = true;
+            PciInternalIdButton.Enabled             = true;
+            PciRevButton.Enabled                    = true;
+            PciSubsystemIdButton.Enabled            = true;
+            PciExternalIdButton.Enabled             = true;
+            BusIdButton.Enabled                     = true;
+            FanSpeedButton.Enabled                  = true;
+            CoreTempButton.Enabled                  = true;
+            MemoryTempButton.Enabled                = true;
+            PowerSupplyTempButton.Enabled           = true;
+            BoardTempButton.Enabled                 = true;
+            PerfStateButton.Enabled                 = true;
             GraphicsBaseClockFreqButton.Enabled     = true;
             GraphicsCurrentClockFreqButton.Enabled  = true;
             GraphicsBoostClockFreqButton.Enabled    = true;
-            MemoryBaseClockFreqButton.Enabled      = true;
-            MemoryCurrentClockFreqButton.Enabled      = true;
+            MemoryBaseClockFreqButton.Enabled       = true;
+            MemoryCurrentClockFreqButton.Enabled    = true;
             MemoryBoostClockFreqButton.Enabled      = true;
-            BaseVoltage1Button.Enabled      = true;
+            BaseVoltage1Button.Enabled              = true;
         }
 
         /// <summary>
