@@ -6,6 +6,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
+using System.Reflection;
 using GraphicsCards;        // namespace containining graphics card interfaces and drivers
 
 namespace GraphicsCardMonitor
@@ -20,23 +22,33 @@ namespace GraphicsCardMonitor
         /// <summary>
         /// amount of time, in milliseconds, to refresh the application data for a selected GPU
         /// </summary>
-        const int REFRESH_TIME = 2000;
+        const int REFRESH_TIME = 1000;
 
         #endregion Constants
 
-        #region Global Variables
+        #region Private Global Static Variables
 
         /// <summary>
         /// interface for the graphics cards
         /// </summary>
-        readonly IGraphicsCard g_GraphicsCards;
+        private static IGraphicsCard gs_GraphicsCards;
 
         /// <summary>
         /// the total number of graphics cards in the system
         /// </summary>
-        uint g_NumGraphicsCards = 0;
+        private static uint gs_NumGraphicsCards = 0;
 
-        #endregion Global Variables
+        /// <summary>
+        /// List containing the BackgroundWorker objects available in the form
+        /// </summary>
+        private static List<BackgroundWorker> gs_backGroundWorkers = new List<BackgroundWorker>();
+
+        /// <summary>
+        /// selected GPU from the GraphicsCardComboxBox
+        /// </summary>
+        private static uint gs_selectedGpu = 0;
+
+        #endregion Private Global Static Variables
 
         #region Constructors
 
@@ -48,6 +60,9 @@ namespace GraphicsCardMonitor
             try
             {
                 InitializeComponent();
+
+                // initialize the BackgroundWorker list
+                InitializeBackgroundWorkerList();
 
                 // refresh the application
                 RefreshApplication();
@@ -84,35 +99,31 @@ namespace GraphicsCardMonitor
         }
 
         /// <summary>
-        /// Gets the graphics cards within the system
+        /// Adds all BackgroundWorker objects to the BackgroundWorker List object
         /// </summary>
-        /// <param name="gCards">The graphics card interface</param>
-        /// <exception cref="System.Exception">
-        /// Graphics card API failed to initialize.
-        /// </exception>
-        /// <exception cref="System.Exception">
-        /// GPU handlers failed to initialize.
-        /// </exception>
-        /// <exception cref="System.Exception">
-        /// No graphics cards found.
-        /// </exception>
-        private void GetGraphicsCards(IGraphicsCard gCards)
+        private void InitializeBackgroundWorkerList()
+        {
+            gs_backGroundWorkers.Add(serialNumBackgroundWorker);
+            gs_backGroundWorkers.Add(vbiosBackgroundWorker);
+        }
+
+        /// <summary>
+        /// Gets all Nvidia based graphics cards installed in the system
+        /// </summary>
+        private void GetNvidiaGraphicsCards()
         {
             try
             {
-                // variable that determines if getting the graphics cards is successful
-                bool success = true;
+                bool success    = true; // determines if getting the graphics cards was successful
+                string errorMsg = "";   // stores an error message if any errors occur
 
-                // varialbe to store the error message if any errors occur
-                string errorMsg = "";
-
-                // instanitate a NvidiaGraphicsCard object
-                gCards = new NvidiaGraphicsCard();
-
+                // create an instance of an Nvidia Graphics card
+                gs_GraphicsCards = new NvidiaGraphicsCard();
+               
                 // initialize the graphics card API
                 try
                 {
-                    success = gCards.InitializeApi();
+                    success = gs_GraphicsCards.InitializeApi();
 
                     // set the error message if the graphics card API failed to initialize
                     if (!success)
@@ -130,7 +141,7 @@ namespace GraphicsCardMonitor
                 // initialize the graphics card handlers
                 try
                 {
-                    success = gCards.InitializeHandlers();
+                    success = gs_GraphicsCards.InitializeHandlers();
 
                     // set the error message if the GPU handlers failed to initialize
                     if (!success)
@@ -148,11 +159,12 @@ namespace GraphicsCardMonitor
                 // get the total number of grahics cards in the system
                 try
                 {
-                    g_NumGraphicsCards = gCards.GetNumHandlers();
+                    gs_NumGraphicsCards = gs_GraphicsCards.GetNumHandlers();
 
-                    if (g_NumGraphicsCards == 0)
+                    if (gs_NumGraphicsCards == 0)
                     {
                         success = false;
+
                         // let the user know no graphics cards were found in the system
                         errorMsg = "No graphics cards found.";
                     }
@@ -191,7 +203,7 @@ namespace GraphicsCardMonitor
             {
                 // iterate through all the available graphics cards
                 // and add them to the the combo box
-                for (uint i = 0; i < g_NumGraphicsCards; i++)
+                for (uint i = 0; i < gs_NumGraphicsCards; i++)
                 {
                     comboBox.Items.Add(gCards.GetName(i));
                 }
@@ -205,56 +217,31 @@ namespace GraphicsCardMonitor
         }
 
         /// <summary>
-        /// Defaults the graphics card ComboBox
-        /// </summary>
-        /// <param name="comboBox">The graphics card ComboBox item</param>
-        private void DefaultComboBox(ComboBox comboBox)
-        {
-            try
-            {
-                // if there are items listed in the ComboBox
-                // select the first item
-                if (comboBox.Items.Count > 0)
-                {
-                    comboBox.SelectedIndex = 0;
-                }
-            }
-            catch (Exception defaultComBoxEx)
-            {
-                // let the user know an error occurred defaulting
-                // the graphics card combo box to the first selected item
-                string message = "ERROR: " + GetInternalExceptionMessage(defaultComBoxEx);
-                MessageBox.Show(message);
-            }
-        }
-
-        /// <summary>
         /// Refreshes the application to a default state
         /// </summary>
         private void RefreshApplication()
         {
             try
             {
-                // wait for the API background thread to not be busy and then cancel the thread
-                while (!ApiBackGroundWorker.IsBusy)
-                {
-                    ApiBackGroundWorker.CancelAsync();
-                }
+                // cancel all BackgroundWorkers from doing work
+                CancelBackgroundWorkers();
 
                 // clear the application items
                 ClearAppItems();
 
-                // if the number of graphics cards in the system is 0
-                // it is possible the application is first being initialized
-                // find all graphics cards in the system
-                GetGraphicsCards(g_GraphicsCards);
+                // enable all base voltage text boxes
+                BaseVoltageTextBox1.Enabled = true;
+                BaseVoltageTextBox2.Enabled = true;
+                BaseVoltageTextBox3.Enabled = true;
+                BaseVoltageTextBox4.Enabled = true;
+
+                // get all Nvidia graphics cards in the system
+                // TODO: USE REFECTION TO LOAD ANY GRAPHICS CARD DRIVER FROM A GIVEN.DLL FILE
+                GetNvidiaGraphicsCards();
 
                 // fill the selectable graphics card ComboBox with
                 // the avaialable graphics cards in the system
-                FillComboBox(GraphicsCardComboBox, g_GraphicsCards);
-
-                // default the graphcis card ComboBox to the first item
-                DefaultComboBox(GraphicsCardComboBox);
+                FillComboBox(GraphicsCardComboBox, gs_GraphicsCards);
             }
             catch (Exception refreshEx)
             {
@@ -274,25 +261,33 @@ namespace GraphicsCardMonitor
         {
             try
             {
-                // clear the graphics card ComboBox items
+                // clear the graphics card ComboBox items and the text
                 GraphicsCardComboBox.Items.Clear();
+                GraphicsCardComboBox.Text = "";
 
                 // clear the application TextBoxs
-                CardInfoTextBox.Text        = "";
-                VbiosTextBox.Text           = "";
-                PhysRamTextBox.Text         = "";
-                VirtualRamTextBox.Text      = "";
-                GpuCoresTextBox.Text        = "";
-                BusIdTextBox.Text           = "";
-                PerfStateTextBox.Text       = "";
-                BaseVoltageTextBox1.Text    = "";
-                BaseVoltageTextBox2.Text    = "";
-                CoreTempTextBox.Text        = "";
-                MemoryTempTextBox.Text      = "";
-                PciInternalIdTextBox.Text   = "";
-                PciRevTextBox.Text          = "";
-                PciSubsystemTextBox.Text    = "";
-                PciExternalIdTextBox.Text   = "";
+                CardInfoTextBox.Text                    = "";
+                VbiosTextBox.Text                       = "";
+                PhysRamTextBox.Text                     = "";
+                VirtualRamTextBox.Text                  = "";
+                GpuCoresTextBox.Text                    = "";
+                BusIdTextBox.Text                       = "";
+                CoreTempTextBox.Text                    = "";
+                GraphicsCurrentClockSpeedTextBox.Text   = "";
+                GraphicsBaseClockSpeedTextBox.Text      = "";
+                GraphicsBoostClockSpeedTextBox.Text     = "";
+                MemoryCurrentClockSpeedTextBox.Text     = "";
+                MemoryBaseClockSpeedTextBox.Text        = "";
+                MemoryBoostClockSpeedTextBox.Text       = "";
+                PciInternalIdTextBox.Text               = "";
+                PciRevTextBox.Text                      = "";
+                PciSubsystemTextBox.Text                = "";
+                PciExternalIdTextBox.Text               = "";
+                PerfStateTextBox.Text                   = "";
+                BaseVoltageTextBox1.Text                = "";
+                BaseVoltageTextBox2.Text                = "";
+                BaseVoltageTextBox3.Text                = "";
+                BaseVoltageTextBox4.Text                = "";
             }
             catch (Exception clearEx)
             {
@@ -301,6 +296,19 @@ namespace GraphicsCardMonitor
                 string message  = "Could not clear ComboBox and TextBox items. "
                                 + GetInternalExceptionMessage(clearEx);
                 throw new Exception(message);
+            }
+        }
+
+        /// <summary>
+        /// Cancels all BackgroundWorker object operations in the BackgroundWorker List
+        /// </summary>
+        private void CancelBackgroundWorkers()
+        {
+            // iterate through each BackgroundWorker in the BackgroundWorker List
+            // and stop any of the operations occurring
+            foreach (BackgroundWorker bw in gs_backGroundWorkers)
+            {
+                bw.CancelAsync();
             }
         }
 
@@ -317,7 +325,17 @@ namespace GraphicsCardMonitor
         {
             try
             {
-                ApiBackGroundWorker.RunWorkerAsync();
+                // cancel all BackgroundWorkers from doing work
+                CancelBackgroundWorkers();
+
+                // set the selected GPU handler to use for the background workers
+                gs_selectedGpu = (uint)GraphicsCardComboBox.SelectedIndex;
+
+                // start each BackgroundWorker work with the newly selected GPU
+                foreach (BackgroundWorker bw in gs_backGroundWorkers)
+                {
+                    bw.RunWorkerAsync();
+                }
             }
             catch (Exception selectGraphicsCardEx)
             {
@@ -334,8 +352,8 @@ namespace GraphicsCardMonitor
         /// <summary>
         /// Event that occurs when the user clicks the Refresh button
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">Reference to the object that raised the event</param>
+        /// <param name="e">Object to the specific event</param>
         private void RefreshButton_Click(object sender, EventArgs e)
         {
             try
@@ -353,51 +371,7 @@ namespace GraphicsCardMonitor
             }
         }
 
-        /// <summary>
-        /// Event that the API background thread is conducting once called
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ApiBackGroundWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            BackgroundWorker apiWorker = sender as BackgroundWorker;
-
-            try
-            {
-                // update the application text box field while no cancellation requests are called
-                while (apiWorker.CancellationPending != true)
-                {
-                    // the GPU handler selected in memory
-                    uint selectedGpu = (uint)GraphicsCardComboBox.SelectedIndex;
-
-                    // update all TextBox text to relevant graphics card information
-                    CardInfoTextBox.Text        = g_GraphicsCards.GetCardSerialNumber(selectedGpu);
-                    VbiosTextBox.Text           = g_GraphicsCards.GetVBiosInfo(selectedGpu);
-                    PhysRamTextBox.Text         = g_GraphicsCards.GetPhysicalRamSize(selectedGpu).ToString();
-                    VirtualRamTextBox.Text      = g_GraphicsCards.GetVirtualRamSize(selectedGpu).ToString();
-                    GpuCoresTextBox.Text        = g_GraphicsCards.GetGpuCoreCount(selectedGpu).ToString();
-                    BusIdTextBox.Text           = g_GraphicsCards.GetGpuBusId(selectedGpu).ToString();
-                    CoreTempTextBox.Text        = g_GraphicsCards.GetGpuCoreTemp(selectedGpu).ToString();
-                    MemoryTempTextBox.Text      = g_GraphicsCards.GetMemoryTemp(selectedGpu).ToString();
-                    PciInternalIdTextBox.Text   = g_GraphicsCards.GetGpuPciInternalDeviceId(selectedGpu).ToString();
-                    PciRevTextBox.Text          = g_GraphicsCards.GetGpuPciRevId(selectedGpu).ToString();
-                    PciSubsystemTextBox.Text    = g_GraphicsCards.GetGpuPciSubSystemId(selectedGpu).ToString();
-                    PciExternalIdTextBox.Text   = g_GraphicsCards.GetGpuPciExternalDeviceId(selectedGpu).ToString();
-
-                    // delay for some time before refreshing the application again
-                    System.Threading.Thread.Sleep(REFRESH_TIME);
-                }
-            }
-            catch (Exception backgroundEx)
-            {
-                // an error occurred with the background worker
-                // cancel the operation and report the error back to the user
-                e.Cancel = true;
-                string message = "An issue occurred with the application: "
-                                + GetInternalExceptionMessage(backgroundEx);
-                throw new Exception(message);
-            }
-        }
+       
 
         /// <summary>
         /// Event that occurs when the user clicks the Exit button
@@ -408,12 +382,8 @@ namespace GraphicsCardMonitor
         {
             try
             {
-                // cancel the API background worker if it is still performing
-                // an operation
-                while (!ApiBackGroundWorker.IsBusy)
-                {
-                    ApiBackGroundWorker.CancelAsync();
-                }
+                // cancel all BackgroundWorkers from doing work
+                CancelBackgroundWorkers();
 
                 // close the application
                 this.Close();
@@ -428,5 +398,117 @@ namespace GraphicsCardMonitor
         }
 
         #endregion Events
+
+        private void serialNumBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                // get the BackgroundWorker object raising the event
+                BackgroundWorker bw = sender as BackgroundWorker;
+
+                // check if any cancellations are pending
+                if (bw.CancellationPending)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    // get the serial number of the selected GPU and set it as the result
+                    e.Result = gs_GraphicsCards.GetCardSerialNumber(gs_selectedGpu);
+                }
+            }
+            catch (Exception ex)
+            {
+                // an error occurred getting the graphics card serial number
+                // get the error and throw it as an exception
+                throw new Exception("ERROR: " + GetInternalExceptionMessage(ex));
+            }
+        }
+
+        private void serialNumBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // check if any errors occurred
+            if (e.Error != null)
+            {
+                // set the serial number TextBox text to the error message
+                CardInfoTextBox.Text = e.Error.Message;
+            }
+            else
+            {
+                // set the serial number TextBox to the result obtained by the BackgroundWorker
+                CardInfoTextBox.Text = e.Result.ToString();
+            }
+        }
+
+        private void vbiosBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                // get the BackgroundWorker object raising the event
+                BackgroundWorker bw = sender as BackgroundWorker;
+
+                // check if any cancellations are pending
+                if (bw.CancellationPending)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    // get the serial number of the selected GPU and set it as the result
+                    e.Result = gs_GraphicsCards.GetVBiosInfo(gs_selectedGpu);
+                }
+            }
+            catch (Exception ex)
+            {
+                // an error occurred getting the graphics card serial number
+                // get the error and throw it as an exception
+                throw new Exception("ERROR: " + GetInternalExceptionMessage(ex));
+            }
+        }
+
+        private void vbiosBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // check if any errors occurred
+            if (e.Error != null)
+            {
+                // set the serial number TextBox text to the error message
+                VbiosTextBox.Text = e.Error.Message;
+            }
+            else
+            {
+                // set the serial number TextBox to the result obtained by the BackgroundWorker
+                VbiosTextBox.Text = e.Result.ToString();
+            }
+        }
+
+        private void physRamBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+
+        }
+
+        private void physRamBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+
+        }
+
+        private void vRamBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+
+        }
+
+        private void vRamBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+
+        }
+
+        private void numCoresBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+
+        }
+
+        private void numCoresBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+
+        }
     }
 }

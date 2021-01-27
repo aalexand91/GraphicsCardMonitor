@@ -83,14 +83,19 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.RefreshToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.ExitToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.ApiBackGroundWorker = new System.ComponentModel.BackgroundWorker();
             this.ClockFreqGroupBox = new System.Windows.Forms.GroupBox();
-            this.MemoryCurrentClockSpeedLabel = new System.Windows.Forms.Label();
-            this.MemoryBaseClockSpeedLabel = new System.Windows.Forms.Label();
-            this.MemoryCurrentClockSpeedTextBox = new System.Windows.Forms.TextBox();
-            this.MemoryBoostClockSpeedLabel = new System.Windows.Forms.Label();
-            this.MemoryBaseClockSpeedTextBox = new System.Windows.Forms.TextBox();
             this.MemoryBoostClockSpeedTextBox = new System.Windows.Forms.TextBox();
+            this.MemoryBaseClockSpeedTextBox = new System.Windows.Forms.TextBox();
+            this.MemoryBoostClockSpeedLabel = new System.Windows.Forms.Label();
+            this.MemoryCurrentClockSpeedTextBox = new System.Windows.Forms.TextBox();
+            this.MemoryBaseClockSpeedLabel = new System.Windows.Forms.Label();
+            this.MemoryCurrentClockSpeedLabel = new System.Windows.Forms.Label();
+            this.serialNumBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.vbiosBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.physRamBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.vRamBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.numCoresBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.busIdBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.PciGroupBox.SuspendLayout();
             this.GeneralGroupBox.SuspendLayout();
             this.PerformanceGroupBox.SuspendLayout();
@@ -604,11 +609,6 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.aboutToolStripMenuItem.Text = "About";
             // 
-            // ApiBackGroundWorker
-            // 
-            this.ApiBackGroundWorker.WorkerSupportsCancellation = true;
-            this.ApiBackGroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.ApiBackGroundWorker_DoWork);
-            // 
             // ClockFreqGroupBox
             // 
             this.ClockFreqGroupBox.Controls.Add(this.MemoryBoostClockSpeedTextBox);
@@ -631,33 +631,21 @@
             this.ClockFreqGroupBox.TabStop = false;
             this.ClockFreqGroupBox.Text = "Processor Clock Frequencies";
             // 
-            // MemoryCurrentClockSpeedLabel
+            // MemoryBoostClockSpeedTextBox
             // 
-            this.MemoryCurrentClockSpeedLabel.AutoSize = true;
-            this.MemoryCurrentClockSpeedLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MemoryCurrentClockSpeedLabel.Location = new System.Drawing.Point(6, 94);
-            this.MemoryCurrentClockSpeedLabel.Name = "MemoryCurrentClockSpeedLabel";
-            this.MemoryCurrentClockSpeedLabel.Size = new System.Drawing.Size(179, 13);
-            this.MemoryCurrentClockSpeedLabel.TabIndex = 32;
-            this.MemoryCurrentClockSpeedLabel.Text = "Memory Current Clock Speed (MHz):";
+            this.MemoryBoostClockSpeedTextBox.Enabled = false;
+            this.MemoryBoostClockSpeedTextBox.Location = new System.Drawing.Point(184, 143);
+            this.MemoryBoostClockSpeedTextBox.Name = "MemoryBoostClockSpeedTextBox";
+            this.MemoryBoostClockSpeedTextBox.Size = new System.Drawing.Size(112, 20);
+            this.MemoryBoostClockSpeedTextBox.TabIndex = 37;
             // 
-            // MemoryBaseClockSpeedLabel
+            // MemoryBaseClockSpeedTextBox
             // 
-            this.MemoryBaseClockSpeedLabel.AutoSize = true;
-            this.MemoryBaseClockSpeedLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MemoryBaseClockSpeedLabel.Location = new System.Drawing.Point(6, 120);
-            this.MemoryBaseClockSpeedLabel.Name = "MemoryBaseClockSpeedLabel";
-            this.MemoryBaseClockSpeedLabel.Size = new System.Drawing.Size(169, 13);
-            this.MemoryBaseClockSpeedLabel.TabIndex = 33;
-            this.MemoryBaseClockSpeedLabel.Text = "Memory Base Clock Speed (MHz):";
-            // 
-            // MemoryCurrentClockSpeedTextBox
-            // 
-            this.MemoryCurrentClockSpeedTextBox.Enabled = false;
-            this.MemoryCurrentClockSpeedTextBox.Location = new System.Drawing.Point(191, 91);
-            this.MemoryCurrentClockSpeedTextBox.Name = "MemoryCurrentClockSpeedTextBox";
-            this.MemoryCurrentClockSpeedTextBox.Size = new System.Drawing.Size(105, 20);
-            this.MemoryCurrentClockSpeedTextBox.TabIndex = 34;
+            this.MemoryBaseClockSpeedTextBox.Enabled = false;
+            this.MemoryBaseClockSpeedTextBox.Location = new System.Drawing.Point(181, 117);
+            this.MemoryBaseClockSpeedTextBox.Name = "MemoryBaseClockSpeedTextBox";
+            this.MemoryBaseClockSpeedTextBox.Size = new System.Drawing.Size(115, 20);
+            this.MemoryBaseClockSpeedTextBox.TabIndex = 36;
             // 
             // MemoryBoostClockSpeedLabel
             // 
@@ -669,21 +657,63 @@
             this.MemoryBoostClockSpeedLabel.TabIndex = 35;
             this.MemoryBoostClockSpeedLabel.Text = "Memory Boost Clock Speed (MHz):";
             // 
-            // MemoryBaseClockSpeedTextBox
+            // MemoryCurrentClockSpeedTextBox
             // 
-            this.MemoryBaseClockSpeedTextBox.Enabled = false;
-            this.MemoryBaseClockSpeedTextBox.Location = new System.Drawing.Point(181, 117);
-            this.MemoryBaseClockSpeedTextBox.Name = "MemoryBaseClockSpeedTextBox";
-            this.MemoryBaseClockSpeedTextBox.Size = new System.Drawing.Size(115, 20);
-            this.MemoryBaseClockSpeedTextBox.TabIndex = 36;
+            this.MemoryCurrentClockSpeedTextBox.Enabled = false;
+            this.MemoryCurrentClockSpeedTextBox.Location = new System.Drawing.Point(191, 91);
+            this.MemoryCurrentClockSpeedTextBox.Name = "MemoryCurrentClockSpeedTextBox";
+            this.MemoryCurrentClockSpeedTextBox.Size = new System.Drawing.Size(105, 20);
+            this.MemoryCurrentClockSpeedTextBox.TabIndex = 34;
             // 
-            // MemoryBoostClockSpeedTextBox
+            // MemoryBaseClockSpeedLabel
             // 
-            this.MemoryBoostClockSpeedTextBox.Enabled = false;
-            this.MemoryBoostClockSpeedTextBox.Location = new System.Drawing.Point(184, 143);
-            this.MemoryBoostClockSpeedTextBox.Name = "MemoryBoostClockSpeedTextBox";
-            this.MemoryBoostClockSpeedTextBox.Size = new System.Drawing.Size(112, 20);
-            this.MemoryBoostClockSpeedTextBox.TabIndex = 37;
+            this.MemoryBaseClockSpeedLabel.AutoSize = true;
+            this.MemoryBaseClockSpeedLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.MemoryBaseClockSpeedLabel.Location = new System.Drawing.Point(6, 120);
+            this.MemoryBaseClockSpeedLabel.Name = "MemoryBaseClockSpeedLabel";
+            this.MemoryBaseClockSpeedLabel.Size = new System.Drawing.Size(169, 13);
+            this.MemoryBaseClockSpeedLabel.TabIndex = 33;
+            this.MemoryBaseClockSpeedLabel.Text = "Memory Base Clock Speed (MHz):";
+            // 
+            // MemoryCurrentClockSpeedLabel
+            // 
+            this.MemoryCurrentClockSpeedLabel.AutoSize = true;
+            this.MemoryCurrentClockSpeedLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.MemoryCurrentClockSpeedLabel.Location = new System.Drawing.Point(6, 94);
+            this.MemoryCurrentClockSpeedLabel.Name = "MemoryCurrentClockSpeedLabel";
+            this.MemoryCurrentClockSpeedLabel.Size = new System.Drawing.Size(179, 13);
+            this.MemoryCurrentClockSpeedLabel.TabIndex = 32;
+            this.MemoryCurrentClockSpeedLabel.Text = "Memory Current Clock Speed (MHz):";
+            // 
+            // serialNumBackgroundWorker
+            // 
+            this.serialNumBackgroundWorker.WorkerSupportsCancellation = true;
+            this.serialNumBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.serialNumBackgroundWorker_DoWork);
+            this.serialNumBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.serialNumBackgroundWorker_RunWorkerCompleted);
+            // 
+            // vbiosBackgroundWorker
+            // 
+            this.vbiosBackgroundWorker.WorkerSupportsCancellation = true;
+            this.vbiosBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.vbiosBackgroundWorker_DoWork);
+            this.vbiosBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.vbiosBackgroundWorker_RunWorkerCompleted);
+            // 
+            // physRamBackgroundWorker
+            // 
+            this.physRamBackgroundWorker.WorkerSupportsCancellation = true;
+            this.physRamBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.physRamBackgroundWorker_DoWork);
+            this.physRamBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.physRamBackgroundWorker_RunWorkerCompleted);
+            // 
+            // vRamBackgroundWorker
+            // 
+            this.vRamBackgroundWorker.WorkerSupportsCancellation = true;
+            this.vRamBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.vRamBackgroundWorker_DoWork);
+            this.vRamBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.vRamBackgroundWorker_RunWorkerCompleted);
+            // 
+            // numCoresBackgroundWorker
+            // 
+            this.numCoresBackgroundWorker.WorkerSupportsCancellation = true;
+            this.numCoresBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.numCoresBackgroundWorker_DoWork);
+            this.numCoresBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.numCoresBackgroundWorker_RunWorkerCompleted);
             // 
             // GraphicsCardMonitorForm
             // 
@@ -763,7 +793,6 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolTip RefreshToolTip;
         private System.Windows.Forms.ToolTip ExitToolTip;
-        private System.ComponentModel.BackgroundWorker ApiBackGroundWorker;
         private System.Windows.Forms.TextBox BaseVoltageTextBox3;
         private System.Windows.Forms.Label BaseVoltageLabel3;
         private System.Windows.Forms.TextBox BaseVoltageTextBox4;
@@ -781,6 +810,12 @@
         private System.Windows.Forms.TextBox MemoryBaseClockSpeedTextBox;
         private System.Windows.Forms.Label MemoryBoostClockSpeedLabel;
         private System.Windows.Forms.TextBox MemoryCurrentClockSpeedTextBox;
+        private System.ComponentModel.BackgroundWorker serialNumBackgroundWorker;
+        private System.ComponentModel.BackgroundWorker vbiosBackgroundWorker;
+        private System.ComponentModel.BackgroundWorker physRamBackgroundWorker;
+        private System.ComponentModel.BackgroundWorker vRamBackgroundWorker;
+        private System.ComponentModel.BackgroundWorker numCoresBackgroundWorker;
+        private System.ComponentModel.BackgroundWorker busIdBackgroundWorker;
     }
 }
 
