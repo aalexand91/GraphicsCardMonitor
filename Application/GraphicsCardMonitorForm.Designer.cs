@@ -54,7 +54,7 @@
             this.VirtualRamTextBox = new System.Windows.Forms.TextBox();
             this.PhysRamTextBox = new System.Windows.Forms.TextBox();
             this.VbiosTextBox = new System.Windows.Forms.TextBox();
-            this.CardInfoTextBox = new System.Windows.Forms.TextBox();
+            this.SerialNumTextBox = new System.Windows.Forms.TextBox();
             this.BusIdLabel = new System.Windows.Forms.Label();
             this.GraphicsBoostClockSpeedTextBox = new System.Windows.Forms.TextBox();
             this.GraphicsBoostClockSpeedLabel = new System.Windows.Forms.Label();
@@ -96,6 +96,22 @@
             this.vRamBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.numCoresBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.busIdBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.coreTempBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.pciInternalBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.pciRevBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.pciSubsystemBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.pciExternalBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.graphicsCurrentClockSpeedBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.graphicsBaseClockSpeedBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.graphicsBoostClockSpeedBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.memoryCurrentClockSpeedBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.memoryBaseClockSpeedBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.memoryBoostClockSpeedBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.perfStateBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.baseVoltage1BackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.baseVoltage2BackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.baseVoltage3BackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.baseVoltage4BackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.PciGroupBox.SuspendLayout();
             this.GeneralGroupBox.SuspendLayout();
             this.PerformanceGroupBox.SuspendLayout();
@@ -218,6 +234,7 @@
             this.PciExternalIdTextBox.Name = "PciExternalIdTextBox";
             this.PciExternalIdTextBox.Size = new System.Drawing.Size(105, 20);
             this.PciExternalIdTextBox.TabIndex = 12;
+            this.PciExternalIdTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // PciSubsystemTextBox
             // 
@@ -227,6 +244,7 @@
             this.PciSubsystemTextBox.Name = "PciSubsystemTextBox";
             this.PciSubsystemTextBox.Size = new System.Drawing.Size(105, 20);
             this.PciSubsystemTextBox.TabIndex = 11;
+            this.PciSubsystemTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // PciExternalIdLabel
             // 
@@ -256,6 +274,7 @@
             this.PciRevTextBox.Name = "PciRevTextBox";
             this.PciRevTextBox.Size = new System.Drawing.Size(105, 20);
             this.PciRevTextBox.TabIndex = 8;
+            this.PciRevTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // PciInternalIdTextBox
             // 
@@ -276,7 +295,7 @@
             this.GeneralGroupBox.Controls.Add(this.VirtualRamTextBox);
             this.GeneralGroupBox.Controls.Add(this.PhysRamTextBox);
             this.GeneralGroupBox.Controls.Add(this.VbiosTextBox);
-            this.GeneralGroupBox.Controls.Add(this.CardInfoTextBox);
+            this.GeneralGroupBox.Controls.Add(this.SerialNumTextBox);
             this.GeneralGroupBox.Controls.Add(this.CardInfoLabel);
             this.GeneralGroupBox.Controls.Add(this.VBiosLabel);
             this.GeneralGroupBox.Controls.Add(this.VirtualRamLabel);
@@ -299,6 +318,7 @@
             this.BusIdTextBox.Name = "BusIdTextBox";
             this.BusIdTextBox.Size = new System.Drawing.Size(52, 20);
             this.BusIdTextBox.TabIndex = 25;
+            this.BusIdTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // CoreTempTextBox
             // 
@@ -308,6 +328,7 @@
             this.CoreTempTextBox.Name = "CoreTempTextBox";
             this.CoreTempTextBox.Size = new System.Drawing.Size(100, 20);
             this.CoreTempTextBox.TabIndex = 0;
+            this.CoreTempTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // GpuCoresTextBox
             // 
@@ -317,6 +338,7 @@
             this.GpuCoresTextBox.Name = "GpuCoresTextBox";
             this.GpuCoresTextBox.Size = new System.Drawing.Size(51, 20);
             this.GpuCoresTextBox.TabIndex = 24;
+            this.GpuCoresTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // CoreTempLabel
             // 
@@ -336,6 +358,7 @@
             this.VirtualRamTextBox.Name = "VirtualRamTextBox";
             this.VirtualRamTextBox.Size = new System.Drawing.Size(135, 20);
             this.VirtualRamTextBox.TabIndex = 22;
+            this.VirtualRamTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // PhysRamTextBox
             // 
@@ -345,6 +368,7 @@
             this.PhysRamTextBox.Name = "PhysRamTextBox";
             this.PhysRamTextBox.Size = new System.Drawing.Size(125, 20);
             this.PhysRamTextBox.TabIndex = 21;
+            this.PhysRamTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // VbiosTextBox
             // 
@@ -354,15 +378,17 @@
             this.VbiosTextBox.Name = "VbiosTextBox";
             this.VbiosTextBox.Size = new System.Drawing.Size(184, 20);
             this.VbiosTextBox.TabIndex = 20;
+            this.VbiosTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
-            // CardInfoTextBox
+            // SerialNumTextBox
             // 
-            this.CardInfoTextBox.Enabled = false;
-            this.CardInfoTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CardInfoTextBox.Location = new System.Drawing.Point(88, 19);
-            this.CardInfoTextBox.Name = "CardInfoTextBox";
-            this.CardInfoTextBox.Size = new System.Drawing.Size(171, 20);
-            this.CardInfoTextBox.TabIndex = 6;
+            this.SerialNumTextBox.Enabled = false;
+            this.SerialNumTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SerialNumTextBox.Location = new System.Drawing.Point(88, 19);
+            this.SerialNumTextBox.Name = "SerialNumTextBox";
+            this.SerialNumTextBox.Size = new System.Drawing.Size(171, 20);
+            this.SerialNumTextBox.TabIndex = 6;
+            this.SerialNumTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // BusIdLabel
             // 
@@ -381,6 +407,7 @@
             this.GraphicsBoostClockSpeedTextBox.Name = "GraphicsBoostClockSpeedTextBox";
             this.GraphicsBoostClockSpeedTextBox.Size = new System.Drawing.Size(107, 20);
             this.GraphicsBoostClockSpeedTextBox.TabIndex = 31;
+            this.GraphicsBoostClockSpeedTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // GraphicsBoostClockSpeedLabel
             // 
@@ -399,6 +426,7 @@
             this.GraphicsBaseClockSpeedTextBox.Name = "GraphicsBaseClockSpeedTextBox";
             this.GraphicsBaseClockSpeedTextBox.Size = new System.Drawing.Size(110, 20);
             this.GraphicsBaseClockSpeedTextBox.TabIndex = 29;
+            this.GraphicsBaseClockSpeedTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // GraphicsCurrentClockSpeedTextBox
             // 
@@ -407,6 +435,7 @@
             this.GraphicsCurrentClockSpeedTextBox.Name = "GraphicsCurrentClockSpeedTextBox";
             this.GraphicsCurrentClockSpeedTextBox.Size = new System.Drawing.Size(100, 20);
             this.GraphicsCurrentClockSpeedTextBox.TabIndex = 28;
+            this.GraphicsCurrentClockSpeedTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // GraphicsBaseClockSpeedLabel
             // 
@@ -485,6 +514,7 @@
             this.BaseVoltageTextBox4.Name = "BaseVoltageTextBox4";
             this.BaseVoltageTextBox4.Size = new System.Drawing.Size(71, 20);
             this.BaseVoltageTextBox4.TabIndex = 22;
+            this.BaseVoltageTextBox4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // BaseVoltageLabel4
             // 
@@ -503,6 +533,7 @@
             this.BaseVoltageTextBox3.Name = "BaseVoltageTextBox3";
             this.BaseVoltageTextBox3.Size = new System.Drawing.Size(71, 20);
             this.BaseVoltageTextBox3.TabIndex = 20;
+            this.BaseVoltageTextBox3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // BaseVoltageLabel3
             // 
@@ -522,6 +553,7 @@
             this.BaseVoltageTextBox2.Name = "BaseVoltageTextBox2";
             this.BaseVoltageTextBox2.Size = new System.Drawing.Size(72, 20);
             this.BaseVoltageTextBox2.TabIndex = 2;
+            this.BaseVoltageTextBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // BaseVoltageTextBox1
             // 
@@ -531,6 +563,7 @@
             this.BaseVoltageTextBox1.Name = "BaseVoltageTextBox1";
             this.BaseVoltageTextBox1.Size = new System.Drawing.Size(72, 20);
             this.BaseVoltageTextBox1.TabIndex = 1;
+            this.BaseVoltageTextBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // PerfStateTextBox
             // 
@@ -540,6 +573,7 @@
             this.PerfStateTextBox.Name = "PerfStateTextBox";
             this.PerfStateTextBox.Size = new System.Drawing.Size(98, 20);
             this.PerfStateTextBox.TabIndex = 0;
+            this.PerfStateTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // RefreshButton
             // 
@@ -638,6 +672,7 @@
             this.MemoryBoostClockSpeedTextBox.Name = "MemoryBoostClockSpeedTextBox";
             this.MemoryBoostClockSpeedTextBox.Size = new System.Drawing.Size(112, 20);
             this.MemoryBoostClockSpeedTextBox.TabIndex = 37;
+            this.MemoryBoostClockSpeedTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // MemoryBaseClockSpeedTextBox
             // 
@@ -646,6 +681,7 @@
             this.MemoryBaseClockSpeedTextBox.Name = "MemoryBaseClockSpeedTextBox";
             this.MemoryBaseClockSpeedTextBox.Size = new System.Drawing.Size(115, 20);
             this.MemoryBaseClockSpeedTextBox.TabIndex = 36;
+            this.MemoryBaseClockSpeedTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // MemoryBoostClockSpeedLabel
             // 
@@ -664,6 +700,7 @@
             this.MemoryCurrentClockSpeedTextBox.Name = "MemoryCurrentClockSpeedTextBox";
             this.MemoryCurrentClockSpeedTextBox.Size = new System.Drawing.Size(105, 20);
             this.MemoryCurrentClockSpeedTextBox.TabIndex = 34;
+            this.MemoryCurrentClockSpeedTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // MemoryBaseClockSpeedLabel
             // 
@@ -714,6 +751,108 @@
             this.numCoresBackgroundWorker.WorkerSupportsCancellation = true;
             this.numCoresBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.numCoresBackgroundWorker_DoWork);
             this.numCoresBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.numCoresBackgroundWorker_RunWorkerCompleted);
+            // 
+            // busIdBackgroundWorker
+            // 
+            this.busIdBackgroundWorker.WorkerSupportsCancellation = true;
+            this.busIdBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.busIdBackgroundWorker_DoWork);
+            this.busIdBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.busIdBackgroundWorker_RunWorkerCompleted);
+            // 
+            // coreTempBackgroundWorker
+            // 
+            this.coreTempBackgroundWorker.WorkerSupportsCancellation = true;
+            this.coreTempBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.coreTempBackgroundWorker_DoWork);
+            this.coreTempBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.coreTempBackgroundWorker_RunWorkerCompleted);
+            // 
+            // pciInternalBackgroundWorker
+            // 
+            this.pciInternalBackgroundWorker.WorkerSupportsCancellation = true;
+            this.pciInternalBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.pciInternalBackgroundWorker_DoWork);
+            this.pciInternalBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.pciInternalBackgroundWorker_RunWorkerCompleted);
+            // 
+            // pciRevBackgroundWorker
+            // 
+            this.pciRevBackgroundWorker.WorkerSupportsCancellation = true;
+            this.pciRevBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.pciRevBackgroundWorker_DoWork);
+            this.pciRevBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.pciRevBackgroundWorker_RunWorkerCompleted);
+            // 
+            // pciSubsystemBackgroundWorker
+            // 
+            this.pciSubsystemBackgroundWorker.WorkerSupportsCancellation = true;
+            this.pciSubsystemBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.pciSubsystemBackgroundWorker_DoWork);
+            this.pciSubsystemBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.pciSubsystemBackgroundWorker_RunWorkerCompleted);
+            // 
+            // pciExternalBackgroundWorker
+            // 
+            this.pciExternalBackgroundWorker.WorkerSupportsCancellation = true;
+            this.pciExternalBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.pciExternalBackgroundWorker_DoWork);
+            this.pciExternalBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.pciExternalBackgroundWorker_RunWorkerCompleted);
+            // 
+            // graphicsCurrentClockSpeedBackgroundWorker
+            // 
+            this.graphicsCurrentClockSpeedBackgroundWorker.WorkerSupportsCancellation = true;
+            this.graphicsCurrentClockSpeedBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.graphicsCurrentClockSpeedBackgroundWorker_DoWork);
+            this.graphicsCurrentClockSpeedBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.graphicsCurrentClockSpeedBackgroundWorker_RunWorkerCompleted);
+            // 
+            // graphicsBaseClockSpeedBackgroundWorker
+            // 
+            this.graphicsBaseClockSpeedBackgroundWorker.WorkerSupportsCancellation = true;
+            this.graphicsBaseClockSpeedBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.graphicsBaseClockSpeedBackgroundWorker_DoWork);
+            this.graphicsBaseClockSpeedBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.graphicsBaseClockSpeedBackgroundWorker_RunWorkerCompleted);
+            // 
+            // graphicsBoostClockSpeedBackgroundWorker
+            // 
+            this.graphicsBoostClockSpeedBackgroundWorker.WorkerSupportsCancellation = true;
+            this.graphicsBoostClockSpeedBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.graphicsBoostClockSpeedBackgroundWorker_DoWork);
+            this.graphicsBoostClockSpeedBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.graphicsBoostClockSpeedBackgroundWorker_RunWorkerCompleted);
+            // 
+            // memoryCurrentClockSpeedBackgroundWorker
+            // 
+            this.memoryCurrentClockSpeedBackgroundWorker.WorkerSupportsCancellation = true;
+            this.memoryCurrentClockSpeedBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.memoryCurrentClockSpeedBackgroundWorker_DoWork);
+            this.memoryCurrentClockSpeedBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.memoryCurrentClockSpeedBackgroundWorker_RunWorkerCompleted);
+            // 
+            // memoryBaseClockSpeedBackgroundWorker
+            // 
+            this.memoryBaseClockSpeedBackgroundWorker.WorkerSupportsCancellation = true;
+            this.memoryBaseClockSpeedBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.memoryBaseClockSpeedBackgroundWorker_DoWork);
+            this.memoryBaseClockSpeedBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.memoryBaseClockSpeedBackgroundWorker_RunWorkerCompleted);
+            // 
+            // memoryBoostClockSpeedBackgroundWorker
+            // 
+            this.memoryBoostClockSpeedBackgroundWorker.WorkerSupportsCancellation = true;
+            this.memoryBoostClockSpeedBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.memoryBoostClockSpeedBackgroundWorker_DoWork);
+            this.memoryBoostClockSpeedBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.memoryBoostClockSpeedBackgroundWorker_RunWorkerCompleted);
+            // 
+            // perfStateBackgroundWorker
+            // 
+            this.perfStateBackgroundWorker.WorkerSupportsCancellation = true;
+            this.perfStateBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.perfStateBackgroundWorker_DoWork);
+            this.perfStateBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.perfStateBackgroundWorker_RunWorkerCompleted);
+            // 
+            // baseVoltage1BackgroundWorker
+            // 
+            this.baseVoltage1BackgroundWorker.WorkerSupportsCancellation = true;
+            this.baseVoltage1BackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.baseVoltage1BackgroundWorker_DoWork);
+            this.baseVoltage1BackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.baseVoltage1BackgroundWorker_RunWorkerCompleted);
+            // 
+            // baseVoltage2BackgroundWorker
+            // 
+            this.baseVoltage2BackgroundWorker.WorkerSupportsCancellation = true;
+            this.baseVoltage2BackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.baseVoltage2BackgroundWorker_DoWork);
+            this.baseVoltage2BackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.baseVoltage2BackgroundWorker_RunWorkerCompleted);
+            // 
+            // baseVoltage3BackgroundWorker
+            // 
+            this.baseVoltage3BackgroundWorker.WorkerSupportsCancellation = true;
+            this.baseVoltage3BackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.baseVoltage3BackgroundWorker_DoWork);
+            this.baseVoltage3BackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.baseVoltage3BackgroundWorker_RunWorkerCompleted);
+            // 
+            // baseVoltage4BackgroundWorker
+            // 
+            this.baseVoltage4BackgroundWorker.WorkerSupportsCancellation = true;
+            this.baseVoltage4BackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.baseVoltage4BackgroundWorker_DoWork);
+            this.baseVoltage4BackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.baseVoltage4BackgroundWorker_RunWorkerCompleted);
             // 
             // GraphicsCardMonitorForm
             // 
@@ -769,7 +908,7 @@
         private System.Windows.Forms.GroupBox GeneralGroupBox;
         private System.Windows.Forms.Label BusIdLabel;
         private System.Windows.Forms.Label CoreTempLabel;
-        private System.Windows.Forms.TextBox CardInfoTextBox;
+        private System.Windows.Forms.TextBox SerialNumTextBox;
         private System.Windows.Forms.Label PerfStateLabel;
         private System.Windows.Forms.Label BaseVoltage1Label;
         private System.Windows.Forms.Label BaseVoltage2Label;
@@ -816,6 +955,22 @@
         private System.ComponentModel.BackgroundWorker vRamBackgroundWorker;
         private System.ComponentModel.BackgroundWorker numCoresBackgroundWorker;
         private System.ComponentModel.BackgroundWorker busIdBackgroundWorker;
+        private System.ComponentModel.BackgroundWorker coreTempBackgroundWorker;
+        private System.ComponentModel.BackgroundWorker pciInternalBackgroundWorker;
+        private System.ComponentModel.BackgroundWorker pciRevBackgroundWorker;
+        private System.ComponentModel.BackgroundWorker pciSubsystemBackgroundWorker;
+        private System.ComponentModel.BackgroundWorker pciExternalBackgroundWorker;
+        private System.ComponentModel.BackgroundWorker graphicsCurrentClockSpeedBackgroundWorker;
+        private System.ComponentModel.BackgroundWorker graphicsBaseClockSpeedBackgroundWorker;
+        private System.ComponentModel.BackgroundWorker graphicsBoostClockSpeedBackgroundWorker;
+        private System.ComponentModel.BackgroundWorker memoryCurrentClockSpeedBackgroundWorker;
+        private System.ComponentModel.BackgroundWorker memoryBaseClockSpeedBackgroundWorker;
+        private System.ComponentModel.BackgroundWorker memoryBoostClockSpeedBackgroundWorker;
+        private System.ComponentModel.BackgroundWorker perfStateBackgroundWorker;
+        private System.ComponentModel.BackgroundWorker baseVoltage1BackgroundWorker;
+        private System.ComponentModel.BackgroundWorker baseVoltage2BackgroundWorker;
+        private System.ComponentModel.BackgroundWorker baseVoltage3BackgroundWorker;
+        private System.ComponentModel.BackgroundWorker baseVoltage4BackgroundWorker;
     }
 }
 

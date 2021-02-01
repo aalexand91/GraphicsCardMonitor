@@ -22,7 +22,7 @@ namespace GraphicsCardMonitor
         /// <summary>
         /// amount of time, in milliseconds, to refresh the application data for a selected GPU
         /// </summary>
-        const int REFRESH_TIME = 1000;
+        const int SETTLING_TIME = 10;
 
         #endregion Constants
 
@@ -36,7 +36,7 @@ namespace GraphicsCardMonitor
         /// <summary>
         /// the total number of graphics cards in the system
         /// </summary>
-        private static uint gs_NumGraphicsCards = 0;
+        private static uint gs_NumGraphicsCards = 0u;
 
         /// <summary>
         /// List containing the BackgroundWorker objects available in the form
@@ -46,7 +46,7 @@ namespace GraphicsCardMonitor
         /// <summary>
         /// selected GPU from the GraphicsCardComboxBox
         /// </summary>
-        private static uint gs_selectedGpu = 0;
+        private static uint gs_selectedGpu = 0u;
 
         #endregion Private Global Static Variables
 
@@ -105,6 +105,26 @@ namespace GraphicsCardMonitor
         {
             gs_backGroundWorkers.Add(serialNumBackgroundWorker);
             gs_backGroundWorkers.Add(vbiosBackgroundWorker);
+            gs_backGroundWorkers.Add(physRamBackgroundWorker);
+            gs_backGroundWorkers.Add(vRamBackgroundWorker);
+            gs_backGroundWorkers.Add(numCoresBackgroundWorker);
+            gs_backGroundWorkers.Add(busIdBackgroundWorker);
+            gs_backGroundWorkers.Add(coreTempBackgroundWorker);
+            gs_backGroundWorkers.Add(pciInternalBackgroundWorker);
+            gs_backGroundWorkers.Add(pciRevBackgroundWorker);
+            gs_backGroundWorkers.Add(pciSubsystemBackgroundWorker);
+            gs_backGroundWorkers.Add(pciExternalBackgroundWorker);
+            gs_backGroundWorkers.Add(graphicsCurrentClockSpeedBackgroundWorker);
+            gs_backGroundWorkers.Add(graphicsBaseClockSpeedBackgroundWorker);
+            gs_backGroundWorkers.Add(graphicsBoostClockSpeedBackgroundWorker);
+            gs_backGroundWorkers.Add(memoryCurrentClockSpeedBackgroundWorker);
+            gs_backGroundWorkers.Add(memoryBaseClockSpeedBackgroundWorker);
+            gs_backGroundWorkers.Add(memoryBoostClockSpeedBackgroundWorker);
+            gs_backGroundWorkers.Add(perfStateBackgroundWorker);
+            gs_backGroundWorkers.Add(baseVoltage1BackgroundWorker);
+            gs_backGroundWorkers.Add(baseVoltage2BackgroundWorker);
+            gs_backGroundWorkers.Add(baseVoltage3BackgroundWorker);
+            gs_backGroundWorkers.Add(baseVoltage4BackgroundWorker);
         }
 
         /// <summary>
@@ -266,23 +286,23 @@ namespace GraphicsCardMonitor
                 GraphicsCardComboBox.Text = "";
 
                 // clear the application TextBoxs
-                CardInfoTextBox.Text                    = "";
+                SerialNumTextBox.Text                   = "";
                 VbiosTextBox.Text                       = "";
                 PhysRamTextBox.Text                     = "";
                 VirtualRamTextBox.Text                  = "";
                 GpuCoresTextBox.Text                    = "";
                 BusIdTextBox.Text                       = "";
                 CoreTempTextBox.Text                    = "";
+                PciInternalIdTextBox.Text               = "";
+                PciRevTextBox.Text                      = "";
+                PciSubsystemTextBox.Text                = "";
+                PciExternalIdTextBox.Text               = "";
                 GraphicsCurrentClockSpeedTextBox.Text   = "";
                 GraphicsBaseClockSpeedTextBox.Text      = "";
                 GraphicsBoostClockSpeedTextBox.Text     = "";
                 MemoryCurrentClockSpeedTextBox.Text     = "";
                 MemoryBaseClockSpeedTextBox.Text        = "";
                 MemoryBoostClockSpeedTextBox.Text       = "";
-                PciInternalIdTextBox.Text               = "";
-                PciRevTextBox.Text                      = "";
-                PciSubsystemTextBox.Text                = "";
-                PciExternalIdTextBox.Text               = "";
                 PerfStateTextBox.Text                   = "";
                 BaseVoltageTextBox1.Text                = "";
                 BaseVoltageTextBox2.Text                = "";
@@ -312,15 +332,72 @@ namespace GraphicsCardMonitor
             }
         }
 
+        /// <summary>
+        /// Updates a TextBox control with a BackgroundWorker object's result
+        /// </summary>
+        /// <param name="textBox">The TextBox control to update</param>
+        /// <param name="e">Object with the BackgroundWorker object results</param>
+        private void UpdateTextBoxControlText(TextBox textBox, RunWorkerCompletedEventArgs e)
+        {
+            // check if any errors occurred
+            if (e.Error != null)
+            {
+                // set the TextBox text to the error message
+                textBox.Text = e.Error.Message;
+            }
+            else
+            {
+                // set the TextBox text to the result obtained by the BackgroundWorker
+                textBox.Text = e.Result.ToString();
+            }
+
+            // allow the current background worker to settle
+            //System.Threading.Thread.Sleep(SETTLING_TIME);
+        }
+
+        /// <summary>
+        /// Updates the base voltage TextBox control text to the respective base voltage BackgroundWorker
+        /// object result. If any errors occurred obtaining the specific base voltage, a message is
+        /// displayed to the user and then the TextBox control is cleared and then disabled.
+        /// </summary>
+        /// <param name="textBox">The base voltage TextBox control</param>
+        /// <param name="e">Object with the BackgroundWorker object results</param>
+        private void UpdateBaseVoltageTextBoxControlText(TextBox textBox, RunWorkerCompletedEventArgs e)
+        {
+            // check if the base voltage TextBox control is enabled
+            if (textBox.Enabled)
+            {
+                // check if any error occurred
+                if (e.Error != null)
+                {
+                    // display the error message to the user to let them know
+                    MessageBox.Show(e.Error.Message);
+
+                    // more than likely, the graphics card does not have this base voltage
+                    // clear any text from the text box and disable it
+                    textBox.Text = "";
+                    textBox.Enabled = false;
+                }
+                else
+                {
+                    // set the base voltage TextBox control to the BackgroundWorker result
+                    textBox.Text = e.Result.ToString();
+                }
+            }
+
+            // allow the current background worker to settle
+            //System.Threading.Thread.Sleep(SETTLING_TIME);
+        }
+
         #endregion Private Methods
 
-        #region Events
+        #region Control Events
 
         /// <summary>
         /// Event that occurs when the user selects a graphics card to monitor
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">Reference to the object that raised the event</param>
+        /// <param name="e">Object to the specific event</param>
         private void GraphicsCardComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             try
@@ -371,13 +448,11 @@ namespace GraphicsCardMonitor
             }
         }
 
-       
-
         /// <summary>
         /// Event that occurs when the user clicks the Exit button
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">Reference to the object that raised the event</param>
+        /// <param name="e">Object to the specific event</param>
         private void ExitButton_Click(object sender, EventArgs e)
         {
             try
@@ -397,8 +472,18 @@ namespace GraphicsCardMonitor
             }
         }
 
-        #endregion Events
+        #endregion Control Events
 
+        #region BackgroundWorker Events
+
+        /// <summary>
+        /// Gets the graphics card serial number using the respective BackgroundWorker object
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object raising the event</param>
+        /// <param name="e">Object to store the BackgroundWorker results</param>
+        /// <exception cref="System.Exception">
+        /// An exception is thrown if an error occurs with the graphics card API
+        /// </exception>
         private void serialNumBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             try
@@ -421,25 +506,29 @@ namespace GraphicsCardMonitor
             {
                 // an error occurred getting the graphics card serial number
                 // get the error and throw it as an exception
-                throw new Exception("ERROR: " + GetInternalExceptionMessage(ex));
+                throw new Exception("ERROR: Could not get serial number. " + GetInternalExceptionMessage(ex));
             }
         }
 
+        /// <summary>
+        /// Sets the serial number TextBox control text to its respective BackgroundWorker object result
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object that raised the event</param>
+        /// <param name="e">Object with the BackgroundWorker object results</param>
         private void serialNumBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            // check if any errors occurred
-            if (e.Error != null)
-            {
-                // set the serial number TextBox text to the error message
-                CardInfoTextBox.Text = e.Error.Message;
-            }
-            else
-            {
-                // set the serial number TextBox to the result obtained by the BackgroundWorker
-                CardInfoTextBox.Text = e.Result.ToString();
-            }
+            // update the serial number TextBox text
+            UpdateTextBoxControlText(SerialNumTextBox, e);
         }
 
+        /// <summary>
+        /// Gets the graphics card VBIOS info using the respective BackgroundWorker object
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object raising the event</param>
+        /// <param name="e">Object to store the BackgroundWorker results</param>
+        /// <exception cref="System.Exception">
+        /// An exception is thrown if an error occurs with the graphics card API
+        /// </exception>
         private void vbiosBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             try
@@ -462,53 +551,939 @@ namespace GraphicsCardMonitor
             {
                 // an error occurred getting the graphics card serial number
                 // get the error and throw it as an exception
-                throw new Exception("ERROR: " + GetInternalExceptionMessage(ex));
+                throw new Exception("ERROR: Could not get VBIOS info. " + GetInternalExceptionMessage(ex));
             }
         }
 
+        /// <summary>
+        /// Sets the VBIOS TextBox control text to its respective BackgroundWorker object result
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object that raised the event</param>
+        /// <param name="e">Object with the BackgroundWorker object results</param>
         private void vbiosBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            // check if any errors occurred
-            if (e.Error != null)
-            {
-                // set the serial number TextBox text to the error message
-                VbiosTextBox.Text = e.Error.Message;
-            }
-            else
-            {
-                // set the serial number TextBox to the result obtained by the BackgroundWorker
-                VbiosTextBox.Text = e.Result.ToString();
-            }
+            // update the VBIOS TextBox text
+            UpdateTextBoxControlText(VbiosTextBox, e);
         }
 
+        /// <summary>
+        /// Gets the graphics card physical RAM size using the respective BackgroundWorker object
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object raising the event</param>
+        /// <param name="e">Object to store the BackgroundWorker results</param>
+        /// <exception cref="System.Exception">
+        /// An exception is thrown if an error occurs with the graphics card API
+        /// </exception>
         private void physRamBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
+            try
+            {
+                // get the BackgroundWorker object raising the event
+                BackgroundWorker bw = sender as BackgroundWorker;
 
+                // check if any cancellations are pending
+                if (bw.CancellationPending)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    // get the physical RAM of the graphics card
+                    e.Result = gs_GraphicsCards.GetPhysicalRamSize(gs_selectedGpu);
+                }
+            }
+            catch (Exception ex)
+            {
+                // throw an exception to let the user know an error occurred getting
+                // the graphics card physical RAM size
+                throw new Exception("ERROR: Could not get physical RAM size. " + GetInternalExceptionMessage(ex));
+            }
         }
 
+        /// <summary>
+        /// Sets the physical RAM TextBox control text to its respective BackgroundWorker object result
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object that raised the event</param>
+        /// <param name="e">Object with the BackgroundWorker object results</param>
         private void physRamBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-
+            // update the physical RAM TextBox text
+            UpdateTextBoxControlText(PhysRamTextBox, e);
         }
 
+        /// <summary>
+        /// Gets the graphics card virtual RAM size using the respective BackgroundWorker object
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object raising the event</param>
+        /// <param name="e">Object to store the BackgroundWorker results</param>
+        /// <exception cref="System.Exception">
+        /// An exception is thrown if an error occurs with the graphics card API
+        /// </exception>
         private void vRamBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
+            try
+            {
+                // get the BackgroundWorker object raising the event
+                BackgroundWorker bw = sender as BackgroundWorker;
 
+                // check if any cancellations are pending
+                if (bw.CancellationPending)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    // get the virtual RAM of the graphics card
+                    e.Result = gs_GraphicsCards.GetVirtualRamSize(gs_selectedGpu);
+                }
+            }
+            catch (Exception ex)
+            {
+                // throw an exception to let the user know an error occurred getting
+                // the graphics card virtual RAM size
+                throw new Exception("ERROR: Could not get virtual RAM size. " + GetInternalExceptionMessage(ex));
+            }
         }
 
+        /// <summary>
+        /// Sets the virtual RAM TextBox control text to its respective BackgroundWorker object result
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object that raised the event</param>
+        /// <param name="e">Object with the BackgroundWorker object results</param>
         private void vRamBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-
+            // update the virtual RAM TextBox text
+            UpdateTextBoxControlText(SerialNumTextBox, e);
         }
 
+        /// <summary>
+        /// Gets the number of GPU cores for the graphics card using the respective BackgroundWorker object
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object raising the event</param>
+        /// <param name="e">Object to store the BackgroundWorker results</param>
+        /// <exception cref="System.Exception">
+        /// An exception is thrown if an error occurs with the graphics card API
+        /// </exception>
         private void numCoresBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
+            try
+            {
+                // get the BackgroundWorker object raising the event
+                BackgroundWorker bw = sender as BackgroundWorker;
 
+                // check if any cancellations are pending
+                if (bw.CancellationPending)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    // get the number of GPU cores the graphics card has
+                    e.Result = gs_GraphicsCards.GetGpuCoreCount(gs_selectedGpu);
+                }
+            }
+            catch (Exception ex)
+            {
+                // throw an exception to let the user know an error occurred getting
+                // the number of GPU cores for the graphics card
+                throw new Exception("ERROR: Could not get number of GPU cores. " + GetInternalExceptionMessage(ex));
+            }
         }
 
+        /// <summary>
+        /// Sets the GPU core count TextBox control text to its respective BackgroundWorker object result
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object that raised the event</param>
+        /// <param name="e">Object with the BackgroundWorker object results</param>
         private void numCoresBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-
+            // update the GPU core count TextBox text
+            UpdateTextBoxControlText(GpuCoresTextBox, e);
         }
+
+        /// <summary>
+        /// Gets the GPU bus ID for the graphics card using the respective BackgroundWorker object
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object raising the event</param>
+        /// <param name="e">Object to store the BackgroundWorker results</param>
+        /// <exception cref="System.Exception">
+        /// An exception is thrown if an error occurs with the graphics card API
+        /// </exception>
+        private void busIdBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                // get the BackgroundWorker object raising the event
+                BackgroundWorker bw = sender as BackgroundWorker;
+
+                // check if any cancellations are pending
+                if (bw.CancellationPending)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    // get the number of GPU cores the graphics card has
+                    e.Result = gs_GraphicsCards.GetGpuBusId(gs_selectedGpu);
+                }
+            }
+            catch (Exception ex)
+            {
+                // throw an exception to let the user know an error occurred getting
+                // the bus ID for the graphics card
+                throw new Exception("ERROR: Could not get bus ID. " + GetInternalExceptionMessage(ex));
+            }
+        }
+
+        /// <summary>
+        /// Sets the GPU bus ID TextBox control text to its respective BackgroundWorker object result
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object that raised the event</param>
+        /// <param name="e">Object with the BackgroundWorker object results</param>
+        private void busIdBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // update the bus ID TextBox text
+            UpdateTextBoxControlText(BusIdTextBox, e);
+        }
+
+        /// <summary>
+        /// Gets the GPU core temperature using the respective BackgroundWorker object
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object raising the event</param>
+        /// <param name="e">Object to store the BackgroundWorker results</param>
+        /// <exception cref="System.Exception">
+        /// An exception is thrown if an error occurs with the graphics card API
+        /// </exception>
+        private void coreTempBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                // get the BackgroundWorker object raising the event
+                BackgroundWorker bw = sender as BackgroundWorker;
+
+                // check if any cancellations are pending
+                if (bw.CancellationPending)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    // get the GPU core temperature of the graphics card
+                    e.Result = gs_GraphicsCards.GetGpuCoreTemp(gs_selectedGpu);
+                }
+            }
+            catch (Exception ex)
+            {
+                // throw an exception to let the user know an error occurred getting
+                // the graphics card GPU core temperature
+                throw new Exception("ERROR: Could not get GPU core temperature. " + GetInternalExceptionMessage(ex));
+            }
+        }
+
+        /// <summary>
+        /// Sets the GPU core temp TextBox control text to its respective BackgroundWorker object result
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object that raised the event</param>
+        /// <param name="e">Object with the BackgroundWorker object results</param>
+        private void coreTempBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // update the GPU core temperature TextBox text
+            UpdateTextBoxControlText(GpuCoresTextBox, e);
+        }
+
+        /// <summary>
+        /// Gets the PCI internal ID of the graphics card using the respective BackgroundWorker object
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object raising the event</param>
+        /// <param name="e">Object to store the BackgroundWorker results</param>
+        /// <exception cref="System.Exception">
+        /// An exception is thrown if an error occurs with the graphics card API
+        /// </exception>
+        private void pciInternalBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                // get the BackgroundWorker object raising the event
+                BackgroundWorker bw = sender as BackgroundWorker;
+
+                // check if any cancellations are pending
+                if (bw.CancellationPending)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    // get the GPU PCI internal device ID
+                    e.Result = gs_GraphicsCards.GetGpuPciInternalDeviceId(gs_selectedGpu);
+                }
+            }
+            catch (Exception ex)
+            {
+                // throw an exception to let the user know an error occurred getting
+                // the graphics card PCI internal ID
+                throw new Exception("ERROR: Could not get PCI internal ID. " + GetInternalExceptionMessage(ex));
+            }
+        }
+
+        /// <summary>
+        /// Sets the GPU PCI Internal ID TextBox control text to its respective BackgroundWorker object result
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object that raised the event</param>
+        /// <param name="e">Object with the BackgroundWorker object results</param>
+        private void pciInternalBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // update the PCI internal ID TextBox text
+            UpdateTextBoxControlText(PciInternalIdTextBox, e);
+        }
+
+        /// <summary>
+        /// Gets the PCI revision ID of the graphics card using the respective BackgroundWorker object
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object raising the event</param>
+        /// <param name="e">Object to store the BackgroundWorker results</param>
+        /// <exception cref="System.Exception">
+        /// An exception is thrown if an error occurs with the graphics card API
+        /// </exception>
+        private void pciRevBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                // get the BackgroundWorker object raising the event
+                BackgroundWorker bw = sender as BackgroundWorker;
+
+                // check if any cancellations are pending
+                if (bw.CancellationPending)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    // get the GPU PCI revision
+                    e.Result = gs_GraphicsCards.GetGpuPciRevId(gs_selectedGpu);
+                }
+            }
+            catch (Exception ex)
+            {
+                // throw an exception to let the user know an error occurred getting
+                // the graphics card PCI revision ID
+                throw new Exception("ERROR: Could not get PCI revision ID. " + GetInternalExceptionMessage(ex));
+            }
+        }
+
+        /// <summary>
+        /// Sets the GPU PCI revision TextBox control text to its respective BackgroundWorker object result
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object that raised the event</param>
+        /// <param name="e">Object with the BackgroundWorker object results</param>
+        private void pciRevBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // update the GPU PCI revision TextBox text
+            UpdateTextBoxControlText(PciRevTextBox, e);
+        }
+
+        /// <summary>
+        /// Gets the PCI subsystem ID of the graphics card using the respective BackgroundWorker object
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object raising the event</param>
+        /// <param name="e">Object to store the BackgroundWorker results</param>
+        /// <exception cref="System.Exception">
+        /// An exception is thrown if an error occurs with the graphics card API
+        /// </exception>
+        private void pciSubsystemBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                // get the BackgroundWorker object raising the event
+                BackgroundWorker bw = sender as BackgroundWorker;
+
+                // check if any cancellations are pending
+                if (bw.CancellationPending)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    // get the GPU PCI subsystem ID
+                    e.Result = gs_GraphicsCards.GetGpuPciSubSystemId(gs_selectedGpu);
+                }
+            }
+            catch (Exception ex)
+            {
+                // throw an exception to let the user know an error occurred getting
+                // the graphics card PCI subsystem ID
+                throw new Exception("ERROR: Could not get PCI subsystem ID. " + GetInternalExceptionMessage(ex));
+            }
+        }
+
+        /// <summary>
+        /// Sets the GPU PCI subsystem ID TextBox control text to its respective BackgroundWorker object result
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object that raised the event</param>
+        /// <param name="e">Object with the BackgroundWorker object results</param>
+        private void pciSubsystemBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // update the GPU PCI subsystem ID TextBox text
+            UpdateTextBoxControlText(PciSubsystemTextBox, e);
+        }
+
+        /// <summary>
+        /// Gets the PCI external ID of the graphics card using the respective BackgroundWorker object
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object raising the event</param>
+        /// <param name="e">Object to store the BackgroundWorker results</param>
+        /// <exception cref="System.Exception">
+        /// An exception is thrown if an error occurs with the graphics card API
+        /// </exception>
+        private void pciExternalBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                // get the BackgroundWorker object raising the event
+                BackgroundWorker bw = sender as BackgroundWorker;
+
+                // check if any cancellations are pending
+                if (bw.CancellationPending)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    // get the GPU PCI external ID
+                    e.Result = gs_GraphicsCards.GetGpuPciExternalDeviceId(gs_selectedGpu);
+                }
+            }
+            catch (Exception ex)
+            {
+                // throw an exception to let the user know an error occurred getting
+                // the graphics card PCI external ID
+                throw new Exception("ERROR: Could not get PCI external ID. " + GetInternalExceptionMessage(ex));
+            }
+        }
+
+        /// <summary>
+        /// Sets the GPU PCI External ID TextBox control text to its respective BackgroundWorker object result
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object that raised the event</param>
+        /// <param name="e">Object with the BackgroundWorker object results</param>
+        private void pciExternalBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // update the GPU PCI external ID TextBox text
+            UpdateTextBoxControlText(PciExternalIdTextBox, e);
+        }
+
+        /// <summary>
+        /// Gets the current clock speed of the graphics processor using the respective BackgroundWorker object
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object raising the event</param>
+        /// <param name="e">Object to store the BackgroundWorker results</param>
+        /// <exception cref="System.Exception">
+        /// An exception is thrown if an error occurs with the graphics card API
+        /// </exception>
+        private void graphicsCurrentClockSpeedBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                // get the BackgroundWorker object raising the event
+                BackgroundWorker bw = sender as BackgroundWorker;
+
+                // check if any cancellations are pending
+                if (bw.CancellationPending)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    // get the graphic processor current clock speed
+                    e.Result = gs_GraphicsCards.GetGraphicsCurrentClockFreq(gs_selectedGpu);
+                }
+            }
+            catch (Exception ex)
+            {
+                // throw an exception to let the user know an error occurred getting
+                // the current graphics processor clock speed for the graphics card
+                throw new Exception("ERROR: Could not get current clock speed. " + GetInternalExceptionMessage(ex));
+            }
+        }
+
+        /// <summary>
+        /// Sets the graphics processor current clock speed TextBox control text to its 
+        /// respective BackgroundWorker object result
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object that raised the event</param>
+        /// <param name="e">Object with the BackgroundWorker object results</param>
+        private void graphicsCurrentClockSpeedBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // update the graphics processor current clock speed TextBox text
+            UpdateTextBoxControlText(GraphicsCurrentClockSpeedTextBox, e);
+        }
+
+        /// <summary>
+        /// Gets the base clock speed of the graphics processor using the respective BackgroundWorker object
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object raising the event</param>
+        /// <param name="e">Object to store the BackgroundWorker results</param>
+        /// <exception cref="System.Exception">
+        /// An exception is thrown if an error occurs with the graphics card API
+        /// </exception>
+        private void graphicsBaseClockSpeedBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                // get the BackgroundWorker object raising the event
+                BackgroundWorker bw = sender as BackgroundWorker;
+
+                // check if any cancellations are pending
+                if (bw.CancellationPending)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    // get the graphics processor base clock speed
+                    e.Result = gs_GraphicsCards.GetGraphicsBaseClockFreq(gs_selectedGpu);
+                }
+            }
+            catch (Exception ex)
+            {
+                // throw an exception to let the user know an error occurred getting
+                // the graphics processor base clock speed for the graphics card
+                throw new Exception("ERROR: Could not get base clock speed. " + GetInternalExceptionMessage(ex));
+            }
+        }
+
+        /// <summary>
+        /// Sets the graphics processor base clock speed TextBox control text to its 
+        /// respective BackgroundWorker object result
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object that raised the event</param>
+        /// <param name="e">Object with the BackgroundWorker object results</param>
+        private void graphicsBaseClockSpeedBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // update the graphics processor base clock speed TextBox text
+            UpdateTextBoxControlText(GraphicsBaseClockSpeedTextBox, e);
+        }
+
+        /// <summary>
+        /// Gets the boost clock speed of the graphics processor using the respective BackgroundWorker object
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object raising the event</param>
+        /// <param name="e">Object to store the BackgroundWorker results</param>
+        /// <exception cref="System.Exception">
+        /// An exception is thrown if an error occurs with the graphics card API
+        /// </exception>
+        private void graphicsBoostClockSpeedBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                // get the BackgroundWorker object raising the event
+                BackgroundWorker bw = sender as BackgroundWorker;
+
+                // check if any cancellations are pending
+                if (bw.CancellationPending)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    // get the graphics processor boost clock speed
+                    e.Result = gs_GraphicsCards.GetGraphicsBoostClockFreq(gs_selectedGpu);
+                }
+            }
+            catch (Exception ex)
+            {
+                // throw an exception to let the user know an error occurred getting
+                // the graphics processor boost clock speed for the graphics card
+                throw new Exception("ERROR: Could not get boost clock speed. " + GetInternalExceptionMessage(ex));
+            }
+        }
+
+        /// <summary>
+        /// Sets the graphics processor boost clock speed TextBox control text to its 
+        /// respective BackgroundWorker object result
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object that raised the event</param>
+        /// <param name="e">Object with the BackgroundWorker object results</param>
+        private void graphicsBoostClockSpeedBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // update the graphics processor current clock speed TextBox text
+            UpdateTextBoxControlText(GraphicsBoostClockSpeedTextBox, e);
+        }
+
+        /// <summary>
+        /// Gets the current clock speed of the memory processor using the respective BackgroundWorker object
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object raising the event</param>
+        /// <param name="e">Object to store the BackgroundWorker results</param>
+        /// <exception cref="System.Exception">
+        /// An exception is thrown if an error occurs with the graphics card API
+        /// </exception>
+        private void memoryCurrentClockSpeedBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                // get the BackgroundWorker object raising the event
+                BackgroundWorker bw = sender as BackgroundWorker;
+
+                // check if any cancellations are pending
+                if (bw.CancellationPending)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    // get the memory processor current clock speed
+                    e.Result = gs_GraphicsCards.GetMemoryCurrentClockFreq(gs_selectedGpu);
+                }
+            }
+            catch (Exception ex)
+            {
+                // throw an exception to let the user know an error occurred getting
+                // the memory processor current clock speed for the graphics card
+                throw new Exception("ERROR: Could not get current clock speed. " + GetInternalExceptionMessage(ex));
+            }
+        }
+
+        /// <summary>
+        /// Sets the memory processor current clock speed TextBox control text to its 
+        /// respective BackgroundWorker object result
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object that raised the event</param>
+        /// <param name="e">Object with the BackgroundWorker object results</param>
+        private void memoryCurrentClockSpeedBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // update the memory processor current clock speed TextBox text
+            UpdateTextBoxControlText(MemoryCurrentClockSpeedTextBox, e);
+        }
+
+        /// <summary>
+        /// Gets the base clock speed of the memory processor using the respective BackgroundWorker object
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object raising the event</param>
+        /// <param name="e">Object to store the BackgroundWorker results</param>
+        /// <exception cref="System.Exception">
+        /// An exception is thrown if an error occurs with the graphics card API
+        /// </exception>
+        private void memoryBaseClockSpeedBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                // get the BackgroundWorker object raising the event
+                BackgroundWorker bw = sender as BackgroundWorker;
+
+                // check if any cancellations are pending
+                if (bw.CancellationPending)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    // get the memory processor base clock speed
+                    e.Result = gs_GraphicsCards.GetMemoryBaseClockFreq(gs_selectedGpu);
+                }
+            }
+            catch (Exception ex)
+            {
+                // throw an exception to let the user know an error occurred getting
+                // the memory processor base clock speed for the graphics card
+                throw new Exception("ERROR: Could not get base clock speed. " + GetInternalExceptionMessage(ex));
+            }
+        }
+
+        /// <summary>
+        /// Sets the memory processor base clock speed TextBox control text to its 
+        /// respective BackgroundWorker object result
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object that raised the event</param>
+        /// <param name="e">Object with the BackgroundWorker object results</param>
+        private void memoryBaseClockSpeedBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // update the memory processor base clock speed TextBox text
+            UpdateTextBoxControlText(MemoryBaseClockSpeedTextBox, e);
+        }
+
+        /// <summary>
+        /// Gets the boost clock speed of the memory processor using the respective BackgroundWorker object
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object raising the event</param>
+        /// <param name="e">Object to store the BackgroundWorker results</param>
+        /// <exception cref="System.Exception">
+        /// An exception is thrown if an error occurs with the graphics card API
+        /// </exception>
+        private void memoryBoostClockSpeedBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                // get the BackgroundWorker object raising the event
+                BackgroundWorker bw = sender as BackgroundWorker;
+
+                // check if any cancellations are pending
+                if (bw.CancellationPending)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    // get the memory processor boost clock speed
+                    e.Result = gs_GraphicsCards.GetMemoryBoostClockFreq(gs_selectedGpu);
+                }
+            }
+            catch (Exception ex)
+            {
+                // throw an exception to let the user know an error occurred getting
+                // the memory processor boost clock speed for the graphics card
+                throw new Exception("ERROR: Could not get boost clock speed. " + GetInternalExceptionMessage(ex));
+            }
+        }
+
+        /// <summary>
+        /// Sets the memory processor boost clock speed TextBox control text to its 
+        /// respective BackgroundWorker object result
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object that raised the event</param>
+        /// <param name="e">Object with the BackgroundWorker object results</param>
+        private void memoryBoostClockSpeedBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // update the memory processor boost clock speed TextBox text
+            UpdateTextBoxControlText(MemoryBoostClockSpeedTextBox, e);
+        }
+
+        /// <summary>
+        /// Gets the current performance state of the graphics card using the respective BackgroundWorker object
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object raising the event</param>
+        /// <param name="e">Object to store the BackgroundWorker results</param>
+        /// <exception cref="System.Exception">
+        /// An exception is thrown if an error occurs with the graphics card API
+        /// </exception>
+        private void perfStateBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                // get the BackgroundWorker object raising the event
+                BackgroundWorker bw = sender as BackgroundWorker;
+
+                // check if any cancellations are pending
+                if (bw.CancellationPending)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    // get the current performance state of the graphics card
+                    e.Result = gs_GraphicsCards.GetCurrentPerformanceState(gs_selectedGpu);
+                }
+            }
+            catch (Exception ex)
+            {
+                // throw an exception to let the user know an error occurred getting
+                // the graphics card performance state
+                throw new Exception("ERROR: Could not get performance state. " + GetInternalExceptionMessage(ex));
+            }
+        }
+
+        /// <summary>
+        /// Sets the graphics card performance state TextBox control text to its respective BackgroundWorker object result
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object that raised the event</param>
+        /// <param name="e">Object with the BackgroundWorker object results</param>
+        private void perfStateBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // update the graphics card performance state ID TextBox text
+            UpdateTextBoxControlText(PerfStateTextBox, e);
+        }
+
+        /// <summary>
+        /// Gets a base voltage of the graphics card using the respective BackgroundWorker object
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object raising the event</param>
+        /// <param name="e">Object to store the BackgroundWorker results</param>
+        /// <exception cref="System.Exception">
+        /// An exception is thrown if an error occurs with the graphics card API
+        /// </exception>
+        private void baseVoltage1BackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                // get the BackgroundWorker object raising the event
+                BackgroundWorker bw = sender as BackgroundWorker;
+
+                // check if any cancellations are pending
+                if (bw.CancellationPending)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    // get base voltage 1 of the graphics card
+                    e.Result = gs_GraphicsCards.GetBaseVoltage(gs_selectedGpu, 0);
+                }
+            }
+            catch (Exception ex)
+            {
+                // throw an exception to let the user know an error occurred getting
+                // the graphics card performance state base voltage
+                // for base voltages, it is possible that no base voltage exists for the current graphics card
+                throw new Exception("ERROR: Could not get base voltage. " + GetInternalExceptionMessage(ex));
+            }
+        }
+
+        /// <summary>
+        /// Sets the base voltage 1 TextBox control text to its respective BackgroundWorker object result.
+        /// The TextBox control gets disabled if any errors occur with the BackgroundWorker object.
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object that raised the event</param>
+        /// <param name="e">Object with the BackgroundWorker object results</param>
+        private void baseVoltage1BackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // update the base voltage 1 TextBox text
+            UpdateBaseVoltageTextBoxControlText(BaseVoltageTextBox1, e);
+
+            System.Threading.Thread.Sleep(SETTLING_TIME);
+            baseVoltage1BackgroundWorker.RunWorkerAsync();
+        }
+
+        /// <summary>
+        /// Gets a base voltage of the graphics card using the respective BackgroundWorker object
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object raising the event</param>
+        /// <param name="e">Object to store the BackgroundWorker results</param>
+        /// <exception cref="System.Exception">
+        /// An exception is thrown if an error occurs with the graphics card API
+        /// </exception>
+        private void baseVoltage2BackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                // get the BackgroundWorker object raising the event
+                BackgroundWorker bw = sender as BackgroundWorker;
+
+                // check if any cancellations are pending
+                if (bw.CancellationPending)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    // get base voltage 2 of the graphics card
+                    e.Result = gs_GraphicsCards.GetBaseVoltage(gs_selectedGpu, 1);
+                }
+            }
+            catch (Exception ex)
+            {
+                // throw an exception to let the user know an error occurred getting
+                // the graphics card performance state base voltage
+                // for base voltages, it is possible that no base voltage exists for the current graphics card
+                throw new Exception("ERROR: Could not get base voltage. " + GetInternalExceptionMessage(ex));
+            }
+        }
+
+        /// <summary>
+        /// Sets the base voltage 2 TextBox control text to its respective BackgroundWorker object result.
+        /// The TextBox control gets disabled if any errors occur with the BackgroundWorker object.
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object that raised the event</param>
+        /// <param name="e">Object with the BackgroundWorker object results</param>
+        private void baseVoltage2BackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // update the base voltage 2 TextBox text
+            UpdateBaseVoltageTextBoxControlText(BaseVoltageTextBox2, e);
+        }
+
+        /// <summary>
+        /// Gets a base voltage of the graphics card using the respective BackgroundWorker object
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object raising the event</param>
+        /// <param name="e">Object to store the BackgroundWorker results</param>
+        /// <exception cref="System.Exception">
+        /// An exception is thrown if an error occurs with the graphics card API
+        /// </exception>
+        private void baseVoltage3BackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                // get the BackgroundWorker object raising the event
+                BackgroundWorker bw = sender as BackgroundWorker;
+
+                // check if any cancellations are pending
+                if (bw.CancellationPending)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    // get base voltage 3 of the graphics card
+                    e.Result = gs_GraphicsCards.GetBaseVoltage(gs_selectedGpu, 2);
+                }
+            }
+            catch (Exception ex)
+            {
+                // throw an exception to let the user know an error occurred getting
+                // the graphics card performance state base voltage
+                // for base voltages, it is possible that no base voltage exists for the current graphics card
+                throw new Exception("ERROR: Could not get base voltage. " + GetInternalExceptionMessage(ex));
+            }
+        }
+
+        /// <summary>
+        /// Sets the base voltage 3 TextBox control text to its respective BackgroundWorker object result.
+        /// The TextBox control gets disabled if any errors occur with the BackgroundWorker object.
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object that raised the event</param>
+        /// <param name="e">Object with the BackgroundWorker object results</param>
+        private void baseVoltage3BackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // update the base voltage 3 TextBox text
+            UpdateBaseVoltageTextBoxControlText(BaseVoltageTextBox3, e);
+        }
+
+        /// <summary>
+        /// Gets a base voltage of the graphics card using the respective BackgroundWorker object
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object raising the event</param>
+        /// <param name="e">Object to store the BackgroundWorker results</param>
+        /// <exception cref="System.Exception">
+        /// An exception is thrown if an error occurs with the graphics card API
+        /// </exception>
+        private void baseVoltage4BackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                // get the BackgroundWorker object raising the event
+                BackgroundWorker bw = sender as BackgroundWorker;
+
+                // check if any cancellations are pending
+                if (bw.CancellationPending)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    // get the base voltage 4 of the graphics card
+                    e.Result = gs_GraphicsCards.GetBaseVoltage(gs_selectedGpu, 3);
+                }
+            }
+            catch (Exception ex)
+            {
+                // throw an exception to let the user know an error occurred getting
+                // the graphics card performance state base voltage
+                // for base voltages, it is possible that no base voltage exists for the current graphics card
+                throw new Exception("ERROR: Could not get base voltage. " + GetInternalExceptionMessage(ex));
+            }
+        }
+
+        /// <summary>
+        /// Sets the base voltage 4 TextBox control text to its respective BackgroundWorker object result.
+        /// The TextBox control gets disabled if any errors occur with the BackgroundWorker object.
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object that raised the event</param>
+        /// <param name="e">Object with the BackgroundWorker object results</param>
+        private void baseVoltage4BackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // update the base voltage 4 TextBox text
+            UpdateBaseVoltageTextBoxControlText(BaseVoltageTextBox4, e);
+        }
+
+        #endregion BackgroundWorker Events
+
     }
 }
