@@ -77,10 +77,10 @@
             this.ExitButton = new System.Windows.Forms.Button();
             this.MenuStrip = new System.Windows.Forms.MenuStrip();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.refreshF5ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.RefreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.instructionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.InstructionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.AboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.RefreshToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.ExitToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.ClockFreqGroupBox = new System.Windows.Forms.GroupBox();
@@ -112,6 +112,9 @@
             this.baseVoltage2BackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.baseVoltage3BackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.baseVoltage4BackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.FanSpeedLabel = new System.Windows.Forms.Label();
+            this.FanSpeedTextBox = new System.Windows.Forms.TextBox();
+            this.fanSpeedBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.PciGroupBox.SuspendLayout();
             this.GeneralGroupBox.SuspendLayout();
             this.PerformanceGroupBox.SuspendLayout();
@@ -219,9 +222,9 @@
             this.PciGroupBox.Controls.Add(this.PciInternalIdLabel);
             this.PciGroupBox.Controls.Add(this.PciRevIDLabel);
             this.PciGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.PciGroupBox.Location = new System.Drawing.Point(300, 57);
+            this.PciGroupBox.Location = new System.Drawing.Point(316, 57);
             this.PciGroupBox.Name = "PciGroupBox";
-            this.PciGroupBox.Size = new System.Drawing.Size(210, 176);
+            this.PciGroupBox.Size = new System.Drawing.Size(194, 176);
             this.PciGroupBox.TabIndex = 9;
             this.PciGroupBox.TabStop = false;
             this.PciGroupBox.Text = "PCI Information";
@@ -288,6 +291,8 @@
             // 
             // GeneralGroupBox
             // 
+            this.GeneralGroupBox.Controls.Add(this.FanSpeedTextBox);
+            this.GeneralGroupBox.Controls.Add(this.FanSpeedLabel);
             this.GeneralGroupBox.Controls.Add(this.BusIdTextBox);
             this.GeneralGroupBox.Controls.Add(this.CoreTempTextBox);
             this.GeneralGroupBox.Controls.Add(this.GpuCoresTextBox);
@@ -305,7 +310,7 @@
             this.GeneralGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.GeneralGroupBox.Location = new System.Drawing.Point(15, 55);
             this.GeneralGroupBox.Name = "GeneralGroupBox";
-            this.GeneralGroupBox.Size = new System.Drawing.Size(280, 178);
+            this.GeneralGroupBox.Size = new System.Drawing.Size(295, 178);
             this.GeneralGroupBox.TabIndex = 10;
             this.GeneralGroupBox.TabStop = false;
             this.GeneralGroupBox.Text = "General Information";
@@ -314,7 +319,7 @@
             // 
             this.BusIdTextBox.Enabled = false;
             this.BusIdTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BusIdTextBox.Location = new System.Drawing.Point(182, 123);
+            this.BusIdTextBox.Location = new System.Drawing.Point(235, 122);
             this.BusIdTextBox.Name = "BusIdTextBox";
             this.BusIdTextBox.Size = new System.Drawing.Size(52, 20);
             this.BusIdTextBox.TabIndex = 25;
@@ -326,7 +331,7 @@
             this.CoreTempTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.CoreTempTextBox.Location = new System.Drawing.Point(86, 152);
             this.CoreTempTextBox.Name = "CoreTempTextBox";
-            this.CoreTempTextBox.Size = new System.Drawing.Size(100, 20);
+            this.CoreTempTextBox.Size = new System.Drawing.Size(42, 20);
             this.CoreTempTextBox.TabIndex = 0;
             this.CoreTempTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -334,9 +339,9 @@
             // 
             this.GpuCoresTextBox.Enabled = false;
             this.GpuCoresTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.GpuCoresTextBox.Location = new System.Drawing.Point(73, 123);
+            this.GpuCoresTextBox.Location = new System.Drawing.Point(86, 123);
             this.GpuCoresTextBox.Name = "GpuCoresTextBox";
-            this.GpuCoresTextBox.Size = new System.Drawing.Size(51, 20);
+            this.GpuCoresTextBox.Size = new System.Drawing.Size(42, 20);
             this.GpuCoresTextBox.TabIndex = 24;
             this.GpuCoresTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -356,7 +361,7 @@
             this.VirtualRamTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.VirtualRamTextBox.Location = new System.Drawing.Point(124, 96);
             this.VirtualRamTextBox.Name = "VirtualRamTextBox";
-            this.VirtualRamTextBox.Size = new System.Drawing.Size(135, 20);
+            this.VirtualRamTextBox.Size = new System.Drawing.Size(165, 20);
             this.VirtualRamTextBox.TabIndex = 22;
             this.VirtualRamTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -366,7 +371,7 @@
             this.PhysRamTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.PhysRamTextBox.Location = new System.Drawing.Point(134, 70);
             this.PhysRamTextBox.Name = "PhysRamTextBox";
-            this.PhysRamTextBox.Size = new System.Drawing.Size(125, 20);
+            this.PhysRamTextBox.Size = new System.Drawing.Size(155, 20);
             this.PhysRamTextBox.TabIndex = 21;
             this.PhysRamTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -376,7 +381,7 @@
             this.VbiosTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.VbiosTextBox.Location = new System.Drawing.Point(75, 44);
             this.VbiosTextBox.Name = "VbiosTextBox";
-            this.VbiosTextBox.Size = new System.Drawing.Size(184, 20);
+            this.VbiosTextBox.Size = new System.Drawing.Size(214, 20);
             this.VbiosTextBox.TabIndex = 20;
             this.VbiosTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -386,7 +391,7 @@
             this.SerialNumTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.SerialNumTextBox.Location = new System.Drawing.Point(88, 19);
             this.SerialNumTextBox.Name = "SerialNumTextBox";
-            this.SerialNumTextBox.Size = new System.Drawing.Size(171, 20);
+            this.SerialNumTextBox.Size = new System.Drawing.Size(201, 20);
             this.SerialNumTextBox.TabIndex = 6;
             this.SerialNumTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -394,7 +399,7 @@
             // 
             this.BusIdLabel.AutoSize = true;
             this.BusIdLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BusIdLabel.Location = new System.Drawing.Point(134, 126);
+            this.BusIdLabel.Location = new System.Drawing.Point(187, 126);
             this.BusIdLabel.Name = "BusIdLabel";
             this.BusIdLabel.Size = new System.Drawing.Size(42, 13);
             this.BusIdLabel.TabIndex = 11;
@@ -404,9 +409,9 @@
             // 
             this.GraphicsBoostClockSpeedTextBox.Enabled = false;
             this.GraphicsBoostClockSpeedTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.GraphicsBoostClockSpeedTextBox.Location = new System.Drawing.Point(189, 65);
+            this.GraphicsBoostClockSpeedTextBox.Location = new System.Drawing.Point(196, 65);
             this.GraphicsBoostClockSpeedTextBox.Name = "GraphicsBoostClockSpeedTextBox";
-            this.GraphicsBoostClockSpeedTextBox.Size = new System.Drawing.Size(107, 20);
+            this.GraphicsBoostClockSpeedTextBox.Size = new System.Drawing.Size(100, 20);
             this.GraphicsBoostClockSpeedTextBox.TabIndex = 31;
             this.GraphicsBoostClockSpeedTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -424,9 +429,9 @@
             // 
             this.GraphicsBaseClockSpeedTextBox.Enabled = false;
             this.GraphicsBaseClockSpeedTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.GraphicsBaseClockSpeedTextBox.Location = new System.Drawing.Point(186, 39);
+            this.GraphicsBaseClockSpeedTextBox.Location = new System.Drawing.Point(196, 39);
             this.GraphicsBaseClockSpeedTextBox.Name = "GraphicsBaseClockSpeedTextBox";
-            this.GraphicsBaseClockSpeedTextBox.Size = new System.Drawing.Size(110, 20);
+            this.GraphicsBaseClockSpeedTextBox.Size = new System.Drawing.Size(100, 20);
             this.GraphicsBaseClockSpeedTextBox.TabIndex = 29;
             this.GraphicsBaseClockSpeedTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -616,37 +621,40 @@
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.refreshF5ToolStripMenuItem});
+            this.RefreshToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.optionsToolStripMenuItem.Text = "Options";
             // 
-            // refreshF5ToolStripMenuItem
+            // RefreshToolStripMenuItem
             // 
-            this.refreshF5ToolStripMenuItem.Name = "refreshF5ToolStripMenuItem";
-            this.refreshF5ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
-            this.refreshF5ToolStripMenuItem.Text = "Refresh (F5)";
+            this.RefreshToolStripMenuItem.Name = "RefreshToolStripMenuItem";
+            this.RefreshToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.RefreshToolStripMenuItem.Text = "Refresh (F5)";
+            this.RefreshToolStripMenuItem.Click += new System.EventHandler(this.RefreshToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.instructionsToolStripMenuItem,
-            this.aboutToolStripMenuItem});
+            this.InstructionsToolStripMenuItem,
+            this.AboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "Help";
             // 
-            // instructionsToolStripMenuItem
+            // InstructionsToolStripMenuItem
             // 
-            this.instructionsToolStripMenuItem.Name = "instructionsToolStripMenuItem";
-            this.instructionsToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
-            this.instructionsToolStripMenuItem.Text = "Instructions";
+            this.InstructionsToolStripMenuItem.Name = "InstructionsToolStripMenuItem";
+            this.InstructionsToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.InstructionsToolStripMenuItem.Text = "Instructions";
+            this.InstructionsToolStripMenuItem.Click += new System.EventHandler(this.InstructionsToolStripMenuItem_Click);
             // 
-            // aboutToolStripMenuItem
+            // AboutToolStripMenuItem
             // 
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
-            this.aboutToolStripMenuItem.Text = "About";
+            this.AboutToolStripMenuItem.Name = "AboutToolStripMenuItem";
+            this.AboutToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.AboutToolStripMenuItem.Text = "About";
+            this.AboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolStripMenuItem_Click);
             // 
             // ClockFreqGroupBox
             // 
@@ -674,9 +682,9 @@
             // 
             this.MemoryBoostClockSpeedTextBox.Enabled = false;
             this.MemoryBoostClockSpeedTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MemoryBoostClockSpeedTextBox.Location = new System.Drawing.Point(184, 143);
+            this.MemoryBoostClockSpeedTextBox.Location = new System.Drawing.Point(196, 143);
             this.MemoryBoostClockSpeedTextBox.Name = "MemoryBoostClockSpeedTextBox";
-            this.MemoryBoostClockSpeedTextBox.Size = new System.Drawing.Size(112, 20);
+            this.MemoryBoostClockSpeedTextBox.Size = new System.Drawing.Size(100, 20);
             this.MemoryBoostClockSpeedTextBox.TabIndex = 37;
             this.MemoryBoostClockSpeedTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -684,9 +692,9 @@
             // 
             this.MemoryBaseClockSpeedTextBox.Enabled = false;
             this.MemoryBaseClockSpeedTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MemoryBaseClockSpeedTextBox.Location = new System.Drawing.Point(181, 117);
+            this.MemoryBaseClockSpeedTextBox.Location = new System.Drawing.Point(196, 117);
             this.MemoryBaseClockSpeedTextBox.Name = "MemoryBaseClockSpeedTextBox";
-            this.MemoryBaseClockSpeedTextBox.Size = new System.Drawing.Size(115, 20);
+            this.MemoryBaseClockSpeedTextBox.Size = new System.Drawing.Size(100, 20);
             this.MemoryBaseClockSpeedTextBox.TabIndex = 36;
             this.MemoryBaseClockSpeedTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -704,9 +712,9 @@
             // 
             this.MemoryCurrentClockSpeedTextBox.Enabled = false;
             this.MemoryCurrentClockSpeedTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MemoryCurrentClockSpeedTextBox.Location = new System.Drawing.Point(191, 91);
+            this.MemoryCurrentClockSpeedTextBox.Location = new System.Drawing.Point(196, 91);
             this.MemoryCurrentClockSpeedTextBox.Name = "MemoryCurrentClockSpeedTextBox";
-            this.MemoryCurrentClockSpeedTextBox.Size = new System.Drawing.Size(105, 20);
+            this.MemoryCurrentClockSpeedTextBox.Size = new System.Drawing.Size(100, 20);
             this.MemoryCurrentClockSpeedTextBox.TabIndex = 34;
             this.MemoryCurrentClockSpeedTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -862,6 +870,32 @@
             this.baseVoltage4BackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.baseVoltage4BackgroundWorker_DoWork);
             this.baseVoltage4BackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.baseVoltage4BackgroundWorker_RunWorkerCompleted);
             // 
+            // FanSpeedLabel
+            // 
+            this.FanSpeedLabel.AutoSize = true;
+            this.FanSpeedLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FanSpeedLabel.Location = new System.Drawing.Point(134, 155);
+            this.FanSpeedLabel.Name = "FanSpeedLabel";
+            this.FanSpeedLabel.Size = new System.Drawing.Size(95, 13);
+            this.FanSpeedLabel.TabIndex = 26;
+            this.FanSpeedLabel.Text = "Fan Speed (RPM):";
+            // 
+            // FanSpeedTextBox
+            // 
+            this.FanSpeedTextBox.Enabled = false;
+            this.FanSpeedTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FanSpeedTextBox.Location = new System.Drawing.Point(235, 152);
+            this.FanSpeedTextBox.Name = "FanSpeedTextBox";
+            this.FanSpeedTextBox.Size = new System.Drawing.Size(54, 20);
+            this.FanSpeedTextBox.TabIndex = 27;
+            this.FanSpeedTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // fanSpeedBackgroundWorker
+            // 
+            this.fanSpeedBackgroundWorker.WorkerSupportsCancellation = true;
+            this.fanSpeedBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.fanSpeedBackgroundWorker_DoWork);
+            this.fanSpeedBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.fanSpeedBackgroundWorker_RunWorkerCompleted);
+            // 
             // GraphicsCardMonitorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -934,10 +968,10 @@
         private System.Windows.Forms.Button ExitButton;
         private System.Windows.Forms.MenuStrip MenuStrip;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem refreshF5ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem RefreshToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem instructionsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem InstructionsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem AboutToolStripMenuItem;
         private System.Windows.Forms.ToolTip RefreshToolTip;
         private System.Windows.Forms.ToolTip ExitToolTip;
         private System.Windows.Forms.TextBox BaseVoltageTextBox3;
@@ -979,6 +1013,9 @@
         private System.ComponentModel.BackgroundWorker baseVoltage2BackgroundWorker;
         private System.ComponentModel.BackgroundWorker baseVoltage3BackgroundWorker;
         private System.ComponentModel.BackgroundWorker baseVoltage4BackgroundWorker;
+        private System.Windows.Forms.TextBox FanSpeedTextBox;
+        private System.Windows.Forms.Label FanSpeedLabel;
+        private System.ComponentModel.BackgroundWorker fanSpeedBackgroundWorker;
     }
 }
 

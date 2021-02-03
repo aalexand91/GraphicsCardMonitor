@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
-using System.Reflection;
 using GraphicsCards;        // namespace containining graphics card interfaces and drivers
 
 namespace GraphicsCardMonitor
@@ -140,6 +139,7 @@ namespace GraphicsCardMonitor
             gs_backGroundWorkers.Add(baseVoltage2BackgroundWorker);
             gs_backGroundWorkers.Add(baseVoltage3BackgroundWorker);
             gs_backGroundWorkers.Add(baseVoltage4BackgroundWorker);
+            gs_backGroundWorkers.Add(fanSpeedBackgroundWorker);
         }
 
         /// <summary>
@@ -320,6 +320,7 @@ namespace GraphicsCardMonitor
                 BaseVoltageTextBox2.Text                = "";
                 BaseVoltageTextBox3.Text                = "";
                 BaseVoltageTextBox4.Text                = "";
+                FanSpeedTextBox.Text                    = "";
             }
             catch (Exception clearEx)
             {
@@ -359,6 +360,7 @@ namespace GraphicsCardMonitor
             BaseVoltageTextBox2.Enabled                 = false;
             BaseVoltageTextBox3.Enabled                 = false;
             BaseVoltageTextBox4.Enabled                 = false;
+            FanSpeedTextBox.Enabled                     = false;
         }
 
         /// <summary>
@@ -436,7 +438,7 @@ namespace GraphicsCardMonitor
                     textBox.Enabled = true;
 
                     // set the base voltage TextBox control to the BackgroundWorker result
-                    textBox.Text = String.Format("{0:0.00}", e.Result.ToString());
+                    textBox.Text = e.Result.ToString();
                 }
             }
         }
@@ -466,7 +468,13 @@ namespace GraphicsCardMonitor
                 // start each BackgroundWorker work with the newly selected GPU
                 foreach (BackgroundWorker bw in gs_backGroundWorkers)
                 {
-                    bw.RunWorkerAsync();
+                    // sometimes the current BackgroundWorker object may be busy
+                    // wait for the current BackgroundWorker object to finish
+                    // and then restart it using the newly selected graphics card
+                    while (!bw.IsBusy)
+                    {
+                        bw.RunWorkerAsync();
+                    }
                 }
             }
             catch (Exception selectGraphicsCardEx)
@@ -525,6 +533,45 @@ namespace GraphicsCardMonitor
                                 + ". Try closing the application again.";
                 MessageBox.Show(message);
             }
+        }
+
+        /// <summary>
+        /// Refreshes the application. Functions the same as the Refresh button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RefreshToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            RefreshApplication();
+        }
+
+        /// <summary>
+        /// Displays the instructions to the user on how to use the application
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void InstructionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // display the instructions for the form to the user
+            MessageBox.Show("1) Select a graphics card from the 'Select Graphics Card' drop down menu.\n" +
+                            "2) The application will auto refresh with the selected graphics card's performance.\n" +
+                            "3) Click the Refresh button to refresh the application and reload possible graphics cards to monitor.\n" +
+                            "4) Click the Exit button to exit the application.");
+        }
+
+        /// <summary>
+        /// Displays information about the application to the user
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // display About information to the user
+            MessageBox.Show("Application: Graphics Card Monitor\n" +
+                            "Version: 1.0.0\n" +
+                            "Original Author: Anthony Alexander\n" +
+                            "Summary: Monitors any applicable graphics cards installed in the sytem\n" +
+                            "and reports the graphics card's performance.");
         }
 
         #endregion Control Events
@@ -1693,6 +1740,71 @@ namespace GraphicsCardMonitor
                 // clear the TextBox text and disable it
                 BaseVoltageTextBox4.Text    = "";
                 BaseVoltageTextBox4.Enabled = false;
+            }
+        }
+
+        /// <summary>
+        /// Gets the GPU fan spped using the respective BackgroundWorker object
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object raising the event</param>
+        /// <param name="e">Object to store the BackgroundWorker results</param>
+        /// <exception cref="System.Exception">
+        /// An exception is thrown if an error occurs with the graphics card API
+        /// </exception>
+        private void fanSpeedBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                // get the BackgroundWorker object raising the event
+                BackgroundWorker bw = sender as BackgroundWorker;
+
+                // check if any cancellations are pending
+                if (bw.CancellationPending)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    // get the GPU fan speed
+                    e.Result = gs_GraphicsCards.GetGpuFanSpeed(gs_selectedGpu);
+                }
+
+                // allow the hardware/API to settle
+                System.Threading.Thread.Sleep(SETTLING_TIME);
+            }
+            catch (Exception ex)
+            {
+                // throw an exception to let the user know an error occurred getting
+                // the GPU fan speed
+                throw new Exception("ERROR: Could not GPU fanspeed. " + GetInternalExceptionMessage(ex));
+            }
+        }
+
+        /// <summary>
+        /// Sets the fan speed TextBox control text to its respective BackgroundWorker object result.
+        /// </summary>
+        /// <param name="sender">BackgroundWorker object that raised the event</param>
+        /// <param name="e">Object with the BackgroundWorker object results</param>
+        private void fanSpeedBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // update the GPU fan speed TextBox control
+            UpdateTextBoxControlText(FanSpeedTextBox, e);
+
+            // check if the BackgroundWorker object is not cancelled
+            if (!gs_cancelBackgroundWorkers)
+            {
+                // run the BackgroundWorker again
+                // this will cause the BackgroundWorker to update the application repeatadely
+                // until the user either refreshes or exits the application
+                fanSpeedBackgroundWorker.RunWorkerAsync();
+            }
+            else
+            {
+                // sometimes the BackgroundWorker will cancel before the
+                // Refresh button can clear the TextBox
+                // clear the TextBox text and disable it
+                FanSpeedTextBox.Text    = "";
+                FanSpeedTextBox.Enabled = false;
             }
         }
 
