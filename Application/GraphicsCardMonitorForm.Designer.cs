@@ -403,6 +403,7 @@
             // GraphicsBoostClockSpeedTextBox
             // 
             this.GraphicsBoostClockSpeedTextBox.Enabled = false;
+            this.GraphicsBoostClockSpeedTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.GraphicsBoostClockSpeedTextBox.Location = new System.Drawing.Point(189, 65);
             this.GraphicsBoostClockSpeedTextBox.Name = "GraphicsBoostClockSpeedTextBox";
             this.GraphicsBoostClockSpeedTextBox.Size = new System.Drawing.Size(107, 20);
@@ -422,6 +423,7 @@
             // GraphicsBaseClockSpeedTextBox
             // 
             this.GraphicsBaseClockSpeedTextBox.Enabled = false;
+            this.GraphicsBaseClockSpeedTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.GraphicsBaseClockSpeedTextBox.Location = new System.Drawing.Point(186, 39);
             this.GraphicsBaseClockSpeedTextBox.Name = "GraphicsBaseClockSpeedTextBox";
             this.GraphicsBaseClockSpeedTextBox.Size = new System.Drawing.Size(110, 20);
@@ -431,6 +433,7 @@
             // GraphicsCurrentClockSpeedTextBox
             // 
             this.GraphicsCurrentClockSpeedTextBox.Enabled = false;
+            this.GraphicsCurrentClockSpeedTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.GraphicsCurrentClockSpeedTextBox.Location = new System.Drawing.Point(196, 13);
             this.GraphicsCurrentClockSpeedTextBox.Name = "GraphicsCurrentClockSpeedTextBox";
             this.GraphicsCurrentClockSpeedTextBox.Size = new System.Drawing.Size(100, 20);
@@ -510,6 +513,7 @@
             // BaseVoltageTextBox4
             // 
             this.BaseVoltageTextBox4.Enabled = false;
+            this.BaseVoltageTextBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.BaseVoltageTextBox4.Location = new System.Drawing.Point(74, 125);
             this.BaseVoltageTextBox4.Name = "BaseVoltageTextBox4";
             this.BaseVoltageTextBox4.Size = new System.Drawing.Size(71, 20);
@@ -529,6 +533,7 @@
             // BaseVoltageTextBox3
             // 
             this.BaseVoltageTextBox3.Enabled = false;
+            this.BaseVoltageTextBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.BaseVoltageTextBox3.Location = new System.Drawing.Point(74, 99);
             this.BaseVoltageTextBox3.Name = "BaseVoltageTextBox3";
             this.BaseVoltageTextBox3.Size = new System.Drawing.Size(71, 20);
@@ -668,6 +673,7 @@
             // MemoryBoostClockSpeedTextBox
             // 
             this.MemoryBoostClockSpeedTextBox.Enabled = false;
+            this.MemoryBoostClockSpeedTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MemoryBoostClockSpeedTextBox.Location = new System.Drawing.Point(184, 143);
             this.MemoryBoostClockSpeedTextBox.Name = "MemoryBoostClockSpeedTextBox";
             this.MemoryBoostClockSpeedTextBox.Size = new System.Drawing.Size(112, 20);
@@ -677,6 +683,7 @@
             // MemoryBaseClockSpeedTextBox
             // 
             this.MemoryBaseClockSpeedTextBox.Enabled = false;
+            this.MemoryBaseClockSpeedTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MemoryBaseClockSpeedTextBox.Location = new System.Drawing.Point(181, 117);
             this.MemoryBaseClockSpeedTextBox.Name = "MemoryBaseClockSpeedTextBox";
             this.MemoryBaseClockSpeedTextBox.Size = new System.Drawing.Size(115, 20);
@@ -696,6 +703,7 @@
             // MemoryCurrentClockSpeedTextBox
             // 
             this.MemoryCurrentClockSpeedTextBox.Enabled = false;
+            this.MemoryCurrentClockSpeedTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MemoryCurrentClockSpeedTextBox.Location = new System.Drawing.Point(191, 91);
             this.MemoryCurrentClockSpeedTextBox.Name = "MemoryCurrentClockSpeedTextBox";
             this.MemoryCurrentClockSpeedTextBox.Size = new System.Drawing.Size(105, 20);

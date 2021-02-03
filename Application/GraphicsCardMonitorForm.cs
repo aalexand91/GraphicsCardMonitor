@@ -22,7 +22,17 @@ namespace GraphicsCardMonitor
         /// <summary>
         /// amount of time, in milliseconds, to refresh the application data for a selected GPU
         /// </summary>
-        const int SETTLING_TIME = 10;
+        const int SETTLING_TIME = 100;
+
+        /// <summary>
+        /// converts the GPU base voltage values to V
+        /// </summary>
+        const double BASE_VOLTAGE_CONVERSION = 1e9;
+
+        /// <summary>
+        /// converts all GPU processor clock speeds to MHz
+        /// </summary>
+        const double CLOCK_FREQ_CONVERSION = 1e6;
 
         #endregion Constants
 
@@ -47,6 +57,11 @@ namespace GraphicsCardMonitor
         /// selected GPU from the GraphicsCardComboxBox
         /// </summary>
         private static uint gs_selectedGpu = 0u;
+
+        /// <summary>
+        /// state of cancelling the BackgroundWorker objects
+        /// </summary>
+        private bool gs_cancelBackgroundWorkers = true;
 
         #endregion Private Global Static Variables
 
@@ -249,11 +264,8 @@ namespace GraphicsCardMonitor
                 // clear the application items
                 ClearAppItems();
 
-                // enable all base voltage text boxes
-                BaseVoltageTextBox1.Enabled = true;
-                BaseVoltageTextBox2.Enabled = true;
-                BaseVoltageTextBox3.Enabled = true;
-                BaseVoltageTextBox4.Enabled = true;
+                // disable all the TextBox controls since they are not in use
+                DisableTextBoxes();
 
                 // get all Nvidia graphics cards in the system
                 // TODO: USE REFECTION TO LOAD ANY GRAPHICS CARD DRIVER FROM A GIVEN.DLL FILE
@@ -285,7 +297,7 @@ namespace GraphicsCardMonitor
                 GraphicsCardComboBox.Items.Clear();
                 GraphicsCardComboBox.Text = "";
 
-                // clear the application TextBoxs
+                // clear the application TextBoxes
                 SerialNumTextBox.Text                   = "";
                 VbiosTextBox.Text                       = "";
                 PhysRamTextBox.Text                     = "";
@@ -320,10 +332,43 @@ namespace GraphicsCardMonitor
         }
 
         /// <summary>
+        /// Disables all TextBox controls
+        /// </summary>
+        private void DisableTextBoxes()
+        {
+            // disable the all TextBoxes
+            SerialNumTextBox.Enabled                    = false;
+            VbiosTextBox.Enabled                        = false;
+            PhysRamTextBox.Enabled                      = false;
+            VirtualRamTextBox.Enabled                   = false;
+            GpuCoresTextBox.Enabled                     = false;
+            BusIdTextBox.Enabled                        = false;
+            CoreTempTextBox.Enabled                     = false;
+            PciInternalIdTextBox.Enabled                = false;
+            PciRevTextBox.Enabled                       = false;
+            PciSubsystemTextBox.Enabled                 = false;
+            PciExternalIdTextBox.Enabled                = false;
+            GraphicsCurrentClockSpeedTextBox.Enabled    = false;
+            GraphicsBaseClockSpeedTextBox.Enabled       = false;
+            GraphicsBoostClockSpeedTextBox.Enabled      = false;
+            MemoryCurrentClockSpeedTextBox.Enabled      = false;
+            MemoryBaseClockSpeedTextBox.Enabled         = false;
+            MemoryBoostClockSpeedTextBox.Enabled        = false;
+            PerfStateTextBox.Enabled                    = false;
+            BaseVoltageTextBox1.Enabled                 = false;
+            BaseVoltageTextBox2.Enabled                 = false;
+            BaseVoltageTextBox3.Enabled                 = false;
+            BaseVoltageTextBox4.Enabled                 = false;
+        }
+
+        /// <summary>
         /// Cancels all BackgroundWorker object operations in the BackgroundWorker List
         /// </summary>
         private void CancelBackgroundWorkers()
         {
+            // set the cancellation state of all BackgroundWorker objects to true
+            gs_cancelBackgroundWorkers = true;
+
             // iterate through each BackgroundWorker in the BackgroundWorker List
             // and stop any of the operations occurring
             foreach (BackgroundWorker bw in gs_backGroundWorkers)
@@ -342,17 +387,24 @@ namespace GraphicsCardMonitor
             // check if any errors occurred
             if (e.Error != null)
             {
+                // disable the TextBox
+                textBox.Enabled = false;
+
                 // set the TextBox text to the error message
                 textBox.Text = e.Error.Message;
             }
             else
             {
-                // set the TextBox text to the result obtained by the BackgroundWorker
-                textBox.Text = e.Result.ToString();
-            }
+                // check if the BackgroundWorker was cancelled before trying to update
+                if (!e.Cancelled && !gs_cancelBackgroundWorkers)
+                {
+                    // enable the TextBox
+                    textBox.Enabled = true;
 
-            // allow the current background worker to settle
-            //System.Threading.Thread.Sleep(SETTLING_TIME);
+                    // set the TextBox text to the result obtained by the BackgroundWorker
+                    textBox.Text = e.Result.ToString();
+                }
+            }
         }
 
         /// <summary>
@@ -364,29 +416,29 @@ namespace GraphicsCardMonitor
         /// <param name="e">Object with the BackgroundWorker object results</param>
         private void UpdateBaseVoltageTextBoxControlText(TextBox textBox, RunWorkerCompletedEventArgs e)
         {
-            // check if the base voltage TextBox control is enabled
-            if (textBox.Enabled)
+            // check if any error occurred
+            if (e.Error != null)
             {
-                // check if any error occurred
-                if (e.Error != null)
-                {
-                    // display the error message to the user to let them know
-                    MessageBox.Show(e.Error.Message);
+                // display the error message to the user to let them know
+                MessageBox.Show(e.Error.Message);
 
-                    // more than likely, the graphics card does not have this base voltage
-                    // clear any text from the text box and disable it
-                    textBox.Text = "";
-                    textBox.Enabled = false;
-                }
-                else
+                // more than likely, the graphics card does not have this base voltage
+                // clear any text from the text box and disable it
+                textBox.Text = "";
+                textBox.Enabled = false;
+            }
+            else
+            {
+                // check if the background worker is not cancelled
+                if (!e.Cancelled)
                 {
+                    // enable the TextBox control
+                    textBox.Enabled = true;
+
                     // set the base voltage TextBox control to the BackgroundWorker result
-                    textBox.Text = e.Result.ToString();
+                    textBox.Text = String.Format("{0:0.00}", e.Result.ToString());
                 }
             }
-
-            // allow the current background worker to settle
-            //System.Threading.Thread.Sleep(SETTLING_TIME);
         }
 
         #endregion Private Methods
@@ -407,6 +459,9 @@ namespace GraphicsCardMonitor
 
                 // set the selected GPU handler to use for the background workers
                 gs_selectedGpu = (uint)GraphicsCardComboBox.SelectedIndex;
+
+                // set the cancellation state of all BackgroundWorker objects to false
+                gs_cancelBackgroundWorkers = false;
 
                 // start each BackgroundWorker work with the newly selected GPU
                 foreach (BackgroundWorker bw in gs_backGroundWorkers)
@@ -501,6 +556,9 @@ namespace GraphicsCardMonitor
                     // get the serial number of the selected GPU and set it as the result
                     e.Result = gs_GraphicsCards.GetCardSerialNumber(gs_selectedGpu);
                 }
+
+                // allow the hardware/API to settle
+                System.Threading.Thread.Sleep(SETTLING_TIME);
             }
             catch (Exception ex)
             {
@@ -546,6 +604,9 @@ namespace GraphicsCardMonitor
                     // get the serial number of the selected GPU and set it as the result
                     e.Result = gs_GraphicsCards.GetVBiosInfo(gs_selectedGpu);
                 }
+
+                // allow the hardware/API to settle
+                System.Threading.Thread.Sleep(SETTLING_TIME);
             }
             catch (Exception ex)
             {
@@ -591,6 +652,9 @@ namespace GraphicsCardMonitor
                     // get the physical RAM of the graphics card
                     e.Result = gs_GraphicsCards.GetPhysicalRamSize(gs_selectedGpu);
                 }
+
+                // allow the hardware/API to settle
+                System.Threading.Thread.Sleep(SETTLING_TIME);
             }
             catch (Exception ex)
             {
@@ -636,6 +700,9 @@ namespace GraphicsCardMonitor
                     // get the virtual RAM of the graphics card
                     e.Result = gs_GraphicsCards.GetVirtualRamSize(gs_selectedGpu);
                 }
+
+                // allow the hardware/API to settle
+                System.Threading.Thread.Sleep(SETTLING_TIME);
             }
             catch (Exception ex)
             {
@@ -653,7 +720,7 @@ namespace GraphicsCardMonitor
         private void vRamBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             // update the virtual RAM TextBox text
-            UpdateTextBoxControlText(SerialNumTextBox, e);
+            UpdateTextBoxControlText(VirtualRamTextBox, e);
         }
 
         /// <summary>
@@ -681,6 +748,9 @@ namespace GraphicsCardMonitor
                     // get the number of GPU cores the graphics card has
                     e.Result = gs_GraphicsCards.GetGpuCoreCount(gs_selectedGpu);
                 }
+
+                // allow the hardware/API to settle
+                System.Threading.Thread.Sleep(SETTLING_TIME);
             }
             catch (Exception ex)
             {
@@ -726,6 +796,9 @@ namespace GraphicsCardMonitor
                     // get the number of GPU cores the graphics card has
                     e.Result = gs_GraphicsCards.GetGpuBusId(gs_selectedGpu);
                 }
+
+                // allow the hardware/API to settle
+                System.Threading.Thread.Sleep(SETTLING_TIME);
             }
             catch (Exception ex)
             {
@@ -771,6 +844,9 @@ namespace GraphicsCardMonitor
                     // get the GPU core temperature of the graphics card
                     e.Result = gs_GraphicsCards.GetGpuCoreTemp(gs_selectedGpu);
                 }
+
+                // allow the hardware/API to settle
+                System.Threading.Thread.Sleep(SETTLING_TIME);
             }
             catch (Exception ex)
             {
@@ -788,7 +864,16 @@ namespace GraphicsCardMonitor
         private void coreTempBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             // update the GPU core temperature TextBox text
-            UpdateTextBoxControlText(GpuCoresTextBox, e);
+            UpdateTextBoxControlText(CoreTempTextBox, e);
+
+            // check if no cancellations are pending
+            if (!gs_cancelBackgroundWorkers)
+            {
+                // run the BackgroundWorker again
+                // this will cause the BackgroundWorker to update the application repeatadely
+                // until the user either refreshes or exits the application
+                coreTempBackgroundWorker.RunWorkerAsync();
+            }
         }
 
         /// <summary>
@@ -816,6 +901,9 @@ namespace GraphicsCardMonitor
                     // get the GPU PCI internal device ID
                     e.Result = gs_GraphicsCards.GetGpuPciInternalDeviceId(gs_selectedGpu);
                 }
+
+                // allow the hardware/API to settle
+                System.Threading.Thread.Sleep(SETTLING_TIME);
             }
             catch (Exception ex)
             {
@@ -861,6 +949,9 @@ namespace GraphicsCardMonitor
                     // get the GPU PCI revision
                     e.Result = gs_GraphicsCards.GetGpuPciRevId(gs_selectedGpu);
                 }
+
+                // allow the hardware/API to settle
+                System.Threading.Thread.Sleep(SETTLING_TIME);
             }
             catch (Exception ex)
             {
@@ -906,6 +997,9 @@ namespace GraphicsCardMonitor
                     // get the GPU PCI subsystem ID
                     e.Result = gs_GraphicsCards.GetGpuPciSubSystemId(gs_selectedGpu);
                 }
+
+                // allow the hardware/API to settle
+                System.Threading.Thread.Sleep(SETTLING_TIME);
             }
             catch (Exception ex)
             {
@@ -951,6 +1045,9 @@ namespace GraphicsCardMonitor
                     // get the GPU PCI external ID
                     e.Result = gs_GraphicsCards.GetGpuPciExternalDeviceId(gs_selectedGpu);
                 }
+
+                // allow the hardware/API to settle
+                System.Threading.Thread.Sleep(SETTLING_TIME);
             }
             catch (Exception ex)
             {
@@ -994,8 +1091,11 @@ namespace GraphicsCardMonitor
                 else
                 {
                     // get the graphic processor current clock speed
-                    e.Result = gs_GraphicsCards.GetGraphicsCurrentClockFreq(gs_selectedGpu);
+                    e.Result = gs_GraphicsCards.GetGraphicsCurrentClockFreq(gs_selectedGpu) / CLOCK_FREQ_CONVERSION;
                 }
+
+                // allow the hardware/API to settle
+                System.Threading.Thread.Sleep(SETTLING_TIME);
             }
             catch (Exception ex)
             {
@@ -1015,6 +1115,15 @@ namespace GraphicsCardMonitor
         {
             // update the graphics processor current clock speed TextBox text
             UpdateTextBoxControlText(GraphicsCurrentClockSpeedTextBox, e);
+
+            // check if the BackgroundWorker object is cancelled
+            if (!gs_cancelBackgroundWorkers)
+            {
+                // run the BackgroundWorker again
+                // this will cause the BackgroundWorker to update the application repeatadely
+                // until the user either refreshes or exits the application
+                graphicsCurrentClockSpeedBackgroundWorker.RunWorkerAsync();
+            }
         }
 
         /// <summary>
@@ -1040,8 +1149,11 @@ namespace GraphicsCardMonitor
                 else
                 {
                     // get the graphics processor base clock speed
-                    e.Result = gs_GraphicsCards.GetGraphicsBaseClockFreq(gs_selectedGpu);
+                    e.Result = gs_GraphicsCards.GetGraphicsBaseClockFreq(gs_selectedGpu) / CLOCK_FREQ_CONVERSION;
                 }
+
+                // allow the hardware/API to settle
+                System.Threading.Thread.Sleep(SETTLING_TIME);
             }
             catch (Exception ex)
             {
@@ -1086,8 +1198,11 @@ namespace GraphicsCardMonitor
                 else
                 {
                     // get the graphics processor boost clock speed
-                    e.Result = gs_GraphicsCards.GetGraphicsBoostClockFreq(gs_selectedGpu);
+                    e.Result = gs_GraphicsCards.GetGraphicsBoostClockFreq(gs_selectedGpu) / CLOCK_FREQ_CONVERSION;
                 }
+
+                // allow the hardware/API to settle
+                System.Threading.Thread.Sleep(SETTLING_TIME);
             }
             catch (Exception ex)
             {
@@ -1132,8 +1247,11 @@ namespace GraphicsCardMonitor
                 else
                 {
                     // get the memory processor current clock speed
-                    e.Result = gs_GraphicsCards.GetMemoryCurrentClockFreq(gs_selectedGpu);
+                    e.Result = gs_GraphicsCards.GetMemoryCurrentClockFreq(gs_selectedGpu) / CLOCK_FREQ_CONVERSION;
                 }
+
+                // allow the hardware/API to settle
+                System.Threading.Thread.Sleep(SETTLING_TIME);
             }
             catch (Exception ex)
             {
@@ -1153,6 +1271,15 @@ namespace GraphicsCardMonitor
         {
             // update the memory processor current clock speed TextBox text
             UpdateTextBoxControlText(MemoryCurrentClockSpeedTextBox, e);
+
+            // check if the BackgroundWorker object is cancelled
+            if (!gs_cancelBackgroundWorkers)
+            {
+                // run the BackgroundWorker again
+                // this will cause the BackgroundWorker to update the application repeatadely
+                // until the user either refreshes or exits the application
+                memoryCurrentClockSpeedBackgroundWorker.RunWorkerAsync();
+            }
         }
 
         /// <summary>
@@ -1178,8 +1305,11 @@ namespace GraphicsCardMonitor
                 else
                 {
                     // get the memory processor base clock speed
-                    e.Result = gs_GraphicsCards.GetMemoryBaseClockFreq(gs_selectedGpu);
+                    e.Result = gs_GraphicsCards.GetMemoryBaseClockFreq(gs_selectedGpu) / CLOCK_FREQ_CONVERSION;
                 }
+
+                // allow the hardware/API to settle
+                System.Threading.Thread.Sleep(SETTLING_TIME);
             }
             catch (Exception ex)
             {
@@ -1224,8 +1354,11 @@ namespace GraphicsCardMonitor
                 else
                 {
                     // get the memory processor boost clock speed
-                    e.Result = gs_GraphicsCards.GetMemoryBoostClockFreq(gs_selectedGpu);
+                    e.Result = gs_GraphicsCards.GetMemoryBoostClockFreq(gs_selectedGpu) / CLOCK_FREQ_CONVERSION;
                 }
+
+                // allow the hardware/API to settle
+                System.Threading.Thread.Sleep(SETTLING_TIME);
             }
             catch (Exception ex)
             {
@@ -1272,6 +1405,9 @@ namespace GraphicsCardMonitor
                     // get the current performance state of the graphics card
                     e.Result = gs_GraphicsCards.GetCurrentPerformanceState(gs_selectedGpu);
                 }
+
+                // allow the hardware/API to settle
+                System.Threading.Thread.Sleep(SETTLING_TIME);
             }
             catch (Exception ex)
             {
@@ -1315,8 +1451,11 @@ namespace GraphicsCardMonitor
                 else
                 {
                     // get base voltage 1 of the graphics card
-                    e.Result = gs_GraphicsCards.GetBaseVoltage(gs_selectedGpu, 0);
+                    e.Result = gs_GraphicsCards.GetBaseVoltage(gs_selectedGpu, 0) / BASE_VOLTAGE_CONVERSION;
                 }
+
+                // allow the hardware/API to settle
+                System.Threading.Thread.Sleep(SETTLING_TIME);
             }
             catch (Exception ex)
             {
@@ -1338,8 +1477,22 @@ namespace GraphicsCardMonitor
             // update the base voltage 1 TextBox text
             UpdateBaseVoltageTextBoxControlText(BaseVoltageTextBox1, e);
 
-            System.Threading.Thread.Sleep(SETTLING_TIME);
-            baseVoltage1BackgroundWorker.RunWorkerAsync();
+            // check if the BackgroundWorker is not cancelled
+            if (!gs_cancelBackgroundWorkers)
+            {
+                // run the worker again
+                // this will create a continuous update until the user refreshes
+                // or closes the application
+                baseVoltage1BackgroundWorker.RunWorkerAsync();
+            }
+            else
+            {
+                // sometimes the BackgroundWorker will cancel before the
+                // Refresh button can clear the TextBox
+                // clear the TextBox text and disable it
+                BaseVoltageTextBox1.Text    = "";
+                BaseVoltageTextBox1.Enabled = false;
+            }
         }
 
         /// <summary>
@@ -1365,8 +1518,11 @@ namespace GraphicsCardMonitor
                 else
                 {
                     // get base voltage 2 of the graphics card
-                    e.Result = gs_GraphicsCards.GetBaseVoltage(gs_selectedGpu, 1);
+                    e.Result = gs_GraphicsCards.GetBaseVoltage(gs_selectedGpu, 1) / BASE_VOLTAGE_CONVERSION;
                 }
+                // allow the hardware/API to settle
+                System.Threading.Thread.Sleep(SETTLING_TIME);
+
             }
             catch (Exception ex)
             {
@@ -1387,6 +1543,23 @@ namespace GraphicsCardMonitor
         {
             // update the base voltage 2 TextBox text
             UpdateBaseVoltageTextBoxControlText(BaseVoltageTextBox2, e);
+
+            // check if the BackgroundWorker is not cancelled
+            if (!gs_cancelBackgroundWorkers)
+            {
+                // run the BackgroundWorker again
+                // this will cause the BackgroundWorker to update the application repeatadely
+                // until the user either refreshes or exits the application
+                baseVoltage2BackgroundWorker.RunWorkerAsync();
+            }
+            else
+            {
+                // sometimes the BackgroundWorker will cancel before the
+                // Refresh button can clear the TextBox
+                // clear the TextBox text and disable it
+                BaseVoltageTextBox2.Text    = "";
+                BaseVoltageTextBox2.Enabled = false;
+            }
         }
 
         /// <summary>
@@ -1412,8 +1585,11 @@ namespace GraphicsCardMonitor
                 else
                 {
                     // get base voltage 3 of the graphics card
-                    e.Result = gs_GraphicsCards.GetBaseVoltage(gs_selectedGpu, 2);
+                    e.Result = gs_GraphicsCards.GetBaseVoltage(gs_selectedGpu, 2) / BASE_VOLTAGE_CONVERSION;
                 }
+
+                // allow the hardware/API to settle
+                System.Threading.Thread.Sleep(SETTLING_TIME);
             }
             catch (Exception ex)
             {
@@ -1434,6 +1610,23 @@ namespace GraphicsCardMonitor
         {
             // update the base voltage 3 TextBox text
             UpdateBaseVoltageTextBoxControlText(BaseVoltageTextBox3, e);
+
+            // check if the BackgroundWorker object has not been cancelled
+            if (!gs_cancelBackgroundWorkers)
+            {
+                // run the BackgroundWorker again
+                // this will cause the BackgroundWorker to update the application repeatadely
+                // until the user either refreshes or exits the application
+                baseVoltage3BackgroundWorker.RunWorkerAsync();
+            }
+            else
+            {
+                // sometimes the BackgroundWorker will cancel before the
+                // Refresh button can clear the TextBox
+                // clear the TextBox text and disable it
+                BaseVoltageTextBox3.Text    = "";
+                BaseVoltageTextBox3.Enabled = false;
+            }
         }
 
         /// <summary>
@@ -1459,8 +1652,11 @@ namespace GraphicsCardMonitor
                 else
                 {
                     // get the base voltage 4 of the graphics card
-                    e.Result = gs_GraphicsCards.GetBaseVoltage(gs_selectedGpu, 3);
+                    e.Result = gs_GraphicsCards.GetBaseVoltage(gs_selectedGpu, 3) / BASE_VOLTAGE_CONVERSION;
                 }
+
+                // allow the hardware/API to settle
+                System.Threading.Thread.Sleep(SETTLING_TIME);
             }
             catch (Exception ex)
             {
@@ -1481,6 +1677,23 @@ namespace GraphicsCardMonitor
         {
             // update the base voltage 4 TextBox text
             UpdateBaseVoltageTextBoxControlText(BaseVoltageTextBox4, e);
+
+            // check if the BackgroundWorker object is not cancelled
+            if (!gs_cancelBackgroundWorkers)
+            {
+                // run the BackgroundWorker again
+                // this will cause the BackgroundWorker to update the application repeatadely
+                // until the user either refreshes or exits the application
+                baseVoltage4BackgroundWorker.RunWorkerAsync();
+            }
+            else
+            {
+                // sometimes the BackgroundWorker will cancel before the
+                // Refresh button can clear the TextBox
+                // clear the TextBox text and disable it
+                BaseVoltageTextBox4.Text    = "";
+                BaseVoltageTextBox4.Enabled = false;
+            }
         }
 
         #endregion BackgroundWorker Events
