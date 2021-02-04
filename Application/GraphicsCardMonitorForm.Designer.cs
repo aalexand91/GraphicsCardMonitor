@@ -913,7 +913,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.MenuStrip;
             this.Name = "GraphicsCardMonitorForm";
-            this.Text = "Graphics Card Monitor 1.0";
+            this.Text = "Graphics Card Monitor 1.0.0";
             this.PciGroupBox.ResumeLayout(false);
             this.PciGroupBox.PerformLayout();
             this.GeneralGroupBox.ResumeLayout(false);
