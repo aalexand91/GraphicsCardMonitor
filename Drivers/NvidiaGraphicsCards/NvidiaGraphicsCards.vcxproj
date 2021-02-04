@@ -101,11 +101,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Nvidia APIs\R440-developer;$(SolutionDir)Interface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Nvidia APIs\R440-developer;$(SolutionDir)Interface;%(AdditionalIncludeDirectories);$(SolutionDir)Nvidia APIs\R440-developer;$(SolutionDir)Interface</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>nvapi.lib;nvapi64.lib;nvapi.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Nvidia APIs\R440-developer\x86;$(SolutionDir)Nvidia APIs\R440-developer\amd64;$(SolutionDir)Nvidia APIs\R440-developer\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>nvapi.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Nvidia APIs\R440-developer\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -115,11 +115,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Nvidia APIs\R440-developer;$(SolutionDir)Interface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Nvidia APIs\R440-developer;$(SolutionDir)Interface;%(AdditionalIncludeDirectories);$(SolutionDir)Nvidia APIs\R440-developer;$(SolutionDir)Interface</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>nvapi.lib;nvapi64.lib;</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Nvidia APIs\R440-developer\x86;$(SolutionDir)Nvidia APIs\R440-developer\amd64;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>nvapi64.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Nvidia APIs\R440-developer\amd64</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -128,9 +128,11 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>;$(SolutionDir)Nvidia APIs\R440-developer;$(SolutionDir)Interface</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies />
+      <AdditionalDependencies>nvapi.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Nvidia APIs\R440-developer\x86</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -139,10 +141,11 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Nvidia APIs\R440-developer;$(SolutionDir)Interface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Nvidia APIs\R440-developer;$(SolutionDir)Interface;%(AdditionalIncludeDirectories);$(SolutionDir)Nvidia APIs\R440-developer;$(SolutionDir)Interface</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies />
+      <AdditionalDependencies>nvapi64.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Nvidia APIs\R440-developer\amd64</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
